@@ -11,13 +11,20 @@ function Tooltip({ text, visible }) {
     );
 }
 
-export default function CatalogItem({ item, onDragStart, onQuickAdd }) {
-
-
+export default function CatalogItem({ item, onDragStart, onQuickAdd, mobileMode, onMobileExpand, onMobileCollapse }) {
     return (
         <>
-            <MobileVersion item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
-            <DesktopVersion item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+            {/* Mobile: controlled by parent via mobileMode */}
+            {mobileMode === 'collapsed' && (
+                <MobileCollapsed item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} onExpand={onMobileExpand} />
+            )}
+            {mobileMode === 'expanded' && (
+                <MobileExpanded item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} onCollapse={onMobileCollapse} />
+            )}
+            {/* Desktop: always rendered, hidden on mobile */}
+            {!mobileMode && (
+                <DesktopVersion item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+            )}
         </>
     );
 }
@@ -37,9 +44,9 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                 flex-col
                 md:flex-row
                  items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow ${item.variants && item.variantLocked ? 'cursor-auto' : 'cursor-grab active:cursor-grabbing'}
-                
+
                 hidden md:flex
-                
+
                 `}
 
 
@@ -90,135 +97,111 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                     </div>
                 )}
             </div>
-            {/* <div className="relative flex-shrink-0">
-                <button
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setShowTooltip((v) => !v);
-                    }}
-                    className="w-6 h-6 flex items-center justify-center rounded-full border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif"
-                    aria-label={`Info su ${item.title}`}
-                >
-                    i
-                </button>
-
-
-                <Tooltip text={item.info} visible={showTooltip} />
-            </div> */}
         </div>
     )
 
 }
 
 
-const MobileVersion = ({ item, onDragStart, onQuickAdd }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
+const MobileCollapsed = ({ item, onDragStart, onQuickAdd, onExpand }) => {
+    return (
+        <div
+            onClick={onExpand}
+            {...(item.variants && item.variantLocked ? {} : { draggable: true, onDragStart: (e) => onDragStart(e, item) })}
+            className="md:hidden flex flex-shrink-0 rounded-full bg-white overflow-hidden p-3"
+        >
+            <img
+                src={item.image}
+                alt={item.title}
+                className="object-contain w-10 h-10 aspect-square"
+            />
+        </div>
+    );
+};
 
-    const [open, setOpen] = useState(false);
 
+const MobileExpanded = ({ item, onDragStart, onQuickAdd, onCollapse }) => {
     const [truncate, setTruncate] = useState(true);
 
     return (
-
-        <>
+        <div
+            data-carousel-card
+            className="flex-shrink-0 w-[85vw] snap-center"
+        >
             <div
-
                 {...(item.variants && item.variantLocked ? {} : { draggable: true, onDragStart: (e) => onDragStart(e, item) })}
-
                 className={`
-
-                
-                flex-col
-                md:flex-row
-                 items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow ${item.variants && item.variantLocked ? 'cursor-auto' : 'cursor-grab active:cursor-grabbing'}
-                
-
-
-                absolute bottom-0 left-6 right-6
-                ${open ? 'block' : 'hidden'}
-                
+                    flex flex-col items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 shadow-sm
+                    ${item.variants && item.variantLocked ? 'cursor-auto' : 'cursor-grab active:cursor-grabbing'}
                 `}
-
-
-
             >
-
-                <div className='flex flex-row'>
-
+                <div className='flex flex-row w-full'>
                     <img
                         src={item.image}
                         alt={item.title}
                         className="w-18 h-18 rounded-lg object-cover flex-shrink-0 border border-gray-200"
                     />
                     <div className='ml-auto'>
-                        <h3 className="md:hidden text-xs font-medium text-gray-800 truncate mr-auto flex-1 flex">Misura: </h3>
-                        {item.variants && item.variantLocked && (
+
+                        {item.variants && item.variantLocked ? (<>
+                            <h3 className="text-xs font-medium text-gray-800 truncate mr-auto flex-1 flex">Misura: </h3>
+                            <div className="mt-1 flex items-center flex-row gap-1">
+                                {item.variants.map((variant, index) => (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        draggable
+                                        onDragStart={(e) => onDragStart(e, {
+                                            ...item,
+                                            variant: index
+                                        })}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onQuickAdd?.({
+                                                ...item,
+                                                variant: index,
+                                            });
+                                        }}
+                                        className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif"
+                                        aria-label={`Aggiungi variante ${variant.title} di ${item.title}`}
+                                    >
+                                        {variant.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                        ) : (
                             <div className="mt-1 flex items-center flex-row gap-1">
 
-                                {item.variants.map((variant, index) => {
-                                    return (
-                                        <button
-                                            type="button"
-                                            draggable
-                                            onDragStart={(e) => onDragStart(e, {
-                                                ...item,
-                                                variant: index
-                                            })}
+                                <button
 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onQuickAdd?.({
-                                                    ...item,
-                                                    variant: index,
-                                                });
-                                            }}
-                                            className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif"
-                                            aria-label={`Aggiungi variante ${variant.title} di ${item.title}`}
-                                        >
-                                            {variant.title}
-                                        </button>
-                                    )
-                                })}
+                                    type="button"
+                                    draggable
+                                    onDragStart={(e) => onDragStart(e, {
+                                        ...item
+                                    })}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onQuickAdd?.({
+                                            ...item,
+                                        });
+                                    }}
+                                    className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif"
+
+                                >
+                                    Aggiungi
+                                </button>
 
                             </div>
                         )}
                     </div>
                 </div>
 
-                <div className="flex-1 min-w-0 border-t border-t-gray-200 pt-2 mt-2" onClick={() => setTruncate(!truncate)}>
-                    <h3 className="md:hidden text-sm font-medium text-gray-800 truncate">{item.title}</h3>
-                    <p className={` text-xs text-gray-400 ${truncate ? 'truncate' : ''}`}>{item.description}</p>
-
+                <div className="flex-1 min-w-0 border-t border-t-gray-200 pt-2 mt-2 w-full" onClick={() => setTruncate(!truncate)}>
+                    <h3 className="text-sm font-medium text-gray-800 truncate">{item.title}</h3>
+                    <p className={`text-xs text-gray-400 ${truncate ? 'truncate' : ''}`}>{item.description}</p>
                 </div>
-
             </div>
-
-            <div
-                onClick={() => setOpen(true)}
-
-                {...(item.variants && item.variantLocked ? {} : { draggable: true, onDragStart: (e) => onDragStart(e, item) })}
-
-                className={`              
-                md:hidden
-                
-                flex
-                flex-shrink-0
-                rounded-full
-                bg-white
-                overflow-hidden
-                rounded-full
-                p-3
-                `}
-            >
-
-                <img
-                    src={item.image}
-                    alt={item.title}
-                    className="object-contain w-10 h-10 aspect-square"
-                />
-            </div>
-        </>
-    )
-}
+        </div>
+    );
+};

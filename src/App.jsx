@@ -96,11 +96,12 @@ export default function App() {
   const [quickAddRequest, setQuickAddRequest] = useState(null);
 
   const [selectedItem, setSelectedItem] = useState(null);
+  const [catalogExpanded, setCatalogExpanded] = useState(false);
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
-  // const iframeSrc = 'http://localhost:5173?embed=true';
-  // const iframeSrc = 'https://configuratore-libreria-git-dev-nabes-projects-7a76f8c1.vercel.app?embed=true';
+  // const iframeSrc = 'http://localhost:5174?embed=true';
   const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app?_vercel_share=wkHppnLmnO6vb7jJopgrm28VGoQwiZXh&embed=true';
+
 
   const handleDragStart = useCallback((e, item) => {
     e.dataTransfer.setData('application/json', JSON.stringify(item));
@@ -143,7 +144,7 @@ export default function App() {
     <div className="h-screen flex flex-col bg-white">
       <Header onClose={handleClose} />
       <div className="flex flex-1 overflow-hidden flex-col-reverse md:flex-row">
-        <LeftSidebar items={catalogItems} onDragStart={handleDragStart} onQuickAdd={handleQuickAdd} />
+        <LeftSidebar items={catalogItems} onDragStart={handleDragStart} onQuickAdd={handleQuickAdd} catalogExpanded={catalogExpanded} setCatalogExpanded={setCatalogExpanded} />
 
         <ConfiguratorView
           iframeSrc={iframeSrc}

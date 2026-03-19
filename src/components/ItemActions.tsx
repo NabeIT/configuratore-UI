@@ -10,15 +10,14 @@ export const ItemActions = ({ item }) => {
     console.log(action);
 
     return (
-        <div className="fixed bottom-5 left-90 p-4 rounded flex space-x-4 flex-col">
+        <div className="fixed bottom-0 h-16 md:bottom-5 left-0 md:left-90  p-2 rounded flex space-x-4 flex-row items-center w-full z-50 bg-white md:bg-transparent">
             {/* <span className="text-xs text-gray-600">Hai selezionato:</span> */}
-            <span className="rounded bg-teal-600 text-white p-1 mb-2">{item.title || item.name}</span>
+            <span className="rounded bg-teal-600 text-white p-2 px-4">{item.title || item.name}</span>
             <div>
-                <button className="p-3 bg-white rounded-xl" onClick={() => {
+                <button className="p-3 md:bg-white bg-gray-100 rounded" onClick={() => {
                     performAction(actions.REMOVE_ITEM, { id: item.id });
 
-                }}><Trash2 size={20} strokeWidth={1} /></button>
-
+                }}><Trash2 size={16} strokeWidth={1} /></button>
             </div>
         </div>
     );

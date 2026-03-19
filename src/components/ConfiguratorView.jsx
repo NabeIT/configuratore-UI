@@ -28,6 +28,9 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
             item,
             position,
         });
+
+
+
     }, [postToIframe]);
 
 
@@ -99,11 +102,21 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
             if (data.type === `${MSG_PREFIX}init`) {
                 postToIframe({ type: `${MSG_PREFIX}setAvailableItems`, items });
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+
+
+
                 return;
             }
 
             if (data.type === `${MSG_PREFIX}ready`) {
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                setTimeout(() => {
+
+                    postToIframe({
+                        type: `${MSG_PREFIX}zoomCamera`,
+                        delta: 6
+                    });
+                }, 100)
                 return;
             }
 

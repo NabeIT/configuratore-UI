@@ -272,7 +272,6 @@ const catalogItems = [
             acceptTypes: ["expansion-80"],
             blocksAvailabilityForTypes: ["expansion"],
             blocksAvailabilityMinOverlap: [0.08, 0, 0],
-            cascade: true,
           },
           // {
           //   direction: "cubo-top-left-expansion",
