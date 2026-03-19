@@ -67,11 +67,16 @@ const catalogItems = [
     movementMode: "zone-locked",
     variant: 0,
     variantLocked: true,
+    objectEditMode: {
+      enabled: true,
+      lockCascadeChildren: true,
+      cameraPadding: 0.25,
+    },
     variants: [
       {
         zoneType: "cubo",
         name: "60cm",
-        title: "60cm",
+        title: "Base modulare 60cm",
         dropZones: [
           {
             direction: "cubo-right-cubo",
@@ -125,6 +130,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0, 0.03],
             scale: [0.6, 0.694, 0.25],
+            deleteOnParentRemove: true,
             // slotKey: "mensole",
           },
           {
@@ -133,6 +139,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.694, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-2",
@@ -140,6 +147,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.61, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-3",
@@ -147,6 +155,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.527, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-4",
@@ -154,6 +163,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.442, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-5",
@@ -161,6 +171,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.359, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-6",
@@ -168,6 +179,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.276, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-7",
@@ -175,6 +187,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.192, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
         ],
         items: [
@@ -183,12 +196,20 @@ const catalogItems = [
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0, 0, 0],
+            meta: {
+              sku: "spalliera-base",
+              price: 19,
+            },
           },
           {
             id: "11",
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0.625, 0, 0],
+            meta: {
+              sku: "spalliera-base",
+              price: 19,
+            },
           },
           {
             id: "15",
@@ -196,6 +217,10 @@ const catalogItems = [
             model: "connettore60",
             position: [0.025, 0.312, 0],
             hideFromCart: true,
+            meta: {
+              sku: "connettore60cm",
+              price: 0,
+            },
           },
           {
             id: "16",
@@ -203,13 +228,17 @@ const catalogItems = [
             model: "connettore60",
             position: [0.025, 0.648, 0],
             hideFromCart: true,
+            meta: {
+              sku: "connettore60",
+              price: 0,
+            },
           },
         ],
       },
       {
         zoneType: "cubo-80",
         name: "80cm",
-        title: "80cm",
+        title: "Base modulare 80cm",
         dropZones: [
           {
             direction: "cubo-right-cubo",
@@ -264,6 +293,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.625, 0.025],
             scale: [0.8, 0.001, 0.3],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-2",
@@ -271,6 +301,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.55, 0.0025],
             scale: [0.8, 0.001, 0.3],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-3",
@@ -278,6 +309,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.475, 0.025],
             scale: [0.8, 0.001, 0.3],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-4",
@@ -285,6 +317,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.4, 0.025],
             scale: [0.8, 0.001, 0.3],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-5",
@@ -292,6 +325,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.325, 0.025],
             scale: [0.8, 0.001, 0.3],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-6",
@@ -299,6 +333,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.25, 0.025],
             scale: [0.8, 0.001, 0.3],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-7",
@@ -306,6 +341,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.175, 0.025],
             scale: [0.8, 0.001, 0.3],
+            deleteOnParentRemove: true,
           },
         ],
         items: [
@@ -314,24 +350,40 @@ const catalogItems = [
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0, 0, 0],
+            meta: {
+              sku: "spalliera-base",
+              price: 19,
+            },
           },
           {
             id: "11",
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0.825, 0, 0],
+            meta: {
+              sku: "spalliera-base",
+              price: 19,
+            },
           },
           {
             id: "15",
             name: "Connettore 80cm",
             model: "connettore80",
             position: [0.025, 0.312, 0],
+            meta: {
+              sku: "connettore80",
+              price: 0,
+            },
           },
           {
             id: "16",
             name: "Connettore 80cm",
             model: "connettore80",
             position: [0.025, 0.648, 0],
+            meta: {
+              sku: "connettore80",
+              price: 0,
+            },
           },
         ],
       },
@@ -671,10 +723,15 @@ const catalogItems = [
     movementMode: "free",
     variant: 0,
     variantLocked: true,
+    objectEditMode: {
+      enabled: true,
+      lockCascadeChildren: true,
+      cameraPadding: 0.25,
+    },
     variants: [
       {
         name: "60cm",
-        title: "60cm",
+        title: "Espansione 60cm",
         zoneType: "expansion",
         dropZones: [
           {
@@ -702,39 +759,39 @@ const catalogItems = [
             scale: [0, 0, 0.001],
             acceptTypes: ["expansion"],
           },
-          {
-            direction: "expansion-top-left-expansion",
-            offset: [-0.625, 1.01, 0.01],
-            scale: [0, 0, 0.001],
-            acceptTypes: ["expansion"],
-          },
-          {
-            direction: "expansion-top-right-expansion",
-            offset: [0.625, 1.01, 0.01],
-            scale: [0, 0, 0.001],
-            acceptTypes: ["expansion"],
-          },
+          // {
+          //   direction: "expansion-top-left-expansion",
+          //   offset: [-0.625, 1.01, 0.01],
+          //   scale: [0, 0, 0.001],
+          //   acceptTypes: ["expansion"],
+          // },
+          // {
+          //   direction: "expansion-top-right-expansion",
+          //   offset: [0.625, 1.01, 0.01],
+          //   scale: [0, 0, 0.001],
+          //   acceptTypes: ["expansion"],
+          // },
 
           {
             direction: "expansion-right-expansion-mini-1",
             offset: [0.625, 0, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-right-expansion-mini-2",
             offset: [0.625, 0.34, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-right-expansion-mini-3",
             offset: [0.625, 0.59, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           // {
           //   direction: "expansion-right-expansion-mini-2",
@@ -749,21 +806,21 @@ const catalogItems = [
             offset: [-0.625, 0, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-left-expansion-mini-2",
             offset: [-0.625, 0.34, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-left-expansion-mini-3",
             offset: [-0.625, 0.59, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
 
           // {
@@ -797,6 +854,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.87, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-0",
@@ -804,6 +862,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.776, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-1",
@@ -811,6 +870,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.694, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-2",
@@ -818,6 +878,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.61, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-3",
@@ -825,6 +886,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.527, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-4",
@@ -832,6 +894,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.442, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-5",
@@ -839,6 +902,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.359, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-6",
@@ -846,6 +910,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.276, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-7",
@@ -853,6 +918,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.192, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-8",
@@ -860,6 +926,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.11, 0.03],
             scale: [0.6, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
         ],
         items: [
@@ -896,7 +963,7 @@ const catalogItems = [
       {
         name: "80cm",
         zoneType: "expansion-80",
-        title: "80cm",
+        title: "Espansione 80cm",
         dropZones: [
           {
             direction: "expansion-right-expansion",
@@ -916,39 +983,39 @@ const catalogItems = [
             scale: [0, 0, 0.001],
             acceptTypes: ["expansion-80"],
           },
-          {
-            direction: "expansion-top-left-expansion",
-            offset: [-0.825, 1.01, 0.01],
-            scale: [0, 0, 0.001],
-            acceptTypes: ["expansion-80"],
-          },
-          {
-            direction: "expansion-top-right-expansion",
-            offset: [0.825, 1.01, 0.01],
-            scale: [0, 0, 0.001],
-            acceptTypes: ["expansion-80"],
-          },
+          // {
+          //   direction: "expansion-top-left-expansion",
+          //   offset: [-0.825, 1.01, 0.01],
+          //   scale: [0, 0, 0.001],
+          //   acceptTypes: ["expansion-80"],
+          // },
+          // {
+          //   direction: "expansion-top-right-expansion",
+          //   offset: [0.825, 1.01, 0.01],
+          //   scale: [0, 0, 0.001],
+          //   acceptTypes: ["expansion-80"],
+          // },
 
           {
             direction: "expansion-right-expansion-mini-1",
             offset: [0.825, 0, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-right-expansion-mini-2",
             offset: [0.825, 0.34, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-right-expansion-mini-3",
             offset: [0.825, 0.59, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           // {
           //   direction: "expansion-right-expansion-mini-2",
@@ -962,21 +1029,21 @@ const catalogItems = [
             offset: [-0.825, 0, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-left-expansion-mini-2",
             offset: [-0.825, 0.34, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
           {
             direction: "expansion-left-expansion-mini-3",
             offset: [-0.825, 0.59, 0.01],
             scale: [0, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
-            cascade: true,
+            // cascade: true,
           },
 
           // {
@@ -992,24 +1059,25 @@ const catalogItems = [
             blocksAvailabilityForTypes: ["cubo"],
             blocksAvailabilityMinOverlap: [0.08, 0, 0],
           },
-          {
-            direction: "expansion-bottom-left-cubo",
-            offset: [-0.825, -0.84, 0.01],
-            scale: [0, 0.78, 0.001],
-            acceptTypes: ["cubo-80"],
-          },
-          {
-            direction: "expansion-bottom-right-cubo",
-            offset: [0.825, -0.84, 0.01],
-            scale: [0, 0.78, 0.001],
-            acceptTypes: ["cubo-80"],
-          },
+          // {
+          //   direction: "expansion-bottom-left-cubo",
+          //   offset: [-0.825, -0.84, 0.01],
+          //   scale: [0, 0.78, 0.001],
+          //   acceptTypes: ["cubo-80"],
+          // },
+          // {
+          //   direction: "expansion-bottom-right-cubo",
+          //   offset: [0.825, -0.84, 0.01],
+          //   scale: [0, 0.78, 0.001],
+          //   acceptTypes: ["cubo-80"],
+          // },
           {
             direction: "appoggio-mensola",
             acceptTypes: ["mensola80"],
             cascade: true,
             offset: [0.025, 0.87, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-0",
@@ -1017,6 +1085,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.776, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-1",
@@ -1024,6 +1093,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.694, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-2",
@@ -1031,6 +1101,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.61, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-3",
@@ -1038,6 +1109,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.527, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-4",
@@ -1045,6 +1117,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.442, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-5",
@@ -1052,6 +1125,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.359, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-6",
@@ -1059,6 +1133,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.276, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-7",
@@ -1066,6 +1141,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.192, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
           {
             direction: "appoggio-mensola-8",
@@ -1073,6 +1149,7 @@ const catalogItems = [
             cascade: true,
             offset: [0.025, 0.11, 0.03],
             scale: [0.8, 0.001, 0.25],
+            deleteOnParentRemove: true,
           },
         ],
         items: [
@@ -1164,6 +1241,7 @@ const catalogItems = [
         cascade: true,
         offset: [0.025, 0.359, 0.03],
         scale: [0.8, 0.001, 0.25],
+        deleteOnParentRemove: true,
       },
       {
         direction: "appoggio-mensola-6",
@@ -1171,6 +1249,7 @@ const catalogItems = [
         cascade: true,
         offset: [0.025, 0.276, 0.03],
         scale: [0.8, 0.001, 0.25],
+        deleteOnParentRemove: true,
       },
       {
         direction: "appoggio-mensola-7",
@@ -1178,6 +1257,7 @@ const catalogItems = [
         cascade: true,
         offset: [0.025, 0.192, 0.03],
         scale: [0.8, 0.001, 0.25],
+        deleteOnParentRemove: true,
       },
       {
         direction: "appoggio-mensola-8",
@@ -1185,6 +1265,7 @@ const catalogItems = [
         cascade: true,
         offset: [0.025, 0.11, 0.03],
         scale: [0.8, 0.001, 0.25],
+        deleteOnParentRemove: true,
       },
       {
         direction: "appoggio-mensola-9",
@@ -1192,6 +1273,7 @@ const catalogItems = [
         cascade: true,
         offset: [0.025, 0.025, 0.03],
         scale: [0.8, 0.001, 0.25],
+        deleteOnParentRemove: true,
       },
     ],
     items: [
@@ -1257,13 +1339,13 @@ const catalogItems = [
       {
         model: "mensola60",
         name: "60cm",
-        title: "60cm",
+        title: "Mensola 60cm",
         zoneType: "mensola",
       },
       {
         model: "mensola80",
         name: "80cm",
-        title: "80cm",
+        title: "Mensola 80cm",
         zoneType: "mensola80",
       },
     ],

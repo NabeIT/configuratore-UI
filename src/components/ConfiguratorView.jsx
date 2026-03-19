@@ -1,8 +1,47 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function ConfiguratorView({ iframeSrc, items }) {
+import { useActionContext } from './ActionContext';
+
+const MSG_PREFIX = 'configurator:';
+
+export default function ConfiguratorView({ iframeSrc, items, onSceneState, quickAddRequest, setSelectedItem }) {
     const iframeRef = useRef(null);
+    const lastQuickAddIdRef = useRef(null);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
+
+    const { action, clearAction } = useActionContext();
+
+
+
+
+    const postToIframe = useCallback((message) => {
+        const iframeWindow = iframeRef.current?.contentWindow;
+        if (!iframeWindow) return;
+        iframeWindow.postMessage(message, '*');
+    }, []);
+
+    const sendDrop = useCallback((item, position) => {
+        if (!item) return;
+
+        postToIframe({
+            type: `${MSG_PREFIX}drop`,
+            item,
+            position,
+        });
+    }, [postToIframe]);
+
+
+    useEffect(() => {
+        if (!action || !postToIframe) return;
+
+
+        postToIframe({
+            type: `${MSG_PREFIX}${action.type}`,
+            payload: action.payload,
+        });
+        clearAction();
+
+    }, [action, postToIframe, clearAction]);
 
     const handleDragOver = useCallback((e) => {
         e.preventDefault();
@@ -39,41 +78,78 @@ export default function ConfiguratorView({ iframeSrc, items }) {
             if (!raw) return;
             const item = JSON.parse(raw);
 
-            console.log(item)
-            // Invia i dati all'iframe via postMessage
-            iframe.contentWindow.postMessage(
-                {
-                    type: 'configurator:drop',
-                    item,
-                    position: { x, y },
-                },
-                '*'
-            );
+            sendDrop(item, { x, y });
         } catch {
             // dati drag non validi
         }
-    }, []);
-
-
-
+    }, [sendDrop]);
 
     useEffect(() => {
         const iframe = iframeRef.current;
         if (!iframe) return;
-        const handleMessage = (e) => {
-            // Gestisci eventuali messaggi di risposta dall'iframe se necessario
-            // console.log('Messaggio ricevuto dall\'iframe:', e.data);
-            if (e.data?.type === 'configurator:init') {
-                iframe.contentWindow.postMessage({ type: 'configurator:setAvailableItems', items }, '*');
-            }
-            if (e.data?.type === 'configurator:ready') {
 
-                // iframe.contentWindow.postMessage({ type: 'configurator:setAvailableItems', items }, '*');
+        const handleMessage = (e) => {
+            if (e.source !== iframe.contentWindow) return;
+            const data = e.data;
+            if (!data || typeof data.type !== 'string') return;
+            if (!data.type.startsWith(MSG_PREFIX)) return;
+
+            const payload = data.payload ?? data;
+
+            if (data.type === `${MSG_PREFIX}init`) {
+                postToIframe({ type: `${MSG_PREFIX}setAvailableItems`, items });
+                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                return;
+            }
+
+            if (data.type === `${MSG_PREFIX}ready`) {
+                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                return;
+            }
+
+            if (data.type === `${MSG_PREFIX}itemAdded` || data.type === `${MSG_PREFIX}itemRemoved`) {
+                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                return;
+            }
+
+            if (data.type === `${MSG_PREFIX}sceneCleared`) {
+                onSceneState?.([]);
+                return;
+            }
+            if (data.type === `${MSG_PREFIX}itemSelected`) {
+                setSelectedItem(payload.item);
+                return;
+            }
+            if (data.type === `${MSG_PREFIX}itemDeselected`) {
+                setSelectedItem(null);
+                return;
+            }
+
+            if (data.type === `${MSG_PREFIX}sceneState`) {
+                console.log('Scene state received from iframe:', payload);
+                onSceneState?.(Array.isArray(payload.items) ? payload.items : []);
             }
         };
+
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [iframeRef, items]);
+    }, [items, onSceneState, postToIframe]);
+
+    useEffect(() => {
+        if (!quickAddRequest?.item) return;
+        if (quickAddRequest.id === lastQuickAddIdRef.current) return;
+
+        lastQuickAddIdRef.current = quickAddRequest.id;
+
+        const iframe = iframeRef.current;
+        if (!iframe) return;
+
+        const rect = iframe.getBoundingClientRect();
+        sendDrop(quickAddRequest.item, {
+            x: rect.width / 2,
+            y: rect.height / 2,
+        });
+    }, [quickAddRequest, sendDrop]);
 
 
     return (

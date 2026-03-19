@@ -1,30 +1,36 @@
+import { ArrowBigRight, ChevronDown, ShoppingBasket } from 'lucide-react';
+
 import CartItem from './CartItem';
 import { useState } from 'react';
 
-export default function RightSidebar({ cartItems, onIncrement, onDecrement }) {
+export default function RightSidebar({ cartItems }) {
     const [open, setOpen] = useState(false);
+    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cartItems.reduce((sum, item) => sum + (item.quantity * (item.meta?.price || 0)), 0);
     return (
         <>
-            <aside className={` fixed right-6 bottom-6 rounded-2xl w-72 flex-shrink-0 bg-gray-50 border-l border-gray-200 flex flex-col shadow-2xl pb-12`}>
+            <aside className={`fixed left-0 md:left-auto right-0 bottom-0 rounded-t-xl transition-all ${open ? "right-4 left-4 bottom-4 rounded-2xl shadow-2xl" : "delay-200"}  md:right-6 md:bottom-6 md:rounded-2xl md:w-80 flex-shrink-0 bg-gray-50 border-l border-gray-200 flex flex-col shadow-2xl z-50`}>
 
-                <div className='flex flex-row border-b border-gray-200 items-end'>
+                <div className='overflow-hidden h-0 md:h-auto md:flex flex-row  items-end'>
                     <div className="px-4 py-3 flex-1">
                         <h2 className="text-sm font-semibold text-gray-700">Configurazione</h2>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                            {/* {cartItems.length === 0
-                            ? 'Nessun elemento aggiunto'
-                            : `${cartItems.length} element${cartItems.length === 1 ? 'o' : 'i'}`} */}
-
-                            2 elementi aggiunti
-
+                        <p className="text-xs text-gray-400">
+                            {totalItems === 0
+                                ? 'Nessun elemento aggiunto'
+                                : `${totalItems} ${totalItems === 1 ? 'elemento aggiunto' : 'elementi aggiunti'}`}
                         </p>
 
                     </div>
+                    {/* <div className='flex px-3 py-3 text-sm font-bold text-gray-700 mr-4 items-center'>
+                        <span className='text-2xl'>{totalItems}</span>
+                        <span className='ml-1 text-xs uppercase tracking-wide text-gray-400'>pz</span>
+                    </div> */}
                     <div className='flex px-3 py-3 text-sm font-bold text-gray-700 mr-4 items-center'>
-                        <span className='text-2xl'>1.200€</span>
+                        <span className='text-2xl'>{totalPrice.toFixed(2)}</span>
+                        <span className='ml-1 text-xs uppercase tracking-wide text-gray-400'>€</span>
                     </div>
                 </div>
-                <div className={`${open ? 'h-80' : 'h-0'}  overflow-y-auto p-3 space-y-2 transition-all duration-300`}>
+                <div className={`  overflow-y-auto    space-y-2 transition-all duration-300 ${open ? 'max-h-dvh h-80 p-3' : 'h-0 p-0'}`}>
                     {cartItems.length === 0 && open ? (
                         <div className="flex flex-col items-center justify-center h-full text-gray-300">
                             <svg className="w-12 h-12 mb-2 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -37,29 +43,49 @@ export default function RightSidebar({ cartItems, onIncrement, onDecrement }) {
                             <CartItem
                                 key={item.id}
                                 item={item}
-                                onIncrement={onIncrement}
-                                onDecrement={onDecrement}
                             />
                         ))
                     )}
                 </div>
 
+
+                <aside className="md:w-80 h-16 flex-shrink-0 bg-gray-50  flex flex-col rounded-2xl flex-row items-center p-3 gap-3">
+                    <div onClick={() => {
+                        setOpen((v) => !v);
+                    }} className='w-10 h-10 rounded-full border border-transparent flex-shrink-0 flex items-center justify-center cursor-pointer text-gray-700 hover:border-teal-600 transition-colors'>
+                        {!open && <ShoppingBasket className='w-5 h-5' />}
+                        {open && <ChevronDown className='w-5 h-5' />}
+                    </div>
+
+
+                    <div className='flex-1 flex-row flex items-center md:hidden'>
+                        <div className=" flex-1">
+                            <h2 className="text-sm font-semibold text-gray-700">Configurazione</h2>
+                            <p className="text-xs text-gray-400">
+                                {totalItems === 0
+                                    ? 'Nessun elemento aggiunto'
+                                    : `${totalItems} ${totalItems === 1 ? 'elemento aggiunto' : 'elementi'}`}
+                            </p>
+
+                        </div>
+                        <div className='flex text-sm font-bold text-gray-700 items-center'>
+                            <span className='text-2xl'>{totalPrice.toFixed(2)}</span>
+                            <span className='ml-0.5 text-xs uppercase tracking-wide text-gray-400'>€</span>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={() => alert('Funzionalità di acquisto non implementata')}
+                        disabled={totalItems === 0}
+                        className="flex md:flex-1 px-3 py-3 gap-3 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex-row items-center justify-center"
+                    >
+                        <span className='hidden md:block'>Continua</span>
+                        <ArrowBigRight className='w-4 h-4' />
+                    </button>
+                </aside>
+
             </aside>
 
-            <aside className="w-72 flex-shrink-0 bg-gray-50 border-l border-gray-200 flex flex-col fixed right-6 bottom-6 rounded-2xl flex-row items-center p-3 gap-3">
-                <div onClick={() => {
-                    setOpen((v) => !v);
-                }} className='w-10 h-10 rounded-full bg-amber-200'>
-
-                </div>
-                <button
-                    onClick={() => alert('Funzionalità di acquisto non implementata')}
-                    disabled={cartItems.length === 0}
-                    className="flex-1 py-3 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium"
-                >
-                    Continua
-                </button>
-            </aside>
 
         </>
     );
