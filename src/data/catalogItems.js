@@ -1,41 +1,41 @@
 // const catalogItems = [
 //   {
-//     id: "letto-singolo",
+//     modelId: "letto-singolo",
 //     title: "Letto Singolo",
 //     description: "Letto singolo in legno massello",
 //     image: "https://placehold.co/80x80/e2e8f0/475569?text=Letto",
 //     info: "Dimensioni: 90x200 cm. Struttura in legno di faggio. Disponibile in diverse finiture.",
 //   },
 //   {
-//     id: "letto-castello",
+//     modelId: "letto-castello",
 //     title: "Letto a Castello",
 //     description: "Letto a castello salvaspazio",
 //     image: "https://placehold.co/80x80/e2e8f0/475569?text=Castello",
 //     info: "Dimensioni: 90x200 cm per piano. Altezza totale 160 cm. Include scaletta di sicurezza.",
 //   },
 //   {
-//     id: "scrivania",
+//     modelId: "scrivania",
 //     title: "Scrivania",
 //     description: "Scrivania con cassetti integrati",
 //     image: "https://placehold.co/80x80/e2e8f0/475569?text=Scrivania",
 //     info: "Dimensioni: 120x60 cm. Piano in MDF laccato. 3 cassetti laterali.",
 //   },
 //   {
-//     id: "armadio",
+//     modelId: "armadio",
 //     title: "Armadio",
 //     description: "Armadio a 2 ante scorrevoli",
 //     image: "https://placehold.co/80x80/e2e8f0/475569?text=Armadio",
 //     info: "Dimensioni: 180x60x220 cm. Ante scorrevoli con specchio opzionale.",
 //   },
 //   {
-//     id: "comodino",
+//     modelId: "comodino",
 //     title: "Comodino",
 //     description: "Comodino con un cassetto",
 //     image: "https://placehold.co/80x80/e2e8f0/475569?text=Comodino",
 //     info: "Dimensioni: 45x35x50 cm. Un cassetto e un ripiano aperto.",
 //   },
 //   {
-//     id: "libreria",
+//     modelId: "libreria",
 //     title: "Libreria",
 //     description: "Libreria modulare a giorno",
 //     image: "https://placehold.co/80x80/e2e8f0/475569?text=Libreria",
@@ -47,7 +47,7 @@ const catalogItems = [
   // ── Drop Zone items ──────────────────────────────────────────
 
   {
-    id: "cubo-scaffale",
+    modelId: "cubo-scaffale",
     name: "Cubo Scaffale 60cm o 80cm",
     title: "Base modulare",
     image: "/assets/img/thumbs/spalliera-base.png",
@@ -192,7 +192,7 @@ const catalogItems = [
         ],
         items: [
           {
-            id: "spalliera-base",
+            modelId: "spalliera-base",
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0, 0, 0],
@@ -202,7 +202,7 @@ const catalogItems = [
             },
           },
           {
-            id: "11",
+            modelId: "11",
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0.625, 0, 0],
@@ -212,7 +212,7 @@ const catalogItems = [
             },
           },
           {
-            id: "15",
+            modelId: "15",
             name: "Connettore 60cm",
             model: "connettore60",
             position: [0.025, 0.312, 0],
@@ -223,7 +223,7 @@ const catalogItems = [
             },
           },
           {
-            id: "16",
+            modelId: "16",
             name: "Connettore 60cm",
             model: "connettore60",
             position: [0.025, 0.648, 0],
@@ -345,7 +345,7 @@ const catalogItems = [
         ],
         items: [
           {
-            id: "spalliera-base",
+            modelId: "spalliera-base",
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0, 0, 0],
@@ -355,7 +355,7 @@ const catalogItems = [
             },
           },
           {
-            id: "11",
+            modelId: "11",
             name: "Spalliera base",
             model: "spalliera-base",
             position: [0.825, 0, 0],
@@ -365,7 +365,7 @@ const catalogItems = [
             },
           },
           {
-            id: "15",
+            modelId: "15",
             name: "Connettore 80cm",
             model: "connettore80",
             position: [0.025, 0.312, 0],
@@ -375,7 +375,7 @@ const catalogItems = [
             },
           },
           {
-            id: "16",
+            modelId: "16",
             name: "Connettore 80cm",
             model: "connettore80",
             position: [0.025, 0.648, 0],
@@ -407,7 +407,7 @@ const catalogItems = [
     ],
   },
   // {
-  //   id: "cubo-scaffale",
+  //   modelId: "cubo-scaffale",
   //   name: "Cubo Scaffale 60cm",
   //   description:
   //     "Modulo base con zone posizionali. Si aggancia lateralmente e in alto ad altri cubi.",
@@ -532,25 +532,25 @@ const catalogItems = [
   //   ],
   //   items: [
   //     {
-  //       id: "spalliera-base",
+  //       modelId: "spalliera-base",
   //       name: "Spalliera base",
   //       model: "spalliera-base",
   //       position: [0, 0, 0],
   //     },
   //     {
-  //       id: "11",
+  //       modelId: "11",
   //       name: "Spalliera base",
   //       model: "spalliera-base",
   //       position: [0.625, 0, 0],
   //     },
   //     {
-  //       id: "15",
+  //       modelId: "15",
   //       name: "Connettore 60cm",
   //       model: "connettore60",
   //       position: [0.025, 0.312, 0],
   //     },
   //     {
-  //       id: "16",
+  //       modelId: "16",
   //       name: "Connettore 60cm",
   //       model: "connettore60",
   //       position: [0.025, 0.648, 0],
@@ -558,7 +558,7 @@ const catalogItems = [
   //   ],
   // },
   // {
-  //   id: "cubo-scaffale",
+  //   modelId: "cubo-scaffale",
   //   name: "Cubo Scaffale 80cm",
   //   description:
   //     "Modulo base con zone posizionali. Si aggancia lateralmente e in alto ad altri cubi.",
@@ -676,25 +676,25 @@ const catalogItems = [
   //   ],
   //   items: [
   //     {
-  //       id: "spalliera-base",
+  //       modelId: "spalliera-base",
   //       name: "Spalliera base",
   //       model: "spalliera-base",
   //       position: [0, 0, 0],
   //     },
   //     {
-  //       id: "11",
+  //       modelId: "11",
   //       name: "Spalliera base",
   //       model: "spalliera-base",
   //       position: [0.825, 0, 0],
   //     },
   //     {
-  //       id: "15",
+  //       modelId: "15",
   //       name: "Connettore 80cm",
   //       model: "connettore80",
   //       position: [0.025, 0.312, 0],
   //     },
   //     {
-  //       id: "16",
+  //       modelId: "16",
   //       name: "Connettore 80cm",
   //       model: "connettore80",
   //       position: [0.025, 0.648, 0],
@@ -702,7 +702,7 @@ const catalogItems = [
   //   ],
   // },
   {
-    id: "espansione-cubo-scaffale",
+    modelmodelId: "espansione-cubo-scaffale",
     name: "Espansione Cubo Scaffale",
     title: "Espansione",
     description:
@@ -738,7 +738,6 @@ const catalogItems = [
             offset: [0.625, 0, 0.01],
             scale: [0, 0, 0.001],
             acceptTypes: ["expansion", "expansion-80"],
-            cascade: true,
           },
           {
             direction: "expansion-left-expansion",
@@ -774,21 +773,21 @@ const catalogItems = [
           {
             direction: "expansion-right-expansion-mini-1",
             offset: [0.625, 0, 0.01],
-            scale: [0, 0.36, 0.001],
+            scale: [0.825, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
             // cascade: true,
           },
           {
             direction: "expansion-right-expansion-mini-2",
             offset: [0.625, 0.34, 0.01],
-            scale: [0, 0.36, 0.001],
+            scale: [0.825, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
             // cascade: true,
           },
           {
             direction: "expansion-right-expansion-mini-3",
             offset: [0.625, 0.59, 0.01],
-            scale: [0, 0.36, 0.001],
+            scale: [0.825, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
             // cascade: true,
           },
@@ -802,22 +801,22 @@ const catalogItems = [
 
           {
             direction: "expansion-left-expansion-mini-1",
-            offset: [-0.625, 0, 0.01],
-            scale: [0, 0.36, 0.001],
+            offset: [-0.825, 0, 0.01],
+            scale: [0.825, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
             // cascade: true,
           },
           {
             direction: "expansion-left-expansion-mini-2",
-            offset: [-0.625, 0.34, 0.01],
-            scale: [0, 0.36, 0.001],
+            offset: [-0.825, 0.34, 0.01],
+            scale: [0.825, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
             // cascade: true,
           },
           {
             direction: "expansion-left-expansion-mini-3",
-            offset: [-0.625, 0.59, 0.01],
-            scale: [0, 0.36, 0.001],
+            offset: [-0.825, 0.59, 0.01],
+            scale: [0.825, 0.36, 0.001],
             acceptTypes: ["expansion-mini"],
             // cascade: true,
           },
@@ -930,28 +929,28 @@ const catalogItems = [
         ],
         items: [
           {
-            id: "modulo-medium",
+            modelId: "modulo-medium",
             name: "Kit evolutivo medium",
             description: "Utilizzato per ampliare la libreria small",
             model: "spalliera-b",
             position: [0, 0, 0],
           },
           {
-            id: "2",
+            modelId: "2",
             name: "spalliera",
             model: "spalliera-b",
             position: [0.625, 0, 0],
           },
 
           {
-            id: "2",
+            modelId: "2",
             name: "Mensola 60",
             model: "connettore60",
             position: [0.025, 0.055, 0],
             hideFromCart: true,
           },
           {
-            id: "2",
+            modelId: "2",
             name: "Mensola 60",
             model: "connettore60",
             position: [0.025, 0.875, 0],
@@ -1153,28 +1152,28 @@ const catalogItems = [
         ],
         items: [
           {
-            id: "modulo-medium",
+            modelId: "modulo-medium",
             name: "Kit evolutivo medium",
             description: "Utilizzato per ampliare la libreria small",
             model: "spalliera-b",
             position: [0, 0, 0],
           },
           {
-            id: "2",
+            modelId: "2",
             name: "spalliera",
             model: "spalliera-b",
             position: [0.825, 0, 0],
           },
 
           {
-            id: "2",
+            modelId: "2",
             name: "Mensola 60",
             model: "connettore80",
             position: [0.025, 0.055, 0],
             hideFromCart: true,
           },
           {
-            id: "2",
+            modelId: "2",
             name: "Mensola 60",
             model: "connettore80",
             position: [0.025, 0.875, 0],
@@ -1203,7 +1202,7 @@ const catalogItems = [
     ],
   },
   {
-    id: "espansione-mini",
+    modelId: "espansione-mini",
     name: "Espansione Mini",
     title: "Espansione Mini",
     description:
@@ -1222,6 +1221,11 @@ const catalogItems = [
     zoneType: "expansion-mini",
     movementMode: "free",
     showQuotes: false,
+    objectEditMode: {
+      enabled: true,
+      lockCascadeChildren: true,
+      cameraPadding: 0.25,
+    },
     behaviors: [
       {
         type: "hideGroupItem",
@@ -1277,21 +1281,21 @@ const catalogItems = [
     ],
     items: [
       {
-        id: "spalliera-mini",
+        modelId: "spalliera-mini",
         name: "Spalliera mini",
         description: "Utilizzato per ampliare la libreria small",
         model: "spalliera-mini",
         position: [0, 0, 0],
       },
       {
-        id: "spalliera-mini",
+        modelId: "spalliera-mini",
         name: "Spalliera mini",
         model: "spalliera-mini",
         position: [0.825, 0, 0],
       },
 
       {
-        id: "2",
+        modelId: "2",
         name: "Connettore 80",
         model: "connettore80",
         position: [0.025, 0.31, 0],
@@ -1299,7 +1303,7 @@ const catalogItems = [
     ],
   },
   // {
-  //   id: "mensola-deco",
+  //   modelId: "mensola-deco",
   //   name: "Mensola Decorativa",
   //   description:
   //     "Mensola posizionabile liberamente o nelle zone compatibili. Se rilasciata fuori zona rimane dov'e.",
@@ -1317,7 +1321,7 @@ const catalogItems = [
   // },
 
   {
-    id: "mensola60",
+    modelId: "mensola60",
     name: "Mensola",
     title: "Mensola",
     model: "mensola60",
@@ -1367,7 +1371,7 @@ const catalogItems = [
     ],
   },
   {
-    id: "scrivania",
+    modelId: "scrivania",
     name: "Scrivania",
     title: "Scrivania",
     model: "scrivania",
@@ -1403,7 +1407,7 @@ const catalogItems = [
   },
 
   {
-    id: "mensola-montessoriana",
+    modelId: "mensola-montessoriana",
     name: "Mensola montessoriana",
     title: "Mensola montessoriana",
     description: "Mensola montessoriana",
@@ -1433,7 +1437,7 @@ const catalogItems = [
     ],
   },
   // {
-  //   id: "4",
+  //   modelId: "4",
   //   name: "Mensola 80cm",
   //   model: "mensola80",
   //   position: [0.0, 0, 0.025],
@@ -1477,7 +1481,7 @@ const catalogItems = [
   // },
 
   {
-    id: "mensola60",
+    modelId: "mensola60",
     name: "Mensola mini",
     title: "Mensola mini",
     model: "mensola-mini",
@@ -1511,7 +1515,7 @@ const catalogItems = [
     ],
   },
   {
-    id: "mensola60",
+    modelId: "mensola60",
     name: "Mensola appendi abiti",
     title: "Mensola appendi abiti",
     model: "mensola-appendi-abiti",

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useActionContext } from './ActionContext';
+import { useStateContext } from './StateContext';
 
 const MSG_PREFIX = 'configurator:';
 
@@ -11,8 +12,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
     const { action, clearAction } = useActionContext();
 
-
-
+    const { setSelectedItem: stateSetSelectedItem, setEditedItem } = useStateContext();
 
     const postToIframe = useCallback((message) => {
         const iframeWindow = iframeRef.current?.contentWindow;
@@ -87,11 +87,42 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
         }
     }, [sendDrop]);
 
+
+
+    // useEffect(() => {
+
+    //     if (!availableItems) return;
+
+    //     const cubo = availableItems.find(i => i.id === "cubo-scaffale");
+    //     if (!cubo) return;
+
+    //     addItem({
+    //         ...cubo,
+    //         ...cubo.variants ? cubo.variants[cubo.variant ?? 0] : {},
+    //     });
+    //     invalidate();
+
+
+    //     const mensola = availableItems.find(i => i.id === "mensola-montessoriana");
+
+    //     if (!mensola) return;
+    //     setTimeout(() => {
+    //         addItem({
+    //             ...mensola,
+    //             ...mensola.variants ? mensola.variants[mensola.variant ?? 0] : {},
+    //         });
+    //         invalidate();
+    //     }, 1000);
+
+    // }, []);
+
+
     useEffect(() => {
         const iframe = iframeRef.current;
         if (!iframe) return;
 
         const handleMessage = (e) => {
+            console.log('Message received from iframe:', e.data);
             if (e.source !== iframe.contentWindow) return;
             const data = e.data;
             if (!data || typeof data.type !== 'string') return;
@@ -102,19 +133,25 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
             if (data.type === `${MSG_PREFIX}init`) {
                 postToIframe({ type: `${MSG_PREFIX}setAvailableItems`, items });
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
-
-
-
                 return;
             }
 
             if (data.type === `${MSG_PREFIX}ready`) {
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
-                setTimeout(() => {
 
+                setTimeout(() => {
+                    postToIframe({ type: `${MSG_PREFIX}drop`, item: items.find(i => i.modelId == "cubo-scaffale") });
+                }, 500);
+                setTimeout(() => {
+                    postToIframe({ type: `${MSG_PREFIX}drop`, item: items.find(i => i.modelId == "mensola-montessoriana") });
+                }, 1000);
+
+
+
+                setTimeout(() => {
                     postToIframe({
                         type: `${MSG_PREFIX}zoomCamera`,
-                        delta: 6
+                        delta: 7
                     });
                 }, 100)
                 return;
@@ -131,10 +168,22 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
             }
             if (data.type === `${MSG_PREFIX}itemSelected`) {
                 setSelectedItem(payload.item);
+                stateSetSelectedItem(payload.item);
                 return;
             }
             if (data.type === `${MSG_PREFIX}itemDeselected`) {
                 setSelectedItem(null);
+                stateSetSelectedItem(null);
+
+                return;
+            }
+            if (data.type === `${MSG_PREFIX}editItemOn`) {
+
+                setEditedItem(payload.item);
+                return;
+            }
+            if (data.type === `${MSG_PREFIX}editItemOff`) {
+                setEditedItem(null);
                 return;
             }
 
@@ -146,7 +195,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [items, onSceneState, postToIframe]);
+    }, [items, onSceneState, postToIframe, setEditedItem, setSelectedItem, stateSetSelectedItem]);
 
     useEffect(() => {
         if (!quickAddRequest?.item) return;

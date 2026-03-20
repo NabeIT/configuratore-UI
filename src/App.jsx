@@ -100,6 +100,7 @@ export default function App() {
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
   // const iframeSrc = 'http://localhost:5174?embed=true';
+  // const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app?_vercel_share=wkHppnLmnO6vb7jJopgrm28VGoQwiZXh&embed=true';
   const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app?_vercel_share=wkHppnLmnO6vb7jJopgrm28VGoQwiZXh&embed=true';
 
 

@@ -7,7 +7,6 @@ export const ItemActions = ({ item }) => {
 
     const { action, performAction } = useActionContext();
 
-    console.log(action);
 
     return (
         <div className="fixed bottom-0 h-16 md:bottom-5 left-0 md:left-90  p-2 rounded flex space-x-4 flex-row items-center w-full z-50 bg-white md:bg-transparent">

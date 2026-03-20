@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useStateContext } from './StateContext';
 
 function Tooltip({ text, visible }) {
     if (!visible) return null;
@@ -33,6 +34,10 @@ export default function CatalogItem({ item, onDragStart, onQuickAdd, mobileMode,
 const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
     const [showTooltip, setShowTooltip] = useState(false);
 
+    const { editedItem } = useStateContext();
+
+
+
     return (
         <div
 
@@ -49,7 +54,14 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
 
                 `}
 
+            onClick={item.variants ? null : (e) => {
 
+                e.stopPropagation();
+                onQuickAdd?.({
+                    ...item,
+                });
+
+            }}
 
         >
             <h3 className="md:hidden text-sm font-medium text-gray-800 truncate">{item.title}</h3>
