@@ -12,7 +12,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
     const { action, clearAction } = useActionContext();
 
-    const { setSelectedItem: stateSetSelectedItem, setEditedItem } = useStateContext();
+    const { setSelectedItem: stateSetSelectedItem, setEditedItem, editedItem, setAvailableDropZones } = useStateContext();
 
     const postToIframe = useCallback((message) => {
         const iframeWindow = iframeRef.current?.contentWindow;
@@ -32,6 +32,18 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
 
     }, [postToIframe]);
+
+
+    useEffect(() => {
+        if (postToIframe && editedItem) {
+            const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
+            const dropZonesUnique = [...new Set(dropZones)];
+            postToIframe({
+                type: `${MSG_PREFIX}getAvailableZones`,
+                types: dropZonesUnique,
+            });
+        }
+    }, [editedItem, postToIframe]);
 
 
     useEffect(() => {
@@ -136,6 +148,10 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
                 return;
             }
 
+            if (data.type === `${MSG_PREFIX}availableZones`) {
+                setAvailableDropZones(payload.zones);
+            }
+
             if (data.type === `${MSG_PREFIX}ready`) {
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
 
@@ -159,6 +175,15 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
             if (data.type === `${MSG_PREFIX}itemAdded` || data.type === `${MSG_PREFIX}itemRemoved`) {
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+
+                if (editedItem) {
+                    const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
+                    const dropZonesUnique = [...new Set(dropZones)];
+                    postToIframe({
+                        type: `${MSG_PREFIX}getAvailableZones`,
+                        types: dropZonesUnique,
+                    });
+                }
                 return;
             }
 
@@ -195,7 +220,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [items, onSceneState, postToIframe, setEditedItem, setSelectedItem, stateSetSelectedItem]);
+    }, [editedItem, items, onSceneState, postToIframe, setAvailableDropZones, setEditedItem, setSelectedItem, stateSetSelectedItem]);
 
     useEffect(() => {
         if (!quickAddRequest?.item) return;

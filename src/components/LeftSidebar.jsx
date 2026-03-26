@@ -1,8 +1,10 @@
+import { actions, useActionContext } from './ActionContext';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ArrowBigDown } from 'lucide-react';
 import CatalogItem from './CatalogItem';
 import { Minimize2 } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useMemo } from 'react';
 import { useStateContext } from './StateContext';
 
@@ -12,6 +14,9 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
 
 
     const { selectedItem, editedItem } = useStateContext();
+
+
+    const { performAction, clearAction } = useActionContext();
 
     // Sync with parent: when parent says collapse, reset local index
     useEffect(() => {
@@ -43,6 +48,9 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
 
     const isExpanded = expandedIndex !== null;
 
+    const closeEditMode = () => {
+        performAction(actions.EDI_ITEM_OFF, { modelId: editedItem.modelId });
+    }
 
     const baseItems = useMemo(() => {
         return items.filter(i => i.type === "object");
@@ -54,29 +62,45 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
         if (editedItem?.type === "object") {
             const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
             const dropZonesUnique = [...new Set(dropZones)];
-            return items.filter(i => dropZonesUnique.includes(i.zoneType));
+            return items.filter(i => dropZonesUnique.includes(i.zoneType) || i.variants?.some(v => dropZonesUnique.includes(v.zoneType)));
         }
         return [];
 
     }, [editedItem, items]);
-
     return (
-        <aside className="w-full md:w-82 flex-shrink-0 md:bg-gray-50 border-r border-gray-200 flex-row flex md:flex-col fixed bottom-16 left-0 right-0 z-50 md:relative md:top-auto md:left-auto md:right-auto md:bottom-auto">
+        <aside className="
+        
+        w-full   border-r border-gray-200 flex-row flex fixed bottom-16 left-0 right-0 z-50 
+        
+        
+        md:bg-gray-50 md:flex-col md:w-82
+        md:fixed md:top-auto md:left-6 md:right-auto md:bottom-6
+        md:rounded-2xl
+        md:shadow-2xl
+    
+        ">
             <div className="px-4 py-3 border-b border-gray-200 hidden md:block">
-                <h2 className="text-sm font-semibold text-gray-700">Moduli base</h2>
-                <p className="text-xs text-gray-400 mt-0.5">Trascina gli elementi nel configuratore</p>
+                <h2 className="text-sm font-semibold text-gray-700">{editedItem ? "Configura oggetto" : "Inizia da qui!"}</h2>
+                <p className="text-xs text-gray-400 mt-0.5">{editedItem ? "Personalizza l'oggetto selezionato" : "Inserisci i moduli base da configurare"}</p>
             </div>
 
             {/* Desktop: vertical list */}
-            <div className="hidden md:flex flex-1 overflow-y-auto p-3 space-y-2 flex-col w-full">
+            <div className="hidden md:flex flex-1  p-3 space-y-2 flex-col w-full ">
                 {baseItems.map((item) => (
-                    <div className={`border-2 overflow-hidden ${editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 ? " border-teal-600 bg-white shadow-xl" : "border-transparent"}  rounded-xl ${!editedItem || editedItem?.modelId === item.modelId ? "" : "opacity-30 pointer-events-none"} `}>
+                    <div className={`  ${editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 ? "  bg-teal-600/75 bg-linear-to-r from-teal-600 to-teal-700 shadow-2xl/60 p-4 w-90 -ml-6 -mt-3" : ""}  transition-all rounded-xl ${!editedItem || editedItem?.modelId === item.modelId ? "" : "opacity-30 pointer-events-none hidden"} `}>
+
+                        {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
+                            <div onClick={closeEditMode} className='absolute bottom-full left-full z-50 bg-white shadow-2xl/100 rounded-full p-2 text-xs -translate-x-1/2 translate-y-1/2 cursor-pointer'>
+                                <X size={20} />
+                            </div>
+                        )}
+
                         <CatalogItem key={item.id} item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
                         {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
                             <>
-                                <div className="p-2 bg-gray-100 gap-2 flex flex-col">
-                                    <span className='font-bold text-xs text-center'>Aggiungi pezzi all'oggetto</span>
-                                    <ArrowBigDown size={20} className="mx-auto opacity-50" />
+                                <div className="p-2  gap-2 flex flex-col">
+                                    <span className='font-bold text-xs text-center text-white'>Aggiungi pezzi all'oggetto</span>
+                                    <ArrowBigDown size={20} className="mx-auto opacity-50" color='white' />
                                     {itemsFiltered.map(variant => (
                                         <CatalogItem key={variant.id} item={variant} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
                                     ))}
@@ -131,4 +155,82 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
             )}
         </aside>
     );
+    // return (
+    //     <aside className="w-full md:w-82 flex-shrink-0 md:bg-gray-50 border-r border-gray-200 flex-row flex md:flex-col fixed bottom-16 left-0 right-0 z-50 md:relative md:top-auto md:left-auto md:right-auto md:bottom-auto">
+    //         <div className="px-4 py-3 border-b border-gray-200 hidden md:block">
+    //             <h2 className="text-sm font-semibold text-gray-700">Moduli base</h2>
+    //             <p className="text-xs text-gray-400 mt-0.5">Trascina gli elementi nel configuratore</p>
+    //         </div>
+
+    //         {/* Desktop: vertical list */}
+    //         <div className="hidden md:flex flex-1  p-3 space-y-2 flex-col w-full">
+    //             {baseItems.map((item) => (
+    //                 <div className={`relative  ${editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 ? "  bg-teal-600/75 bg-linear-to-r from-teal-600/20 to-teal-600 shadow-2xl/60 p-4 w-90 ml-6" : ""}  transition-all  rounded-xl ${!editedItem || editedItem?.modelId === item.modelId ? "" : "opacity-30 pointer-events-none"} `}>
+
+    //                     {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
+    //                         <div onClick={closeEditMode} className='absolute bottom-full left-full z-50 bg-white shadow-2xl/90 rounded-full p-2 text-xs -translate-x-1/2 translate-y-1/2 cursor-pointer'>
+    //                             <X size={20} />
+    //                         </div>
+    //                     )}
+
+    //                     <CatalogItem key={item.id} item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+    //                     {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
+    //                         <>
+    //                             <div className="p-2  gap-2 flex flex-col">
+    //                                 <span className='font-bold text-xs text-center text-white'>Aggiungi pezzi all'oggetto</span>
+    //                                 <ArrowBigDown size={20} className="mx-auto opacity-50" color='white' />
+    //                                 {itemsFiltered.map(variant => (
+    //                                     <CatalogItem key={variant.id} item={variant} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+    //                                 ))}
+    //                             </div>
+    //                         </>
+    //                     )}
+    //                 </div>
+    //             ))}
+    //         </div>
+
+    //         {/* Mobile: round dots (collapsed) */}
+    //         {!isExpanded && (
+    //             <div className="flex md:hidden flex-1 overflow-x-auto p-3 flex-row gap-3 w-full">
+    //                 {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
+    //                     <CatalogItem
+    //                         key={item.id}
+    //                         item={item}
+    //                         onDragStart={onDragStart}
+    //                         onQuickAdd={onQuickAdd}
+    //                         mobileMode="collapsed"
+    //                         onMobileExpand={() => handleExpand(index)}
+    //                     />
+    //                 ))}
+    //             </div>
+    //         )}
+
+    //         {/* Mobile: carousel of expanded cards */}
+    //         {isExpanded && (
+    //             <div className="md:hidden fixed inset-x-0 bottom-16 z-50">
+    //                 <button
+    //                     onClick={handleCollapse}
+    //                     className="absolute top-0 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-200"
+    //                 >
+    //                     <Minimize2 size={14} strokeWidth={2} />
+    //                 </button>
+    //                 <div
+    //                     ref={scrollRef}
+    //                     className="flex overflow-x-auto snap-x snap-mandatory gap-3 px-[7.5vw] py-3 scrollbar-hide"
+    //                 >
+    //                     {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
+    //                         <CatalogItem
+    //                             key={item.id}
+    //                             item={item}
+    //                             onDragStart={onDragStart}
+    //                             onQuickAdd={onQuickAdd}
+    //                             mobileMode="expanded"
+    //                             onMobileCollapse={handleCollapse}
+    //                         />
+    //                     ))}
+    //                 </div>
+    //             </div>
+    //         )}
+    //     </aside>
+    // );
 }

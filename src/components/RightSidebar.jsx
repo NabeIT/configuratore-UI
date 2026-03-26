@@ -5,7 +5,8 @@ import { useState } from 'react';
 
 export default function RightSidebar({ cartItems }) {
     const [open, setOpen] = useState(false);
-    const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    console.log(cartItems);
+    const totalItems = cartItems.reduce((sum, item) => item.meta?.inCart !== false ? sum + item.quantity : sum, 0);
     const totalPrice = cartItems.reduce((sum, item) => sum + (item.quantity * (item.meta?.price || 0)), 0);
     return (
         <>
@@ -52,7 +53,7 @@ export default function RightSidebar({ cartItems }) {
                 <aside className="md:w-80 h-16 flex-shrink-0 bg-gray-50  flex flex-col rounded-2xl flex-row items-center p-3 gap-3">
                     <div onClick={() => {
                         setOpen((v) => !v);
-                    }} className='w-10 h-10 rounded-full border border-transparent flex-shrink-0 flex items-center justify-center cursor-pointer text-gray-700 hover:border-teal-600 transition-colors'>
+                    }} className='w-10 h-10 rounded-full border flex-shrink-0 flex items-center justify-center cursor-pointer text-gray-700 border-teal-300 hover:border-teal-600 transition-colors'>
                         {!open && <ShoppingBasket className='w-5 h-5' />}
                         {open && <ChevronDown className='w-5 h-5' />}
                     </div>

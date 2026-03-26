@@ -7,7 +7,9 @@ const actions = {
     REMOVE_ITEM: 'removeItem',
     SELECT_ITEM: 'selectItem',
     CLEAR_SCENE: 'clearScene',
-    DESELECT_ALL: "deselectAll"
+    DESELECT_ALL: "deselectAll",
+    EDI_ITEM_OFF: "editItemOff",
+    GET_AVAILABLE_DROP_ZONES: "getAvailableZones",
 }
 
 const ActionProvider = ({ children }) => {

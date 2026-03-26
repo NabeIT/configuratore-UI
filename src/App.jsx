@@ -61,13 +61,14 @@ function buildCartItems(sceneItems) {
   const groupedByModel = new Map();
   const sourceItems = collectCartSourceItems(sceneItems);
 
-  console.log(sourceItems);
+  console.log("Source items", sourceItems);
   sourceItems.forEach((item) => {
     const modelKey = item.model || item.id;
     if (!modelKey) return;
 
     const existing = groupedByModel.get(modelKey);
     if (existing) {
+
       existing.quantity += 1;
       if (item.id) existing.itemIds.push(item.id);
       return;
@@ -99,9 +100,9 @@ export default function App() {
   const [catalogExpanded, setCatalogExpanded] = useState(false);
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
-  // const iframeSrc = 'http://localhost:5174?embed=true';
+  const iframeSrc = 'http://localhost:5173?embed=true';
   // const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app?_vercel_share=wkHppnLmnO6vb7jJopgrm28VGoQwiZXh&embed=true';
-  const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app?_vercel_share=wkHppnLmnO6vb7jJopgrm28VGoQwiZXh&embed=true';
+  // const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app?_vercel_share=wkHppnLmnO6vb7jJopgrm28VGoQwiZXh&embed=true';
 
 
   const handleDragStart = useCallback((e, item) => {

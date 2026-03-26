@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+
+import { CircleSlash } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { useActionContext } from './ActionContext';
+import { useEffect } from 'react';
 import { useStateContext } from './StateContext';
 
 function Tooltip({ text, visible }) {
@@ -36,6 +41,36 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
 
     const { editedItem } = useStateContext();
 
+    const { availableDropZones } = useStateContext();
+
+
+    const modeEdit = editedItem && editedItem?.modelId === item.modelId;
+
+
+    const dropZonesUnique = useMemo(() => {
+        if (editedItem?.type === "object") {
+            const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
+            return [...new Set(dropZones)];
+            // console.log("Drop zones unique for edited item:", dropZonesUnique);
+        }
+        return [];
+
+    }, [editedItem]);
+
+    useEffect(() => {
+        console.log("Available drop zones updated:", availableDropZones);
+    }, [availableDropZones]);
+
+
+
+    const canBePlaced = (variant) => {
+        const zoneType = variant ? variant.zoneType : item.zoneType;
+        if (!zoneType) return true;
+
+        console.log(zoneType, availableDropZones[zoneType])
+
+        return availableDropZones && availableDropZones[zoneType] && availableDropZones[zoneType].length > 0;
+    }
 
 
     return (
@@ -52,6 +87,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
 
                 hidden md:flex
 
+                
                 `}
 
             onClick={item.variants ? null : (e) => {
@@ -60,9 +96,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                 onQuickAdd?.({
                     ...item,
                 });
-
             }}
-
         >
             <h3 className="md:hidden text-sm font-medium text-gray-800 truncate">{item.title}</h3>
             <img
@@ -73,7 +107,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
             <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                 <h3 className="hidden md:block text-sm font-medium text-gray-800 truncate">{item.title}</h3>
                 <p className="hidden md:block text-xs text-gray-400 truncate">{item.description}</p>
-                {item.variants && item.variantLocked && (
+                {item.variants && item.variantLocked && !modeEdit && (
                     <div className="mt-1 flex items-center">
                         {item.variants.map((variant, index) => {
                             return (
@@ -98,10 +132,21 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                                         color: "#79aea3",
 
                                     }}
-                                    className="cursor-grab active:cursor-grabbing p-2 px-4 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif ml-1"
+                                    className={`cursor-grab active:cursor-grabbing p-1 flex justify-center pl-2 rounded-full gap-2 font-bold border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif ml-1 items-center
+                                        
+                                        ${!editedItem || dropZonesUnique.includes(variant.zoneType) ? '' : 'pointer-events-none opacity-30'}
+                                        
+                                        `}
                                     aria-label={`Aggiungi variante ${variant.title} di ${item.title}`}
                                 >
-                                    {variant.name}
+                                    <span>{variant.name}</span>
+
+
+                                    {canBePlaced(variant) || item.type == "object" ? (
+                                        <div className='bg-teal-600 p-1 rounded-full ml-auto'>
+                                            <Plus size={12} strokeWidth={4} color='#fff' />  </div>
+                                    ) : <CircleSlash size={20} strokeWidth={2} color='#f00' />}
+
                                 </button>
                             )
                         })}
