@@ -5,6 +5,7 @@ import Header from './components/Header';
 import { ItemActions } from './components/ItemActions';
 import LeftSidebar from './components/LeftSidebar';
 import RightSidebar from './components/RightSidebar';
+import StartupModal from './components/StartupModal';
 import catalogItems from './data/catalogItems';
 
 function collectCatalogMeta(items, map = new Map()) {
@@ -98,6 +99,16 @@ export default function App() {
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [catalogExpanded, setCatalogExpanded] = useState(false);
+  const [showStartup, setShowStartup] = useState(true);
+  const [presetRequest, setPresetRequest] = useState(null);
+
+  const handlePresetSelect = useCallback((preset) => {
+    setShowStartup(false);
+    setPresetRequest({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      preset,
+    });
+  }, []);
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
   const iframeSrc = 'http://localhost:5173?embed=true';
@@ -154,13 +165,19 @@ export default function App() {
           setSelectedItem={setSelectedItem}
           onSceneState={handleSceneState}
           quickAddRequest={quickAddRequest}
+          presetRequest={presetRequest}
         />
 
-        <RightSidebar cartItems={cartItems} />
+        <RightSidebar cartItems={cartItems} onAddToCart={(data) => {
+          window.parent.postMessage({ type: 'add-to-cart', data }, '*');
+
+        }} />
 
         {selectedItem && (
           <ItemActions item={selectedItem} onClose={() => setSelectedItem(null)} />
         )}
+
+        {showStartup && <StartupModal onSelect={handlePresetSelect} />}
       </div>
     </div>
   );

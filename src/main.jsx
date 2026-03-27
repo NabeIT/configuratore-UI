@@ -6,7 +6,7 @@ import { StateProvider } from './components/StateContext.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('configurator:root')).render(
   // <StrictMode>
   <StateProvider>
     <ActionProvider >

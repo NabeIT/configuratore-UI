@@ -738,7 +738,7 @@
     ]
   },
   {
-    "modelmodelId": "espansione-cubo-scaffale",
+    "modelId": "espansione-cubo-scaffale",
     "name": "Espansione Cubo Scaffale",
     "title": "Espansione",
     "description": "Modulo base con zone posizionali. Si aggancia lateralmente e in alto ad altri cubi.",

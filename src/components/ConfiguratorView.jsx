@@ -5,9 +5,11 @@ import { useStateContext } from './StateContext';
 
 const MSG_PREFIX = 'configurator:';
 
-export default function ConfiguratorView({ iframeSrc, items, onSceneState, quickAddRequest, setSelectedItem }) {
+export default function ConfiguratorView({ iframeSrc, items, onSceneState, quickAddRequest, setSelectedItem, presetRequest }) {
     const iframeRef = useRef(null);
     const lastQuickAddIdRef = useRef(null);
+    const lastPresetIdRef = useRef(null);
+    const iframeReadyRef = useRef(false);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
 
     const { action, clearAction } = useActionContext();
@@ -153,23 +155,15 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
             }
 
             if (data.type === `${MSG_PREFIX}ready`) {
+                iframeReadyRef.current = true;
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
-
-                setTimeout(() => {
-                    postToIframe({ type: `${MSG_PREFIX}drop`, item: items.find(i => i.modelId == "cubo-scaffale") });
-                }, 500);
-                setTimeout(() => {
-                    postToIframe({ type: `${MSG_PREFIX}drop`, item: items.find(i => i.modelId == "mensola-montessoriana") });
-                }, 1000);
-
-
 
                 setTimeout(() => {
                     postToIframe({
                         type: `${MSG_PREFIX}zoomCamera`,
                         delta: 7
                     });
-                }, 100)
+                }, 100);
                 return;
             }
 
@@ -237,6 +231,38 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
             y: rect.height / 2,
         });
     }, [quickAddRequest, sendDrop]);
+
+    // Load preset configuration
+    useEffect(() => {
+        if (!presetRequest?.preset) return;
+        if (presetRequest.id === lastPresetIdRef.current) return;
+        if (!iframeReadyRef.current) return;
+
+        lastPresetIdRef.current = presetRequest.id;
+
+        const { steps } = presetRequest.preset;
+
+        // Clear scene first
+        postToIframe({ type: `${MSG_PREFIX}clearScene` });
+
+        const itemsToDrop = steps;
+        // Drop items with configured delays
+        // steps.forEach((step) => {
+        //     const catalogItem = items.find((i) => i.modelId === step.modelId);
+        //     if (!catalogItem) return;
+
+        //     itemsToDrop.push(catalogItem);
+        //     // setTimeout(() => {
+        //     //     postToIframe({ type: `${MSG_PREFIX}drop`, item: catalogItem });
+        //     // }, step.delay + 300); 
+        // });
+
+        postToIframe({
+            type: `${MSG_PREFIX}batchDrop`,
+            items: itemsToDrop,
+        })
+
+    }, [presetRequest, items, postToIframe]);
 
 
     return (

@@ -1,10 +1,12 @@
 import { ArrowBigRight, ChevronDown, ShoppingBasket } from 'lucide-react';
 
 import CartItem from './CartItem';
+import CheckoutModal from './CheckoutModal';
 import { useState } from 'react';
 
-export default function RightSidebar({ cartItems }) {
+export default function RightSidebar({ cartItems, onAddToCart }) {
     const [open, setOpen] = useState(false);
+    const [checkoutOpen, setCheckoutOpen] = useState(false);
     console.log(cartItems);
     const totalItems = cartItems.reduce((sum, item) => item.meta?.inCart !== false ? sum + item.quantity : sum, 0);
     const totalPrice = cartItems.reduce((sum, item) => sum + (item.quantity * (item.meta?.price || 0)), 0);
@@ -76,7 +78,7 @@ export default function RightSidebar({ cartItems }) {
                     </div>
 
                     <button
-                        onClick={() => alert('Funzionalità di acquisto non implementata')}
+                        onClick={() => setCheckoutOpen(true)}
                         disabled={totalItems === 0}
                         className="flex md:flex-1 px-3 py-3 gap-3 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex-row items-center justify-center"
                     >
@@ -87,6 +89,16 @@ export default function RightSidebar({ cartItems }) {
 
             </aside>
 
+            {checkoutOpen && (
+                <CheckoutModal
+                    cartItems={cartItems}
+                    onClose={() => setCheckoutOpen(false)}
+                    onAddToCart={(data) => {
+                        setCheckoutOpen(false);
+                        if (onAddToCart) onAddToCart(data);
+                    }}
+                />
+            )}
 
         </>
     );
