@@ -1161,8 +1161,10 @@
               0,
               0
             ],
-            "meta": {
+           "meta": {
               "sku": "BARR95",
+              "handle" : "products/sponde-protettive-per-letto-zeropiu",
+              "variantId" : "43331637575899",
               "price": 29
             }
           },
@@ -1175,8 +1177,10 @@
               0,
               0
             ],
-            "meta": {
+           "meta": {
               "sku": "BARR95",
+              "handle" : "products/sponde-protettive-per-letto-zeropiu",
+              "variantId" : "43331637575899",
               "price": 29
             }
           },
@@ -1578,6 +1582,8 @@
             ],
             "meta": {
               "sku": "BARR95",
+              "handle" : "products/sponde-protettive-per-letto-zeropiu",
+              "variantId" : "43331637575899",
               "price": 29
             }
           },
@@ -1592,6 +1598,8 @@
             ],
             "meta": {
               "sku": "BARR95",
+              "handle" : "products/sponde-protettive-per-letto-zeropiu",
+              "variantId" : "43331637575899",
               "price": 29
             }
           },
