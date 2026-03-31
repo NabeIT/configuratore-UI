@@ -10,6 +10,7 @@ const actions = {
     DESELECT_ALL: "deselectAll",
     EDI_ITEM_OFF: "editItemOff",
     GET_AVAILABLE_DROP_ZONES: "getAvailableZones",
+    CHANGE_COLOR: "changeColor"
 }
 
 const ActionProvider = ({ children }) => {

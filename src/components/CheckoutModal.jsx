@@ -1,7 +1,26 @@
-import { ArrowLeft, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Save, ShoppingCart } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-export default function CheckoutModal({ cartItems, onClose, onAddToCart }) {
+import { createClient } from '@supabase/supabase-js';
+import { jsPDF } from 'jspdf';
+
+function generateUUIDv4() {
+    // If crypto.randomUUID is available (modern browsers)
+    if (crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+
+    // Fallback for older environments
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f) / 0x0f;
+        const v = c === 'x' ? r * 16 : (r * 4) + 8;
+        return Math.floor(v).toString(16);
+    });
+}
+
+
+
+export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAddToCart }) {
     const [ownedQuantities, setOwnedQuantities] = useState({});
 
     // Initialize owned quantities to 0 for each item
@@ -16,6 +35,164 @@ export default function CheckoutModal({ cartItems, onClose, onAddToCart }) {
     }, [cartItems]);
 
     const visibleItems = cartItems.filter((item) => item.meta?.inCart !== false);
+
+
+    const calculateOrderItems = (cartItems) => {
+        console.log('Recalculating order items with cartItems:', cartItems);
+
+        const cartPackages = [];
+        const ELRL60 = cartItems.find((item) => {
+            console.log('Checking item:', item);
+            return item.meta?.sku === "ELRL60";
+        });
+        if (ELRL60) {
+            console.log('Found ELRL60 item:', ELRL60);
+
+            const owned = ownedQuantities[ELRL60.id] || 0;
+            const toBuy = Math.max(ELRL60.quantity - owned, 0);
+            let numPackages = Math.floor(toBuy / 2);
+            const remaining = toBuy % 2;
+            if (remaining > 0) {
+                numPackages -= 1;
+                cartPackages.push({
+                    title: "Ripiani 60 cm libreria (3pz) copreso imballo e ferramenta",
+                    sku: "SCAT3RIP60",
+                    quantity: 1
+                });
+            }
+            if (numPackages > 0) {
+                cartPackages.push({
+                    title: "Ripiani 60 cm libreria (2pz) copreso imballo e ferramenta",
+                    sku: "SCAT2RIP60",
+                    quantity: numPackages
+                });
+            }
+        }
+        const ELRL80 = cartItems.find((item) => item.meta?.sku === "ELRL80");
+        if (ELRL80) {
+            console.log('Found ELRL80 item:', ELRL80);
+            const owned = ownedQuantities[ELRL80.id] || 0;
+            const toBuy = Math.max(ELRL80.quantity - owned, 0);
+            let numPackages = Math.floor(toBuy / 2);
+            const remaining = toBuy % 2;
+            if (remaining > 0) {
+                numPackages -= 1;
+                cartPackages.push({
+                    title: "Ripiani 80 cm libreria (3pz) copreso imballo e ferramenta",
+                    sku: "SCAT3RIP80",
+                    quantity: 1
+                });
+            }
+            if (numPackages > 0) {
+                cartPackages.push({
+                    title: "Ripiani 80 cm libreria (2pz) copreso imballo e ferramenta",
+                    sku: "SCAT2RIP80",
+                    quantity: numPackages
+                });
+            }
+        }
+
+        const SCATSCR80 = cartItems.find((item) => item.meta?.sku === "ELSCR80");
+        if (SCATSCR80) {
+            const owned = ownedQuantities[SCATSCR80.id] || 0;
+            const toBuy = Math.max(SCATSCR80.quantity - owned, 0);
+            if (toBuy > 0) {
+                cartPackages.push({
+                    title: "Scaffale 80 cm libreria (1pz) compreso imballo e ferramenta",
+                    sku: "SCATSCR80",
+                    quantity: SCATSCR80.quantity
+                });
+            }
+        }
+        const SCAT3RIPS60 = cartItems.find((item) => item.meta?.sku === "SCAT3RIPS60");
+        if (SCAT3RIPS60) {
+            const owned = ownedQuantities[SCAT3RIPS60.id] || 0;
+            const toBuy = Math.max(SCAT3RIPS60.quantity - owned, 0);
+            if (toBuy > 0) {
+                cartPackages.push({
+                    title: "Mensole montessoriane 60 cm libreria (3pz) copreso imballo e ferramenta",
+                    sku: "SCAT3RIPS60",
+                    quantity: toBuy
+                });
+            }
+        }
+        const SCAT3RIPS80 = cartItems.find((item) => item.meta?.sku === "SCAT3RIPS80");
+        if (SCAT3RIPS80) {
+            const owned = ownedQuantities[SCAT3RIPS80.id] || 0;
+            const toBuy = Math.max(SCAT3RIPS80.quantity - owned, 0);
+            if (toBuy > 0) {
+                cartPackages.push({
+                    title: "Mensole montessoriane 80 cm libreria (3pz) copreso imballo e ferramenta",
+                    sku: "SCAT3RIPS80",
+                    quantity: toBuy
+                });
+            }
+        }
+
+        const BARR78 = cartItems.find((item) => item.meta?.sku === "BARR78");
+        if (BARR78) {
+
+            const owned = ownedQuantities[BARR78.id] || 0;
+            const toBuy = Math.max(BARR78.quantity - owned, 0);
+
+            let numPackages = Math.ceil(toBuy / 2);
+
+            if (numPackages > 0) {
+                cartPackages.push({
+                    title: "Barra 78 cm libreria (2pz) copreso imballo e ferramenta, con staffa per ripiano 60 cm",
+                    sku: "SCATBARR78TSTAFFA60",
+                    quantity: numPackages
+                });
+            }
+        }
+        const BARR78_80 = cartItems.find((item) => item.meta?.sku === "BARR78-80");
+        if (BARR78_80) {
+            const owned = ownedQuantities[BARR78_80.id] || 0;
+            const toBuy = Math.max(BARR78_80.quantity - owned, 0);
+            let numPackages = Math.ceil(toBuy / 2);
+
+            if (numPackages > 0) {
+                cartPackages.push({
+                    title: "Barra 78 cm libreria (2pz) copreso imballo e ferramenta, con staffa per ripiano 80 cm",
+                    sku: "SCATBARR78T",
+                    quantity: numPackages
+                });
+            }
+        }
+
+
+        console.log('Cart packages after processing:', cartPackages);
+        return cartPackages;
+    }
+
+
+    const orderItems = useMemo(() => {
+        return calculateOrderItems(cartItems);
+
+    }, [cartItems]);
+
+
+
+    const saveToSupabase = async (freshItems) => {
+        const supabaseUrl = 'https://azrkvmypdhvxhaailnsv.supabase.co';
+        const supabaseKey = 'sb_publishable_Tvvx1UT8dNNpu3FK2enaSA_L9lMkfJO';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        const guid = generateUUIDv4();
+
+
+        console.log('Saving fresh scene state:', freshItems);
+        const { data, error } = await supabase
+            .from('Libreria').insert({
+                items: freshItems,
+                guid
+            }).select();
+        if (error) {
+            console.error('Error saving configuration:', error);
+        } else {
+            console.log('Configuration saved with ID:', data);
+        }
+        return { data, error };
+    }
 
     const setOwned = (id, value) => {
         setOwnedQuantities((prev) => ({ ...prev, [id]: value }));
@@ -51,6 +228,9 @@ export default function CheckoutModal({ cartItems, onClose, onAddToCart }) {
     }, [visibleItems, ownedQuantities]);
 
     const handleAddToCart = () => {
+        const orderItems = calculateOrderItems(cartItems);
+
+
         const itemsToAdd = visibleItems
             .map((item) => {
                 const owned = ownedQuantities[item.id] || 0;
@@ -75,8 +255,260 @@ export default function CheckoutModal({ cartItems, onClose, onAddToCart }) {
         });
     };
 
+
+    const requestSceneState = () => {
+        return new Promise((resolve) => {
+            const iframe = document.querySelector('iframe');
+            if (!iframe) { resolve([]); return; }
+
+            const handleMsg = (e) => {
+                if (e.data?.type === 'configurator:sceneState') {
+                    window.removeEventListener('message', handleMsg);
+                    const payload = e.data.payload ?? e.data;
+                    resolve(payload)
+                    // resolve(Array.isArray(payload.items) ? payload.items : []);
+                }
+            };
+            window.addEventListener('message', handleMsg);
+            iframe.contentWindow.postMessage({ type: 'configurator:getSceneState' }, '*');
+            setTimeout(() => {
+                window.removeEventListener('message', handleMsg);
+                resolve([]);
+            }, 3000);
+        });
+    };
+
+    const buildConfigUrl = (sceneItems) => {
+        const extractSteps = (items, steps = []) => {
+            if (!Array.isArray(items)) return steps;
+            items.forEach((item) => {
+                if (!item || !item.modelId) return;
+                const step = { m: item.modelId };
+                if (item.variant !== undefined && item.variant !== null) step.v = item.variant;
+                if (item.targetZoneKey) step.t = item.targetZoneKey;
+                if (item.id) step.i = item.id;
+                if (item.position) step.p = item.position;
+                steps.push(step);
+                if (item.type === 'object' && Array.isArray(item.items)) {
+                    extractSteps(item.items, steps);
+                }
+            });
+            return steps;
+        };
+
+        const steps = extractSteps(sceneItems);
+        if (steps.length === 0) return null;
+
+        const json = JSON.stringify(steps);
+        const baseUrl = window.location.origin + window.location.pathname;
+        return `${baseUrl}?config=${encodeURIComponent(json)}`;
+    };
+
+    const saveToPdf = async () => {
+        const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+        const pageW = doc.internal.pageSize.getWidth();
+        const margin = 15;
+        const contentW = pageW - margin * 2;
+        let y = margin;
+        const { items: freshItems, color } = await requestSceneState();
+
+        const { data, error } = await saveToSupabase(freshItems);
+        const baseUrl = "https://nabecreation.com/products/libreria-evolutiva-evergrow";
+        const configurationUrl = !error ? baseUrl + "?config=" + data[0].guid : null;
+
+        const orderItems = calculateOrderItems(cartItems);
+
+
+        const addPageIfNeeded = (needed) => {
+            if (y + needed > doc.internal.pageSize.getHeight() - margin) {
+                doc.addPage();
+                y = margin;
+            }
+        };
+
+        // --- Header ---
+        doc.setFontSize(20);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Riepilogo Configurazione', margin, y + 7);
+        y += 12;
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(120);
+        doc.text(`Generato il ${new Date().toLocaleDateString('it-IT')}`, margin, y);
+        doc.setTextColor(0);
+        y += 8;
+
+        // --- Screenshot della libreria ---
+        try {
+            const iframe = document.querySelector('iframe');
+            if (iframe) {
+                const dataUrl = await new Promise((resolve, reject) => {
+                    const handleMsg = (e) => {
+                        if (e.data?.type === 'configurator:screenshot') {
+                            window.removeEventListener('message', handleMsg);
+                            const url = e.data.dataUrl || e.data.payload?.dataUrl;
+                            if (url) {
+                                resolve(url);
+                            } else {
+                                reject(new Error('no dataUrl in response'));
+                            }
+                        }
+                    };
+                    window.addEventListener('message', handleMsg);
+                    iframe.contentWindow.postMessage({ type: 'configurator:screenshot' }, '*');
+                    setTimeout(() => {
+                        window.removeEventListener('message', handleMsg);
+                        reject(new Error('timeout'));
+                    }, 5000);
+                });
+
+                // Caricare l'immagine per ottenere le dimensioni reali
+                const img = await new Promise((resolve, reject) => {
+                    const image = new Image();
+                    image.onload = () => resolve(image);
+                    image.onerror = reject;
+                    image.src = dataUrl;
+                });
+
+                const imgW = contentW;
+                const imgH = (img.height / img.width) * imgW;
+                addPageIfNeeded(imgH + 5);
+                doc.addImage(dataUrl, 'PNG', margin, y, imgW, imgH);
+                y += imgH + 5;
+            }
+        } catch (err) {
+            console.warn('Screenshot non disponibile per il PDF:', err.message);
+        }
+
+        // --- Separatore ---
+        doc.setDrawColor(200);
+        doc.line(margin, y, pageW - margin, y);
+        y += 6;
+
+        // --- Tabella articoli ---
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Lista componenti', margin, y);
+        y += 7;
+
+        // Header tabella
+        const colX = {
+            name: margin,
+            qty: margin + contentW * 0.7,
+            // owned: margin + contentW * 0.68,
+            toBuy: margin + contentW * 0.8,
+            price: margin + contentW * 0.9,
+        };
+
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(100);
+        doc.text('Articolo', colX.name, y);
+        doc.text('Totale', colX.qty, y);
+        // doc.text('Posseduti', colX.owned, y);
+        doc.text('Acquisto', colX.toBuy, y);
+        doc.text('Prezzo', colX.price, y);
+        y += 2;
+        doc.setDrawColor(180);
+        doc.line(margin, y, pageW - margin, y);
+        y += 4;
+
+        doc.setTextColor(0);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+
+        orderItems.forEach((item) => {
+            addPageIfNeeded(10);
+
+            const owned = ownedQuantities[item.id] || 0;
+            const toBuy = Math.max(item.quantity - owned, 0);
+            const itemPrice = toBuy * (item.meta?.price || 0);
+            const sku = color == "white" ? item.sku + "W" : item.sku;
+
+            // Nome articolo (troncato se troppo lungo)
+            const maxNameW = contentW * 0.52;
+            let name = item.title || item.model;
+            while (doc.getTextWidth(name) > maxNameW && name.length > 3) {
+                name = name.slice(0, -4) + '...';
+            }
+
+            doc.setFont('helvetica', toBuy > 0 ? 'bold' : 'normal');
+            doc.setTextColor(toBuy > 0 ? 0 : 150);
+            doc.text(name, colX.name, y);
+            doc.text(String(item.quantity), colX.qty, y);
+
+            // doc.text(String(owned), colX.owned, y);
+            doc.text(String(toBuy), colX.toBuy, y);
+            doc.text(
+                item.meta?.price ? `${itemPrice.toFixed(2)} €` : '—',
+                colX.price,
+                y
+            );
+            y += 4;
+            doc.setTextColor(150);
+            doc.text(sku, colX.name, y);
+            y += 6;
+        });
+
+        // --- Separatore finale ---
+        y += 2;
+        doc.setDrawColor(180);
+        doc.line(margin, y, pageW - margin, y);
+        y += 6;
+
+        // --- Totale ---
+        addPageIfNeeded(12);
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(0);
+        doc.text('Totale da acquistare:', margin, y);
+        doc.text(`${totalPrice.toFixed(2)} €`, pageW - margin, y, { align: 'right' });
+        y += 6;
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100);
+        doc.text(`${totalItems} ${totalItems === 1 ? 'pezzo' : 'pezzi'}`, margin, y);
+        y += 10;
+
+        // --- URL configurazione ---
+        try {
+
+            if (configurationUrl) {
+                addPageIfNeeded(20);
+                doc.setDrawColor(200);
+                doc.line(margin, y, pageW - margin, y);
+                y += 6;
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(0);
+                doc.text('Link alla configurazione', margin, y);
+                y += 5;
+
+                doc.setFontSize(7);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(60);
+
+                // Spezza l'URL su più righe se troppo lungo
+                const urlLines = doc.splitTextToSize(configurationUrl, contentW);
+                doc.textWithLink(urlLines[0], margin, y, { url: configurationUrl });
+                if (urlLines.length > 1) {
+                    for (let i = 1; i < urlLines.length; i++) {
+                        y += 3.5;
+                        doc.text(urlLines[i], margin, y);
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('Impossibile generare URL configurazione:', err.message);
+        }
+
+        doc.save('configurazione-libreria.pdf');
+    };
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className="fixed inset-0 z-100 flex items-center justify-center">
             {/* Overlay */}
             <div
                 className="absolute inset-0 bg-black/50 backdrop-blur-sm"
@@ -84,7 +516,7 @@ export default function CheckoutModal({ cartItems, onClose, onAddToCart }) {
             />
 
             {/* Modal */}
-            <div className="relative w-full max-w-lg mx-4 max-h-[90dvh] bg-gray-50 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div className="relative w-full max-w-2xl mx-4 max-h-[90dvh] bg-gray-50 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="px-5 py-4 border-b border-gray-200 bg-white rounded-t-2xl">
                     <h2 className="text-lg font-semibold text-gray-700">Riepilogo configurazione</h2>
@@ -103,78 +535,95 @@ export default function CheckoutModal({ cartItems, onClose, onAddToCart }) {
                         return (
                             <div
                                 key={item.id}
-                                className="bg-white rounded-xl border border-gray-100 shadow-sm p-3"
+                                className={`rounded-xl transition-all ${toBuy > 0
+                                    ? 'bg-white shadow-sm p-4'
+                                    : 'bg-gray-50 p-2.5 opacity-50'
+                                    }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <img
                                         src={item.image}
                                         alt={item.title}
-                                        className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                                        className={`rounded-lg object-cover flex-shrink-0 ${toBuy > 0 ? 'w-14 h-14' : 'w-10 h-10'
+                                            }`}
                                         onError={(e) => {
                                             e.currentTarget.src = '/assets/img/thumbs/spalliera-base.png';
                                         }}
                                     />
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="text-sm font-medium text-gray-800 truncate">
+                                        <h3 className={`font-medium text-gray-800 truncate ${toBuy > 0 ? 'text-sm' : 'text-xs'
+                                            }`}>
                                             {item.title}
                                         </h3>
-                                        <p className="text-xs text-gray-400 truncate">
-                                            {item.description}
-                                        </p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <span className="text-xs text-white bg-gray-800 rounded-2xl px-2 py-0.5">
+                                        {toBuy > 0 && (
+                                            <p className="text-xs text-gray-400 truncate">
+                                                {item.description}
+                                            </p>
+                                        )}
+                                        {/* <div className="flex items-center gap-2 mt-1">
+                                            <span className={`text-xs text-white bg-gray-800 rounded-2xl px-2 py-0.5 ${
+                                                toBuy > 0 ? '' : 'text-[10px] px-1.5'
+                                            }`}>
                                                 {item.meta?.price ? `${item.meta.price} \u20ac` : 'Incluso'}
                                             </span>
                                             <span className="text-xs text-gray-400">
                                                 x{item.quantity} nella configurazione
                                             </span>
+                                        </div> */}
+                                    </div>
+                                </div>
+
+                                {/* Da acquistare + Già in mio possesso stacked */}
+                                <div className={`flex flex-col gap-2 ${toBuy > 0 ? 'mt-3' : 'mt-2'}`}>
+                                    {/* Da acquistare row */}
+                                    <div className="flex items-center justify-between px-1">
+                                        <span className={`font-semibold p-1 px-2 rounded-2xl ${toBuy > 0
+                                            ? 'text-sm text-white bg-brand '
+                                            : 'text-xs text-gray-400'
+                                            }
+                                           
+                                            
+                                            `}>
+                                            {toBuy > 0 ? (
+                                                <>{toBuy} da acquistare
+                                                    {/* {item.meta?.price ? (
+                                                    <span className="text-gray-700 ml-1">
+                                                        &middot; {itemPrice.toFixed(2)} &euro;
+                                                    </span>
+                                                ) : null} */}
+                                                </>
+                                            ) : (
+                                                'Gi\u00e0 in tuo possesso'
+                                            )}
+                                        </span>
+                                    </div>
+
+                                    {/* Già in mio possesso controls */}
+                                    <div className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-1.5">
+                                        <span className="text-xs text-gray-500">
+                                            Pezzi che ho già disponibili a casa
+                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                onClick={() => decrementOwned(item.id)}
+                                                disabled={owned === 0}
+                                                className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-brand hover:text-brand disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-600 transition-colors"
+                                            >
+                                                <Minus className="w-3 h-3" />
+                                            </button>
+                                            <span className="text-sm font-semibold text-gray-700 w-5 text-center">
+                                                {owned}
+                                            </span>
+                                            <button
+                                                onClick={() => incrementOwned(item.id, item.quantity)}
+                                                disabled={owned >= item.quantity}
+                                                className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-brand hover:text-brand disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-600 transition-colors"
+                                            >
+                                                <Plus className="w-3 h-3" />
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* Owned quantity controls */}
-                                <div className="mt-3 flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
-                                    <span className="text-xs text-gray-500">
-                                        Gi&agrave; in mio possesso
-                                    </span>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={() => decrementOwned(item.id)}
-                                            disabled={owned === 0}
-                                            className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-teal-400 hover:text-teal-600 disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-600 transition-colors"
-                                        >
-                                            <Minus className="w-3 h-3" />
-                                        </button>
-                                        <span className="text-sm font-semibold text-gray-700 w-6 text-center">
-                                            {owned}
-                                        </span>
-                                        <button
-                                            onClick={() => incrementOwned(item.id, item.quantity)}
-                                            disabled={owned >= item.quantity}
-                                            className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:border-teal-400 hover:text-teal-600 disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-600 transition-colors"
-                                        >
-                                            <Plus className="w-3 h-3" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Per-item summary */}
-                                {toBuy > 0 && item.meta?.price ? (
-                                    <div className="mt-2 flex justify-between items-center px-1">
-                                        <span className="text-xs text-gray-400">
-                                            {toBuy} da acquistare
-                                        </span>
-                                        <span className="text-sm font-semibold text-gray-700">
-                                            {itemPrice.toFixed(2)} &euro;
-                                        </span>
-                                    </div>
-                                ) : toBuy === 0 ? (
-                                    <div className="mt-2 px-1">
-                                        <span className="text-xs text-teal-600 font-medium">
-                                            Gi&agrave; in tuo possesso
-                                        </span>
-                                    </div>
-                                ) : null}
                             </div>
                         );
                     })}
@@ -199,17 +648,28 @@ export default function CheckoutModal({ cartItems, onClose, onAddToCart }) {
                     <div className="flex gap-3">
                         <button
                             onClick={onClose}
-                            className="flex-1 px-4 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            className="cursor-pointer px-4 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium flex items-center justify-center gap-2"
                         >
                             <ArrowLeft className="w-4 h-4" />
-                            Continua a configurare
+                            {/* Continua a configurare */}
+                        </button>
+                        <button
+                            onClick={saveToPdf}
+                            disabled={totalItems === 0}
+                            className="cursor-pointer md:flex-1 px-4 py-3 bg-white border border-brand hover:bg-teal-600 hover:text-white disabled:bg-gray-400 text-brand rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                        >
+                            <Save className="w-4 h-4" />
+                            <span className='hidden md:inline'>
+                                Salva configurazione
+                            </span>
                         </button>
                         <button
                             onClick={handleAddToCart}
                             disabled={totalItems === 0}
-                            className="flex-1 px-4 py-3 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            className="cursor-pointer flex-1 px-4 py-3 bg-brand hover:bg-teal-600 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
                         >
                             <ShoppingCart className="w-4 h-4" />
+
                             Aggiungi al carrello
                         </button>
                     </div>

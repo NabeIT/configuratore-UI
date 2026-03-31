@@ -24,6 +24,30 @@
       "lockCascadeChildren": true,
       "cameraPadding": 0.25
     },
+    "helpers": [
+      {
+        "id": "mount-point",
+        "name": "Mount point",
+        "model": "mount-point",
+        "position": [0.0125, 0.7875, 0.2875],
+        "rotation": [0, 0, 0],
+        "scale": [0.026, 0.026, 0.026],
+        "minY": 0,
+        "maxY": 0,
+        "snaps": [0.025, 0.025, 0.025]
+      },
+      {
+        "id": "mount-point",
+        "name": "Mount point",
+        "model": "mount-point",
+        "position": [0.6385, 0.7875, 0.2875],
+        "rotation": [0, 0, 0],
+        "scale": [0.026, 0.026, 0.026],
+        "minY": 0,
+        "maxY": 0,
+        "snaps": [0.025, 0.025, 0.025]
+      }
+    ],
     "variants": [
       {
         "zoneType": "cubo",
@@ -181,30 +205,6 @@
               "price": 0
             }
           }
-        ],
-        "helpers": [
-          {
-            "id": "mount-point",
-            "name": "Mount point",
-            "model": "mount-point",
-            "position": [0.0125, 0.7875, 0.2875],
-            "rotation": [0, 0, 0],
-            "scale": [0.026, 0.026, 0.026],
-            "minY": 0,
-            "maxY": 0,
-            "snaps": [0.025, 0.025, 0.025]
-          },
-          {
-            "id": "mount-point",
-            "name": "Mount point",
-            "model": "mount-point",
-            "position": [0.6385, 0.7875, 0.2875],
-            "rotation": [0, 0, 0],
-            "scale": [0.026, 0.026, 0.026],
-            "minY": 0,
-            "maxY": 0,
-            "snaps": [0.025, 0.025, 0.025]
-          }
         ]
       },
       {
@@ -358,30 +358,6 @@
               "price": 0
             }
           }
-        ],
-        "helpers": [
-          {
-            "id": "mount-point",
-            "name": "Mount point",
-            "model": "mount-point",
-            "position": [0.0125, 0.7875, 0.2875],
-            "rotation": [0, 0, 0],
-            "scale": [0.026, 0.026, 0.026],
-            "minY": 0,
-            "maxY": 0,
-            "snaps": [0.025, 0.025, 0.025]
-          },
-          {
-            "id": "mount-point",
-            "name": "Mount point",
-            "model": "mount-point",
-            "position": [0.8385, 0.7875, 0.2875],
-            "rotation": [0, 0, 0],
-            "scale": [0.026, 0.026, 0.026],
-            "minY": 0,
-            "maxY": 0,
-            "snaps": [0.025, 0.025, 0.025]
-          }
         ]
       }
     ],
@@ -389,9 +365,9 @@
       {
         "type": "addMeta",
         "rules": {
-          "targets": ["cubo-scaffale"],
+          "targets": ["spalliera-base"],
           "position": [0, 0, 0],
-          "offset": [-0.01, 0, 0],
+          "offset": [0.01, 0, 0],
           "index": 0,
           "key": "visible",
           "onSuccess": false,
@@ -401,19 +377,19 @@
       {
         "type": "addMeta",
         "rules": {
-          "targets": ["cubo-scaffale"],
+          "targets": ["spalliera-base"],
           "position": [0, 0, 0],
-          "offset": [-0.01, 0, 0],
+          "offset": [0.01, 0, 0],
           "index": 0,
           "key": "inCart",
-          "onSuccess": false,
-          "onFail": true
+          "onSuccess": true,
+          "onFail": false
         }
       },
       {
         "type": "avoidCollision",
         "rules": {
-          "targets": ["cubo-scaffale"],
+          "targets": ["spalliera-base"],
           "offset": [0, 0, 0]
         }
       }
@@ -661,81 +637,6 @@
               "price": 0
             }
           }
-        ],
-        "behaviors": [
-          {
-            "type": "addMeta",
-            "rules": {
-              "targets": ["spalliera", "spalliera-b"],
-              "position": [0, 0, 0],
-              "offset": [-0.01, 0, 0],
-              "index": 0,
-              "key": "visible",
-              "onSuccess": false,
-              "onFail": true
-            }
-          },
-          {
-            "type": "addMeta",
-            "rules": {
-              "targets": ["spalliera", "spalliera-b"],
-              "position": [0, 0, 0],
-              "offset": [-0.01, 0, 0],
-              "index": 0,
-              "key": "inCart",
-              "onSuccess": false,
-              "onFail": true
-            }
-          },
-
-          {
-            "type": "addItem",
-            "content": {
-              "connectedInfo": "Verrà aggiunto in automatico un connettore per unire le due spalliere una sopra l'altra"
-            },
-            "rules": {
-              "targets": ["mount-point"],
-              "offset": [0.0125, -0.0125, 0.285],
-              "position": [0, -0.05, 0]
-            },
-            "items": [
-              {
-                "id": "16",
-                "name": "Mensola 60",
-                "model": "connettore-sponde",
-                "position": [0, -0.05, 0],
-                "rotation": [0, 0, 0],
-                "scale": [1, 1, 1],
-                "minY": 0.025,
-                "maxY": 100,
-                "snaps": [0.025, 0.025, 0.025]
-              }
-            ]
-          },
-          {
-            "type": "addItem",
-            "content": {
-              "connectedInfo": "Verrà aggiunto in automatico un connettore per unire le due spalliere una sopra l'altra"
-            },
-            "rules": {
-              "targets": ["mount-point"],
-              "offset": [0.6385, -0.0125, 0.285],
-              "position": [0, -0.05, 0]
-            },
-            "items": [
-              {
-                "id": "17",
-                "name": "Mensola 60",
-                "model": "connettore-sponde",
-                "position": [0.625, -0.05, 0],
-                "rotation": [0, 0, 0],
-                "scale": [1, 1, 1],
-                "minY": 0.025,
-                "maxY": 100,
-                "snaps": [0.025, 0.025, 0.025]
-              }
-            ]
-          }
         ]
       },
       {
@@ -950,80 +851,55 @@
               "price": 0
             }
           }
-        ],
-        "behaviors": [
+        ]
+      }
+    ],
+    "behaviors": [
+      {
+        "type": "addMeta",
+        "rules": {
+          "targets": ["spalliera", "spalliera-b"],
+          "position": [0, 0, 0],
+          "offset": [0.01, 0, 0],
+          "index": 0,
+          "key": "visible",
+          "onSuccess": false,
+          "onFail": true
+        }
+      },
+      {
+        "type": "addMeta",
+        "rules": {
+          "targets": ["spalliera", "spalliera-b"],
+          "position": [0, 0, 0],
+          "offset": [0.01, 0, 0],
+          "index": 0,
+          "key": "inCart",
+          "onSuccess": true,
+          "onFail": false
+        }
+      },
+      {
+        "type": "addItem",
+        "content": {
+          "connectedInfo": "Verrà aggiunto in automatico un connettore per unire le due spalliere una sopra l'altra"
+        },
+        "rules": {
+          "targets": ["mount-point"],
+          "offset": [0.0125, -0.0125, 0.285],
+          "position": [0, -0.05, 0]
+        },
+        "items": [
           {
-            "type": "addMeta",
-            "rules": {
-              "targets": ["spalliera", "spalliera-b"],
-              "position": [0, 0, 0],
-              "offset": [-0.01, 0, 0],
-              "index": 0,
-              "key": "visible",
-              "onSuccess": false,
-              "onFail": true
-            }
-          },
-          {
-            "type": "addMeta",
-            "rules": {
-              "targets": ["spalliera", "spalliera-b"],
-              "position": [0, 0, 0],
-              "offset": [-0.01, 0, 0],
-              "index": 0,
-              "key": "inCart",
-              "onSuccess": false,
-              "onFail": true
-            }
-          },
-
-          {
-            "type": "addItem",
-            "content": {
-              "connectedInfo": "Verrà aggiunto in automatico un connettore per unire le due spalliere una sopra l'altra"
-            },
-            "rules": {
-              "targets": ["mount-point"],
-              "offset": [0.0125, -0.0125, 0.285],
-              "position": [0, -0.05, 0]
-            },
-            "items": [
-              {
-                "id": "16",
-                "name": "Mensola 60",
-                "model": "connettore-sponde",
-                "position": [0, -0.05, 0],
-                "rotation": [0, 0, 0],
-                "scale": [1, 1, 1],
-                "minY": 0.025,
-                "maxY": 100,
-                "snaps": [0.025, 0.025, 0.025]
-              }
-            ]
-          },
-          {
-            "type": "addItem",
-            "content": {
-              "connectedInfo": "Verrà aggiunto in automatico un connettore per unire le due spalliere una sopra l'altra"
-            },
-            "rules": {
-              "targets": ["mount-point"],
-              "offset": [0.8385, -0.0125, 0.285],
-              "position": [0, -0.05, 0]
-            },
-            "items": [
-              {
-                "id": "17",
-                "name": "Mensola 60",
-                "model": "connettore-sponde",
-                "position": [0.825, -0.05, 0],
-                "rotation": [0, 0, 0],
-                "scale": [1, 1, 1],
-                "minY": 0.025,
-                "maxY": 100,
-                "snaps": [0.025, 0.025, 0.025]
-              }
-            ]
+            "id": "16",
+            "name": "Mensola 60",
+            "model": "connettore-sponde",
+            "position": [0, -0.05, 0],
+            "rotation": [0, 0, 0],
+            "scale": [1, 1, 1],
+            "minY": 0.025,
+            "maxY": 100,
+            "snaps": [0.025, 0.025, 0.025]
           }
         ]
       }
@@ -1055,27 +931,12 @@
     },
     "behaviors": [
       {
-        "type": "addMeta",
+        "type": "hideGroupItem",
         "rules": {
-          "targets": ["spalliera", "spalliera-b"],
+          "targets": ["spalliera-b", "spalliera-base", "spalliera"],
           "position": [0, 0, 0],
-          "offset": [-0.01, 0, 0],
-          "index": 0,
-          "key": "visible",
-          "onSuccess": false,
-          "onFail": true
-        }
-      },
-      {
-        "type": "addMeta",
-        "rules": {
-          "targets": ["spalliera", "spalliera-b"],
-          "position": [0, 0, 0],
-          "offset": [-0.01, 0, 0],
-          "index": 0,
-          "key": "inCart",
-          "onSuccess": false,
-          "onFail": true
+          "offset": [0.01, 0, 0],
+          "index": 0
         }
       }
     ],

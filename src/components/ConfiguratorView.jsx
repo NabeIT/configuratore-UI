@@ -10,6 +10,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
     const lastQuickAddIdRef = useRef(null);
     const lastPresetIdRef = useRef(null);
     const iframeReadyRef = useRef(false);
+    const [iframeReady, setIframeReady] = useState(false);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
 
     const { action, clearAction } = useActionContext();
@@ -156,6 +157,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
             if (data.type === `${MSG_PREFIX}ready`) {
                 iframeReadyRef.current = true;
+                setIframeReady(true);
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
 
                 setTimeout(() => {
@@ -262,7 +264,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
             items: itemsToDrop,
         })
 
-    }, [presetRequest, items, postToIframe]);
+    }, [presetRequest, items, postToIframe, iframeReady]);
 
 
     return (

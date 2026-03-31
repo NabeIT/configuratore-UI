@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { createClient } from '@supabase/supabase-js';
 import ConfiguratorView from './components/ConfiguratorView';
 import Header from './components/Header';
 import { ItemActions } from './components/ItemActions';
@@ -7,6 +8,10 @@ import LeftSidebar from './components/LeftSidebar';
 import RightSidebar from './components/RightSidebar';
 import StartupModal from './components/StartupModal';
 import catalogItems from './data/catalogItems';
+
+const supabaseUrl = 'https://azrkvmypdhvxhaailnsv.supabase.co';
+const supabaseKey = 'sb_publishable_Tvvx1UT8dNNpu3FK2enaSA_L9lMkfJO';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 function collectCatalogMeta(items, map = new Map()) {
   if (!Array.isArray(items)) return map;
@@ -62,7 +67,7 @@ function buildCartItems(sceneItems) {
   const groupedByModel = new Map();
   const sourceItems = collectCartSourceItems(sceneItems);
 
-  console.log("Source items", sourceItems);
+  console.log("Source items", sceneItems);
   sourceItems.forEach((item) => {
     const modelKey = item.model || item.id;
     if (!modelKey) return;
@@ -102,6 +107,8 @@ export default function App() {
   const [showStartup, setShowStartup] = useState(true);
   const [presetRequest, setPresetRequest] = useState(null);
 
+  const [rawSceneItems, setRawSceneItems] = useState([]);
+
   const handlePresetSelect = useCallback((preset) => {
     setShowStartup(false);
     setPresetRequest({
@@ -110,9 +117,33 @@ export default function App() {
     });
   }, []);
 
+  // Carica configurazione da URL se presente ?config=<guid>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const configGuid = params.get('config');
+    if (!configGuid) return;
+
+    supabase
+      .from('Libreria')
+      .select('items')
+      .eq('guid', configGuid)
+      .single()
+      .then(({ data, error }) => {
+        if (error || !data?.items) {
+          console.error('Errore caricamento configurazione:', error);
+          return;
+        }
+        setShowStartup(false);
+        setPresetRequest({
+          id: `config-${configGuid}`,
+          preset: { steps: data.items },
+        });
+      });
+  }, []);
+
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
-  // const iframeSrc = 'http://localhost:5173?embed=true';
-  const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
+  const iframeSrc = 'http://localhost:5173?embed=true';
+  // const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
 
 
 
@@ -139,6 +170,7 @@ export default function App() {
 
   const handleSceneState = useCallback((sceneItems) => {
     setCartItems(buildCartItems(sceneItems));
+    setRawSceneItems(sceneItems);
   }, []);
 
   const handleQuickAdd = useCallback((item) => {
@@ -168,7 +200,7 @@ export default function App() {
           presetRequest={presetRequest}
         />
 
-        <RightSidebar cartItems={cartItems} onAddToCart={(data) => {
+        <RightSidebar rawSceneItems={rawSceneItems} cartItems={cartItems} onAddToCart={(data) => {
           window.parent.postMessage({ type: 'add-to-cart', data }, '*');
 
         }} />

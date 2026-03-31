@@ -76,27 +76,29 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
     return (
         <div
 
-            {...(item.variants && item.variantLocked ? {} : { draggable: true, onDragStart: (e) => onDragStart(e, item) })}
+            // {...(item.variants && item.variantLocked ? {} : { draggable: true, onDragStart: (e) => onDragStart(e, item) })}
 
             className={`
 
                 w-3/4 md:w-full
                 flex-col
                 md:flex-row
-                 items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow ${item.variants && item.variantLocked ? 'cursor-auto' : 'cursor-grab active:cursor-grabbing'}
+                 items-center gap-3 p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow 
+                 
+                  
 
                 hidden md:flex
 
                 
                 `}
 
-            onClick={item.variants ? null : (e) => {
+        // onClick={item.variants ? null : (e) => {
 
-                e.stopPropagation();
-                onQuickAdd?.({
-                    ...item,
-                });
-            }}
+        //     e.stopPropagation();
+        //     onQuickAdd?.({
+        //         ...item,
+        //     });
+        // }}
         >
             <h3 className="md:hidden text-sm font-medium text-gray-800 truncate">{item.title}</h3>
             <img
@@ -107,6 +109,46 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
             <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                 <h3 className="hidden md:block text-sm font-medium text-gray-800 truncate">{item.title}</h3>
                 <p className="hidden md:block text-xs text-gray-400 truncate">{item.description}</p>
+                {(!item.variants || !item.variantLocked) && (
+                    <button
+                        type="button"
+                        draggable
+                        onDragStart={(e) => onDragStart(e, {
+                            ...item,
+                            variant: 0
+                        })}
+
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onQuickAdd?.({
+                                ...item,
+                                variant: 0,
+                            });
+                        }}
+
+                        style={{
+                            borderColor: "#79aea3",
+                            color: "#79aea3",
+
+                        }}
+                        className={`cursor-grab active:cursor-grabbing p-1 flex justify-center pl-2 rounded-full gap-2 font-bold border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs  ml-1 items-center
+                                        
+                                        ${!editedItem || dropZonesUnique.includes(item.zoneType) ? '' : 'pointer-events-none opacity-30'}
+                                        
+                                        w-26
+                                        `}
+                        aria-label={`Aggiungi  ${item.title}`}
+                    >
+                        <span>Aggiungi</span>
+
+
+                        {canBePlaced(item) || item.type == "object" ? (
+                            <div className='bg-brand p-1 rounded-full ml-auto'>
+                                <Plus size={12} strokeWidth={4} color='#fff' />  </div>
+                        ) : <CircleSlash size={20} strokeWidth={2} color='#f00' />}
+
+                    </button>
+                )}
                 {item.variants && item.variantLocked && !modeEdit && (
                     <div className="mt-1 flex items-center">
                         {item.variants.map((variant, index) => {
@@ -132,7 +174,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                                         color: "#79aea3",
 
                                     }}
-                                    className={`cursor-grab active:cursor-grabbing p-1 flex justify-center pl-2 rounded-full gap-2 font-bold border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif ml-1 items-center
+                                    className={`cursor-grab active:cursor-grabbing p-1 flex justify-center pl-2 rounded-full gap-2 font-bold border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs  ml-1 items-center
                                         
                                         ${!editedItem || dropZonesUnique.includes(variant.zoneType) ? '' : 'pointer-events-none opacity-30'}
                                         
@@ -143,7 +185,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
 
 
                                     {canBePlaced(variant) || item.type == "object" ? (
-                                        <div className='bg-teal-600 p-1 rounded-full ml-auto'>
+                                        <div className='bg-brand p-1 rounded-full ml-auto'>
                                             <Plus size={12} strokeWidth={4} color='#fff' />  </div>
                                     ) : <CircleSlash size={20} strokeWidth={2} color='#f00' />}
 
@@ -219,7 +261,7 @@ const MobileExpanded = ({ item, onDragStart, onQuickAdd, onCollapse }) => {
                                                 variant: index,
                                             });
                                         }}
-                                        className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif"
+                                        className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs "
                                         aria-label={`Aggiungi variante ${variant.title} di ${item.title}`}
                                     >
                                         {variant.name}
@@ -243,7 +285,7 @@ const MobileExpanded = ({ item, onDragStart, onQuickAdd, onCollapse }) => {
                                             ...item,
                                         });
                                     }}
-                                    className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs font-serif"
+                                    className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs "
 
                                 >
                                     Aggiungi

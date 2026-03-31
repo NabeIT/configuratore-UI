@@ -67,8 +67,46 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
         return [];
 
     }, [editedItem, items]);
+
+    const availableColors = useMemo(() => {
+        return ["wood", "white"]
+    }, []);
+
+    const changeColor = (color) => {
+        performAction(actions.CHANGE_COLOR, { color });
+    }
+
     return (
-        <aside className="
+        <>
+            {!editedItem && (
+
+
+                <aside className="
+        w-full border-gray-200 flex-row flex fixed top-14 left-0 right-0 z-50 
+        h-auto
+        bottom-auto
+        md:flex-col
+    bg-gray-50  md:w-82
+        md:top-20 md:left-6 md:right-auto 
+        md:rounded-2xl
+        md:shadow-2xl
+        ">
+                    {availableColors.length > 0 && (
+                        <div className="px-4 py-3 border-b border-gray-200  md:block">
+                            <h2 className="text-sm font-semibold text-gray-700">Colori disponibili</h2>
+                            <p className="text-xs text-gray-400 mt-0.5">Scegli il colore per i tuoi moduli</p>
+                        </div>
+                    )}
+                    {availableColors.length > 0 && (
+                        <div className="flex flex-row items-center gap-3 px-4 py-3 ml-auto md:ml-0">
+                            {availableColors.map(color => (
+                                <div onClick={() => changeColor(color)} key={color} className={`w-8 h-8 rounded-full border ${color === "wood" ? "bg-gradient-to-br from-yellow-800 to-yellow-900" : "bg-gray-200"} cursor-pointer border-gray-400`} />
+                            ))}
+                        </div>
+                    )}
+                </aside>
+            )}
+            <aside className="
         
         w-full   border-r border-gray-200 flex-row flex fixed bottom-16 left-0 right-0 z-50 
         
@@ -79,81 +117,82 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
         md:shadow-2xl
     
         ">
-            <div className="px-4 py-3 border-b border-gray-200 hidden md:block">
-                <h2 className="text-sm font-semibold text-gray-700">{editedItem ? "Configura oggetto" : "Inizia da qui!"}</h2>
-                <p className="text-xs text-gray-400 mt-0.5">{editedItem ? "Personalizza l'oggetto selezionato" : "Inserisci i moduli base da configurare"}</p>
-            </div>
+                <div className="px-4 py-3 border-b border-gray-200 hidden md:block">
+                    <h2 className="text-sm font-semibold text-gray-700">{editedItem ? "Configura oggetto" : "Inizia da qui!"}</h2>
+                    <p className="text-xs text-gray-400 mt-0.5">{editedItem ? "Personalizza l'oggetto selezionato" : "Inserisci i moduli base da configurare"}</p>
+                </div>
 
-            {/* Desktop: vertical list */}
-            <div className="hidden md:flex flex-1  p-3 space-y-2 flex-col w-full ">
-                {baseItems.map((item) => (
-                    <div className={`  ${editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 ? "  bg-teal-600/75 bg-linear-to-r from-teal-600 to-teal-700 shadow-2xl/60 p-4 w-90 -ml-6 -mt-3" : ""}  transition-all rounded-xl ${!editedItem || editedItem?.modelId === item.modelId ? "" : "opacity-30 pointer-events-none hidden"} `}>
+                {/* Desktop: vertical list */}
+                <div className="hidden md:flex flex-1  p-3 space-y-2 flex-col w-full ">
+                    {baseItems.map((item) => (
+                        <div className={`  ${editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 ? "  bg-brand/75 bg-linear-to-r from-brand/80 to-brand shadow-2xl/60 p-4 w-90 -ml-6 -mt-3" : ""}  transition-all rounded-xl ${!editedItem || editedItem?.modelId === item.modelId ? "" : "opacity-30 pointer-events-none hidden"} `}>
 
-                        {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
-                            <div onClick={closeEditMode} className='absolute bottom-full left-full z-50 bg-white shadow-2xl/100 rounded-full p-2 text-xs -translate-x-1/2 translate-y-1/2 cursor-pointer'>
-                                <X size={20} />
-                            </div>
-                        )}
-
-                        <CatalogItem key={item.id} item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
-                        {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
-                            <>
-                                <div className="p-2  gap-2 flex flex-col">
-                                    <span className='font-bold text-xs text-center text-white'>Aggiungi pezzi all'oggetto</span>
-                                    <ArrowBigDown size={20} className="mx-auto opacity-50" color='white' />
-                                    {itemsFiltered.map(variant => (
-                                        <CatalogItem key={variant.id} item={variant} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
-                                    ))}
+                            {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
+                                <div onClick={closeEditMode} className='absolute bottom-full left-full z-50 bg-white shadow-2xl/100 rounded-full p-2 text-xs -translate-x-1/2 translate-y-1/2 cursor-pointer'>
+                                    <X size={20} />
                                 </div>
-                            </>
-                        )}
-                    </div>
-                ))}
-            </div>
+                            )}
 
-            {/* Mobile: round dots (collapsed) */}
-            {!isExpanded && (
-                <div className="flex md:hidden flex-1 overflow-x-auto p-3 flex-row gap-3 w-full">
-                    {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
-                        <CatalogItem
-                            key={item.id}
-                            item={item}
-                            onDragStart={onDragStart}
-                            onQuickAdd={onQuickAdd}
-                            mobileMode="collapsed"
-                            onMobileExpand={() => handleExpand(index)}
-                        />
+                            <CatalogItem key={item.id} item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+                            {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
+                                <>
+                                    <div className="p-2  gap-2 flex flex-col">
+                                        <span className='font-bold text-xs text-center text-white'>Aggiungi pezzi all'oggetto</span>
+                                        <ArrowBigDown size={20} className="mx-auto opacity-50" color='white' />
+                                        {itemsFiltered.map(variant => (
+                                            <CatalogItem key={variant.id} item={variant} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
                     ))}
                 </div>
-            )}
 
-            {/* Mobile: carousel of expanded cards */}
-            {isExpanded && (
-                <div className="md:hidden fixed inset-x-0 bottom-16 z-50">
-                    <button
-                        onClick={handleCollapse}
-                        className="absolute top-0 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-200"
-                    >
-                        <Minimize2 size={14} strokeWidth={2} />
-                    </button>
-                    <div
-                        ref={scrollRef}
-                        className="flex overflow-x-auto snap-x snap-mandatory gap-3 px-[7.5vw] py-3 scrollbar-hide"
-                    >
+                {/* Mobile: round dots (collapsed) */}
+                {!isExpanded && (
+                    <div className="flex md:hidden flex-1 overflow-x-auto p-3 flex-row gap-3 w-full">
                         {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
                             <CatalogItem
                                 key={item.id}
                                 item={item}
                                 onDragStart={onDragStart}
                                 onQuickAdd={onQuickAdd}
-                                mobileMode="expanded"
-                                onMobileCollapse={handleCollapse}
+                                mobileMode="collapsed"
+                                onMobileExpand={() => handleExpand(index)}
                             />
                         ))}
                     </div>
-                </div>
-            )}
-        </aside>
+                )}
+
+                {/* Mobile: carousel of expanded cards */}
+                {isExpanded && (
+                    <div className="md:hidden fixed inset-x-0 bottom-16 z-50">
+                        <button
+                            onClick={handleCollapse}
+                            className="absolute top-0 right-3 z-10 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-200"
+                        >
+                            <Minimize2 size={14} strokeWidth={2} />
+                        </button>
+                        <div
+                            ref={scrollRef}
+                            className="flex overflow-x-auto snap-x snap-mandatory gap-3 px-[7.5vw] py-3 scrollbar-hide"
+                        >
+                            {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
+                                <CatalogItem
+                                    key={item.id}
+                                    item={item}
+                                    onDragStart={onDragStart}
+                                    onQuickAdd={onQuickAdd}
+                                    mobileMode="expanded"
+                                    onMobileCollapse={handleCollapse}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </aside>
+        </>
     );
     // return (
     //     <aside className="w-full md:w-82 flex-shrink-0 md:bg-gray-50 border-r border-gray-200 flex-row flex md:flex-col fixed bottom-16 left-0 right-0 z-50 md:relative md:top-auto md:left-auto md:right-auto md:bottom-auto">

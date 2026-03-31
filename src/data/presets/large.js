@@ -12,20 +12,24 @@ export default {
     {
       ...libreria.find((i) => i.modelId === "espansione-cubo-scaffale"),
       id: "startup-espansione-cubo-scaffale-2",
+      variant: 1,
       targetZoneKey:
         "startup-espansione-cubo-scaffale-dz-expansion-left-expansion",
     },
     {
       ...libreria.find((i) => i.modelId === "mensola60"),
-      targetZoneKey: "startup-espansione-cubo-scaffale-2-dz-appoggio-mensola-8",
+      variant: 1,
+      targetZoneKey: "startup-espansione-cubo-scaffale-2-dz-appoggio-mensola-9",
     },
     {
       ...libreria.find((i) => i.modelId === "mensola60"),
-      targetZoneKey: "startup-espansione-cubo-scaffale-2-dz-appoggio-mensola-0",
+      variant: 1,
+      targetZoneKey: "startup-espansione-cubo-scaffale-2-dz-appoggio-mensola-1",
     },
     {
       ...libreria.find((i) => i.modelId === "mensola60"),
-      targetZoneKey: "startup-espansione-cubo-scaffale-2-dz-appoggio-mensola-4",
+      variant: 1,
+      targetZoneKey: "startup-espansione-cubo-scaffale-2-dz-appoggio-mensola-5",
     },
   ],
 };

@@ -45,6 +45,8 @@ export default function StartupModal({ onSelect }) {
                         </button>
                     ))}
                 </div>
+
+                <span onClick={() => onSelect({})} className='mt-8 underline cursor-pointer text-sm opacity-50 hover:opacity-100'>Configura da zero</span>
             </div>
         </div>
     );
