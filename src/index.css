@@ -4,6 +4,7 @@
 
 @theme {
   --color-brand: #79aea3;
+  --radius-lg: 18px;
 }
 
 body {

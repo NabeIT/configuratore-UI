@@ -1,9 +1,9 @@
 import { ArrowLeft, Minus, Plus, Save, ShoppingCart } from 'lucide-react';
+import { calculateOrderItems, calculateRealtimeCartTotal } from '../utils/orderPricing';
 import { useEffect, useMemo, useState } from 'react';
 
 import { createClient } from '@supabase/supabase-js';
 import { jsPDF } from 'jspdf';
-import { calculateOrderItems, calculateRealtimeCartTotal } from '../utils/orderPricing';
 
 function generateUUIDv4() {
     // If crypto.randomUUID is available (modern browsers)
@@ -90,27 +90,29 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
     }, [visibleItems, ownedQuantities]);
 
     const handleAddToCart = () => {
-        const itemsToAdd = visibleItems
-            .map((item) => {
-                const owned = ownedQuantities[item.id] || 0;
-                const toBuy = Math.max(item.quantity - owned, 0);
-                return {
-                    id: item.id,
-                    model: item.model,
-                    title: item.title,
-                    quantity: toBuy,
-                    ownedQuantity: owned,
-                    totalQuantity: item.quantity,
-                    meta: item.meta,
-                    itemIds: item.itemIds,
-                };
-            })
-            .filter((item) => item.quantity > 0);
+        const orderItems = calculateOrderItems(cartItems, ownedQuantities, sceneColor);
+        const itemsToAdd = orderItems
+            .filter((item) => item.quantity > 0)
+            .map((item) => ({
+                id: item.sku,
+                model: item.sku,
+                title: item.title,
+                sku: item.sku,
+                quantity: item.quantity,
+                ownedQuantity: 0,
+                totalQuantity: item.quantity,
+                meta: {
+                    sku: item.sku,
+                    price: item.price || 0,
+                },
+                itemIds: [],
+            }));
+        const orderTotalItems = itemsToAdd.reduce((sum, item) => sum + item.quantity, 0);
 
         onAddToCart({
             items: itemsToAdd,
             totalPrice,
-            totalItems,
+            totalItems: orderTotalItems,
         });
     };
 
