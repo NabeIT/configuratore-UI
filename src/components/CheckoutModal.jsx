@@ -107,6 +107,9 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
                 },
                 itemIds: [],
             }));
+
+        console.log(itemsToAdd);
+
         const orderTotalItems = itemsToAdd.reduce((sum, item) => sum + item.quantity, 0);
 
         onAddToCart({
