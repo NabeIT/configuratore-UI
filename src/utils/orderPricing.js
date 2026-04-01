@@ -131,6 +131,62 @@ const ORDER_SKU_CATALOG = {
     },
 };
 
+const ORDER_SKU_VARIANTS_BY_COLOR = {
+    SCAT2BAR95: {
+        wood: { sku: 'SCAT2BAR95', handle: 'scat2bar95', variantId: '57008244293976' },
+        white: { sku: 'SCAT2BAR95W', handle: 'scat2bar95w', variantId: '57008244457816' },
+    },
+    SCAT2BAR95STAFFA60: {
+        wood: { sku: 'SCAT2BAR95STAFFA60', handle: 'scat2bar95staffa60', variantId: '57008244392280' },
+        white: { sku: 'SCAT2BAR95STAFFA60W', handle: 'scat2bar95staffa60w', variantId: '57008244621656' },
+    },
+    SCAT2RIP60: {
+        wood: { sku: 'SCAT2RIP60', handle: 'scat2rip60', variantId: '57008244785496' },
+        // In CSV la variante white usa ancora SKU SCAT2RIP60 ma handle diverso (scat2rip60-2)
+        white: { sku: 'SCAT2RIP60', handle: 'scat2rip60-2', variantId: '57008245309784' },
+    },
+    SCAT2RIP80: {
+        wood: { sku: 'SCAT2RIP80', handle: 'scat2rip80', variantId: '57008244719960' },
+        white: { sku: 'SCAT2RIP80W', handle: 'scat2rip80w', variantId: '57008245211480' },
+    },
+    SCAT3BAR95: {
+        wood: { sku: 'SCAT3BAR95', handle: 'scat3bar95', variantId: '57008244326744' },
+        white: { sku: 'SCAT3BAR95W', handle: 'scat3bar95w', variantId: '57008244588888' },
+    },
+    SCAT3BAR95STAFFA60: {
+        wood: { sku: 'SCAT3BAR95STAFFA60', handle: 'scat3bar95staffa60', variantId: '57008244425048' },
+        white: { sku: 'SCAT3BAR95STAFFA60W', handle: 'scat3bar95staffa60w', variantId: '57008244654424' },
+    },
+    SCAT3RIP60: {
+        wood: { sku: 'SCAT3RIP60', handle: 'scat3rip60', variantId: '57008244949336' },
+        white: { sku: 'SCAT3RIP60W', handle: 'scat3rip60w', variantId: '57008245473624' },
+    },
+    SCAT3RIP80: {
+        wood: { sku: 'SCAT3RIP80', handle: 'scat3rip80', variantId: '57008244851032' },
+        white: { sku: 'SCAT3RIP80W', handle: 'scat3rip80w', variantId: '57008245375320' },
+    },
+    SCAT3RIPS60: {
+        wood: { sku: 'SCAT3RIPS60', handle: 'scat3rips60', variantId: '57008245637464' },
+        white: { sku: 'SCAT3RIPS60W', handle: 'scat3rips60w', variantId: '57008245703000' },
+    },
+    SCAT3RIPS80: {
+        wood: { sku: 'SCAT3RIPS80', handle: 'scat3rips80', variantId: '57008245571928' },
+        white: { sku: 'SCAT3RIPS80W', handle: 'scat3rips80w', variantId: '57008245604696' },
+    },
+    SCATBARR78T: {
+        wood: { sku: 'SCATBARR78T', handle: 'scatbarr78t', variantId: '57008245735768' },
+        white: { sku: 'SCATBARR78TW', handle: 'scatbarr78tw', variantId: '57008245768536' },
+    },
+    SCATBARR78TSTAFFA60: {
+        wood: { sku: 'SCATBARR78TSTAFFA60', handle: 'scatbarr78tstaffa60', variantId: '57008245834072' },
+        white: { sku: 'SCATBARR78TSTAFFA60W', handle: 'scatbarr78tstaffa60w', variantId: '57008245899608' },
+    },
+    SCATSCR80: {
+        wood: { sku: 'SCATSCR80', handle: 'scatscr80', variantId: '57008246063448' },
+        white: { sku: 'SCATSCR80W', handle: 'scatscr80w', variantId: '57008246096216' },
+    },
+};
+
 const GROUPED_INPUT_SKUS = new Set([
     'BARR78',
     'BARR78-80',
@@ -185,6 +241,15 @@ export function getOrderSkuPrice(sku, color = 'wood') {
 
     if (!catalogEntry) return null;
     return catalogEntry.prices[normalizedColor] ?? catalogEntry.prices.wood ?? null;
+}
+
+export function getOrderVariantData(sku, color = 'wood') {
+    const normalizedSku = normalizeSku(sku);
+    const normalizedColor = normalizeColor(color);
+    const entry = ORDER_SKU_VARIANTS_BY_COLOR[normalizedSku];
+
+    if (!entry) return null;
+    return entry[normalizedColor] ?? entry.wood ?? null;
 }
 
 const pushPackage = (packages, sku, quantity, fallbackTitle, color) => {

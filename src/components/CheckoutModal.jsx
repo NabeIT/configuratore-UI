@@ -1,5 +1,5 @@
 import { ArrowLeft, Minus, Plus, Save, ShoppingCart } from 'lucide-react';
-import { calculateOrderItems, calculateRealtimeCartTotal } from '../utils/orderPricing';
+import { calculateOrderItems, calculateRealtimeCartTotal, getOrderVariantData } from '../utils/orderPricing';
 import { useEffect, useMemo, useState } from 'react';
 
 import { createClient } from '@supabase/supabase-js';
@@ -93,22 +93,27 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
         const orderItems = calculateOrderItems(cartItems, ownedQuantities, sceneColor);
         const itemsToAdd = orderItems
             .filter((item) => item.quantity > 0)
-            .map((item) => ({
-                id: item.sku,
-                model: item.sku,
-                title: item.title,
-                sku: item.sku,
-                quantity: item.quantity,
-                ownedQuantity: 0,
-                totalQuantity: item.quantity,
-                meta: {
-                    sku: item.sku,
-                    price: item.price || 0,
-                },
-                itemIds: [],
-            }));
+            .map((item) => {
+                const variantData = getOrderVariantData(item.sku, sceneColor);
+                const skuForCart = variantData?.sku || item.sku;
 
-        console.log(itemsToAdd);
+                return {
+                    id: variantData?.variantId || skuForCart,
+                    model: skuForCart,
+                    title: item.title,
+                    sku: skuForCart,
+                    quantity: item.quantity,
+                    ownedQuantity: 0,
+                    totalQuantity: item.quantity,
+                    meta: {
+                        sku: skuForCart,
+                        price: item.price || 0,
+                        variantId: variantData?.variantId || null,
+                        handle: variantData?.handle || null,
+                    },
+                    itemIds: [],
+                };
+            });
 
         const orderTotalItems = itemsToAdd.reduce((sum, item) => sum + item.quantity, 0);
 
