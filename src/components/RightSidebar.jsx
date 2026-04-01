@@ -2,91 +2,17 @@ import { ArrowBigRight, ChevronDown, ShoppingBasket } from 'lucide-react';
 
 import CartItem from './CartItem';
 import CheckoutModal from './CheckoutModal';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { calculateRealtimeCartTotal } from '../utils/orderPricing';
 
-export default function RightSidebar({ cartItems, rawSceneItems, onAddToCart }) {
+export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, onAddToCart }) {
     const [open, setOpen] = useState(false);
     const [checkoutOpen, setCheckoutOpen] = useState(false);
-    console.log(cartItems);
     const totalItems = cartItems.reduce((sum, item) => item.meta?.inCart !== false ? sum + item.quantity : sum, 0);
-    const totalPrice = cartItems.reduce((sum, item) => sum + (item.quantity * (item.meta?.price || 0)), 0);
-
-
-    const cartPackages = [];
-    console.log("RAW", rawSceneItems);
-
-    cartItems.forEach(element => {
-        // CONNNETTORI... BOH
-
-
-        // RIPIANI
-        if (element.meta?.sku === "ELRL60") {
-
-            let numPackages = Math.floor(element.quantity / 2);
-            const remaining = element.quantity % 2;
-            if (remaining > 0) {
-                numPackages -= 1;
-                cartPackages.push({
-                    title: "Ripiani 60 cm libreria (3pz) copreso imballo e ferramenta",
-                    sku: "SCAT3RIP60",
-                    quantity: 1
-                });
-            }
-            if (numPackages > 0) {
-                cartPackages.push({
-                    title: "Ripiani 60 cm libreria (2pz) copreso imballo e ferramenta",
-                    sku: "SCAT2RIP60",
-                    quantity: numPackages
-                });
-            }
-        }
-        if (element.meta?.sku === "ELRL80") {
-            cartPackages.push({
-                title: "Ripiani 80 cm libreria (3pz) copreso imballo e ferramenta",
-                sku: "SCAT3RIP80",
-                quantity: Math.ceil(element.quantity / 3)
-            });
-        }
-
-
-    });
-
-
-    console.log(cartItems);
-
-
-    /*
-
-    Accorpare gli oggetti così:
-
-    SCAT3RIP60 -> Ripiani 60 cm libreria (3pz)  copreso imballo e ferramenta
-    SCAT3RIP80 -> Ripiani 80 cm libreria (3pz)     copreso imballo e ferramenta
-    
-    SCAT2RIP60 -> Ripiani 60 cm libreria (2pz)     copreso imballo e ferramenta
-    SCAT2RIP80 -> Ripiani 80 cm libreria (2pz)     copreso imballo e ferramenta
-
-
-
-
-    */
-
-    /*
-
-    ELKITRIPIANI : viti per i ripiani
-    1 ogni 3 ripiani (indifferente se 60 o 80)
-
-
-    ELKITCART: 
-    imballo
-    1 ogni 3 elementi (ripiani o fianchi 60/80 indifferente)
-
-
-
-    ELKITLIBRERIA: 
-    kit per fissare al muro (staffettine) 
-    numero connettori(qualsiasi tipo) / 2 arrotondato per eccesso
-
-    */
+    const totalPrice = useMemo(
+        () => calculateRealtimeCartTotal(cartItems, {}, sceneColor),
+        [cartItems, sceneColor]
+    );
 
     return (
         <>
@@ -170,6 +96,7 @@ export default function RightSidebar({ cartItems, rawSceneItems, onAddToCart }) 
             {checkoutOpen && (
                 <CheckoutModal
                     rawSceneItems={rawSceneItems}
+                    sceneColor={sceneColor}
                     cartItems={cartItems}
                     onClose={() => setCheckoutOpen(false)}
                     onAddToCart={(data) => {

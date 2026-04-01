@@ -5,7 +5,7 @@ import { useStateContext } from './StateContext';
 
 const MSG_PREFIX = 'configurator:';
 
-export default function ConfiguratorView({ iframeSrc, items, onSceneState, quickAddRequest, setSelectedItem, presetRequest }) {
+export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSceneColor, quickAddRequest, setSelectedItem, presetRequest }) {
     const iframeRef = useRef(null);
     const lastQuickAddIdRef = useRef(null);
     const lastPresetIdRef = useRef(null);
@@ -52,6 +52,12 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
     useEffect(() => {
         if (!action || !postToIframe) return;
 
+        if (action.type === 'changeColor') {
+            const requestedColor = action.payload?.color;
+            if (typeof requestedColor === 'string') {
+                onSceneColor?.(requestedColor);
+            }
+        }
 
         postToIframe({
             type: `${MSG_PREFIX}${action.type}`,
@@ -59,7 +65,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
         });
         clearAction();
 
-    }, [action, postToIframe, clearAction]);
+    }, [action, clearAction, onSceneColor, postToIframe]);
 
     const handleDragOver = useCallback((e) => {
         e.preventDefault();
@@ -210,13 +216,28 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, quick
 
             if (data.type === `${MSG_PREFIX}sceneState`) {
                 console.log('Scene state received from iframe:', payload);
-                onSceneState?.(Array.isArray(payload.items) ? payload.items : []);
+                onSceneState?.(payload);
+                return;
+            }
+
+            if (data.type === `${MSG_PREFIX}changeColor`) {
+                const nextColor = typeof payload?.color === 'string'
+                    ? payload.color
+                    : typeof data?.color === 'string'
+                        ? data.color
+                        : typeof payload === 'string'
+                            ? payload
+                            : null;
+
+                if (nextColor) {
+                    onSceneColor?.(nextColor);
+                }
             }
         };
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [editedItem, items, onSceneState, postToIframe, setAvailableDropZones, setEditedItem, setSelectedItem, stateSetSelectedItem]);
+    }, [editedItem, items, onSceneColor, onSceneState, postToIframe, setAvailableDropZones, setEditedItem, setSelectedItem, stateSetSelectedItem]);
 
     useEffect(() => {
         if (!quickAddRequest?.item) return;

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { createClient } from '@supabase/supabase-js';
 import { jsPDF } from 'jspdf';
+import { calculateOrderItems, calculateRealtimeCartTotal } from '../utils/orderPricing';
 
 function generateUUIDv4() {
     // If crypto.randomUUID is available (modern browsers)
@@ -20,7 +21,7 @@ function generateUUIDv4() {
 
 
 
-export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAddToCart }) {
+export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, onClose, onAddToCart }) {
     const [ownedQuantities, setOwnedQuantities] = useState({});
 
     // Initialize owned quantities to 0 for each item
@@ -35,141 +36,6 @@ export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAdd
     }, [cartItems]);
 
     const visibleItems = cartItems.filter((item) => item.meta?.inCart !== false);
-
-
-    const calculateOrderItems = (cartItems) => {
-        console.log('Recalculating order items with cartItems:', cartItems);
-
-        const cartPackages = [];
-        const ELRL60 = cartItems.find((item) => {
-            console.log('Checking item:', item);
-            return item.meta?.sku === "ELRL60";
-        });
-        if (ELRL60) {
-            console.log('Found ELRL60 item:', ELRL60);
-
-            const owned = ownedQuantities[ELRL60.id] || 0;
-            const toBuy = Math.max(ELRL60.quantity - owned, 0);
-            let numPackages = Math.floor(toBuy / 2);
-            const remaining = toBuy % 2;
-            if (remaining > 0) {
-                numPackages -= 1;
-                cartPackages.push({
-                    title: "Ripiani 60 cm libreria (3pz) copreso imballo e ferramenta",
-                    sku: "SCAT3RIP60",
-                    quantity: 1
-                });
-            }
-            if (numPackages > 0) {
-                cartPackages.push({
-                    title: "Ripiani 60 cm libreria (2pz) copreso imballo e ferramenta",
-                    sku: "SCAT2RIP60",
-                    quantity: numPackages
-                });
-            }
-        }
-        const ELRL80 = cartItems.find((item) => item.meta?.sku === "ELRL80");
-        if (ELRL80) {
-            console.log('Found ELRL80 item:', ELRL80);
-            const owned = ownedQuantities[ELRL80.id] || 0;
-            const toBuy = Math.max(ELRL80.quantity - owned, 0);
-            let numPackages = Math.floor(toBuy / 2);
-            const remaining = toBuy % 2;
-            if (remaining > 0) {
-                numPackages -= 1;
-                cartPackages.push({
-                    title: "Ripiani 80 cm libreria (3pz) copreso imballo e ferramenta",
-                    sku: "SCAT3RIP80",
-                    quantity: 1
-                });
-            }
-            if (numPackages > 0) {
-                cartPackages.push({
-                    title: "Ripiani 80 cm libreria (2pz) copreso imballo e ferramenta",
-                    sku: "SCAT2RIP80",
-                    quantity: numPackages
-                });
-            }
-        }
-
-        const SCATSCR80 = cartItems.find((item) => item.meta?.sku === "ELSCR80");
-        if (SCATSCR80) {
-            const owned = ownedQuantities[SCATSCR80.id] || 0;
-            const toBuy = Math.max(SCATSCR80.quantity - owned, 0);
-            if (toBuy > 0) {
-                cartPackages.push({
-                    title: "Scaffale 80 cm libreria (1pz) compreso imballo e ferramenta",
-                    sku: "SCATSCR80",
-                    quantity: SCATSCR80.quantity
-                });
-            }
-        }
-        const SCAT3RIPS60 = cartItems.find((item) => item.meta?.sku === "SCAT3RIPS60");
-        if (SCAT3RIPS60) {
-            const owned = ownedQuantities[SCAT3RIPS60.id] || 0;
-            const toBuy = Math.max(SCAT3RIPS60.quantity - owned, 0);
-            if (toBuy > 0) {
-                cartPackages.push({
-                    title: "Mensole montessoriane 60 cm libreria (3pz) copreso imballo e ferramenta",
-                    sku: "SCAT3RIPS60",
-                    quantity: toBuy
-                });
-            }
-        }
-        const SCAT3RIPS80 = cartItems.find((item) => item.meta?.sku === "SCAT3RIPS80");
-        if (SCAT3RIPS80) {
-            const owned = ownedQuantities[SCAT3RIPS80.id] || 0;
-            const toBuy = Math.max(SCAT3RIPS80.quantity - owned, 0);
-            if (toBuy > 0) {
-                cartPackages.push({
-                    title: "Mensole montessoriane 80 cm libreria (3pz) copreso imballo e ferramenta",
-                    sku: "SCAT3RIPS80",
-                    quantity: toBuy
-                });
-            }
-        }
-
-        const BARR78 = cartItems.find((item) => item.meta?.sku === "BARR78");
-        if (BARR78) {
-
-            const owned = ownedQuantities[BARR78.id] || 0;
-            const toBuy = Math.max(BARR78.quantity - owned, 0);
-
-            let numPackages = Math.ceil(toBuy / 2);
-
-            if (numPackages > 0) {
-                cartPackages.push({
-                    title: "Barra 78 cm libreria (2pz) copreso imballo e ferramenta, con staffa per ripiano 60 cm",
-                    sku: "SCATBARR78TSTAFFA60",
-                    quantity: numPackages
-                });
-            }
-        }
-        const BARR78_80 = cartItems.find((item) => item.meta?.sku === "BARR78-80");
-        if (BARR78_80) {
-            const owned = ownedQuantities[BARR78_80.id] || 0;
-            const toBuy = Math.max(BARR78_80.quantity - owned, 0);
-            let numPackages = Math.ceil(toBuy / 2);
-
-            if (numPackages > 0) {
-                cartPackages.push({
-                    title: "Barra 78 cm libreria (2pz) copreso imballo e ferramenta, con staffa per ripiano 80 cm",
-                    sku: "SCATBARR78T",
-                    quantity: numPackages
-                });
-            }
-        }
-
-
-        console.log('Cart packages after processing:', cartPackages);
-        return cartPackages;
-    }
-
-
-    const orderItems = useMemo(() => {
-        return calculateOrderItems(cartItems);
-
-    }, [cartItems]);
 
 
 
@@ -213,12 +79,8 @@ export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAdd
     };
 
     const totalPrice = useMemo(() => {
-        return visibleItems.reduce((sum, item) => {
-            const owned = ownedQuantities[item.id] || 0;
-            const toBuy = Math.max(item.quantity - owned, 0);
-            return sum + toBuy * (item.meta?.price || 0);
-        }, 0);
-    }, [visibleItems, ownedQuantities]);
+        return calculateRealtimeCartTotal(cartItems, ownedQuantities, sceneColor);
+    }, [cartItems, ownedQuantities, sceneColor]);
 
     const totalItems = useMemo(() => {
         return visibleItems.reduce((sum, item) => {
@@ -228,9 +90,6 @@ export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAdd
     }, [visibleItems, ownedQuantities]);
 
     const handleAddToCart = () => {
-        const orderItems = calculateOrderItems(cartItems);
-
-
         const itemsToAdd = visibleItems
             .map((item) => {
                 const owned = ownedQuantities[item.id] || 0;
@@ -316,7 +175,8 @@ export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAdd
         const baseUrl = "https://nabecreation.com/products/libreria-evolutiva-evergrow";
         const configurationUrl = !error ? baseUrl + "?config=" + data[0].guid : null;
 
-        const orderItems = calculateOrderItems(cartItems);
+        const orderItems = calculateOrderItems(cartItems, ownedQuantities, color);
+        const pdfTotalItems = orderItems.reduce((sum, item) => sum + item.quantity, 0);
 
 
         const addPageIfNeeded = (needed) => {
@@ -421,9 +281,8 @@ export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAdd
         orderItems.forEach((item) => {
             addPageIfNeeded(10);
 
-            const owned = ownedQuantities[item.id] || 0;
-            const toBuy = Math.max(item.quantity - owned, 0);
-            const itemPrice = toBuy * (item.meta?.price || 0);
+            const toBuy = item.quantity;
+            const itemPrice = toBuy * (item.price || 0);
             const sku = color == "white" ? item.sku + "W" : item.sku;
 
             // Nome articolo (troncato se troppo lungo)
@@ -441,7 +300,7 @@ export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAdd
             // doc.text(String(owned), colX.owned, y);
             doc.text(String(toBuy), colX.toBuy, y);
             doc.text(
-                item.meta?.price ? `${itemPrice.toFixed(2)} €` : '—',
+                item.price ? `${itemPrice.toFixed(2)} €` : '—',
                 colX.price,
                 y
             );
@@ -468,7 +327,7 @@ export default function CheckoutModal({ cartItems, rawSceneItems, onClose, onAdd
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(100);
-        doc.text(`${totalItems} ${totalItems === 1 ? 'pezzo' : 'pezzi'}`, margin, y);
+        doc.text(`${pdfTotalItems} ${pdfTotalItems === 1 ? 'prodotto' : 'prodotti'}`, margin, y);
         y += 10;
 
         // --- URL configurazione ---

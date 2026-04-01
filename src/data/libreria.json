@@ -141,7 +141,8 @@
         "items": [
           {
             "modelId": "spalliera-base",
-            "name": "Spalliera base",
+            "name": "Fianchi h 78cm a terra",
+
             "model": "spalliera-base",
             "position": [0, 0, 0],
             "meta": {
@@ -151,7 +152,8 @@
           },
           {
             "modelId": "11",
-            "name": "Spalliera base",
+            "name": "Fianchi h 78cm a terra",
+
             "model": "spalliera-base",
             "position": [0.625, 0, 0],
             "meta": {
@@ -161,7 +163,7 @@
           },
           {
             "modelId": "15",
-            "name": "Connettore 60cm",
+            "name": "Staffa 60cm",
             "model": "connettore60",
             "position": [0.025, 0.312, 0],
             "hideFromCart": true,
@@ -172,7 +174,7 @@
           },
           {
             "modelId": "16",
-            "name": "Connettore 60cm",
+            "name": "Staffa 60cm",
             "model": "connettore60",
             "position": [0.025, 0.648, 0],
             "hideFromCart": true,
@@ -320,7 +322,7 @@
         "items": [
           {
             "modelId": "spalliera-base",
-            "name": "Spalliera base",
+            "name": "Fianchi h 78cm a terra",
             "model": "spalliera-base",
             "position": [0, 0, 0],
             "meta": {
@@ -330,7 +332,7 @@
           },
           {
             "modelId": "11",
-            "name": "Spalliera base",
+            "name": "Fianchi h 78cm a terra",
             "model": "spalliera-base",
             "position": [0.825, 0, 0],
             "meta": {
@@ -340,7 +342,7 @@
           },
           {
             "modelId": "15",
-            "name": "Connettore 80cm",
+            "name": "Staffa 80cm",
             "model": "connettore80",
             "position": [0.025, 0.312, 0],
             "meta": {
@@ -350,7 +352,7 @@
           },
           {
             "modelId": "16",
-            "name": "Connettore 80cm",
+            "name": "Staffa 80cm",
             "model": "connettore80",
             "position": [0.025, 0.648, 0],
             "meta": {
@@ -618,8 +620,7 @@
         "items": [
           {
             "modelId": "modulo-medium",
-            "name": "Kit evolutivo medium",
-            "description": "Utilizzato per ampliare la libreria small",
+            "name": "Fianchi h 95cm ",
             "model": "spalliera-b",
             "position": [0, 0, 0],
             "meta": {
@@ -631,7 +632,7 @@
           },
           {
             "modelId": "2",
-            "name": "spalliera",
+            "name": "Fianchi h 95cm ",
             "model": "spalliera-b",
             "position": [0.625, 0, 0],
             "meta": {
@@ -643,7 +644,7 @@
           },
           {
             "modelId": "2",
-            "name": "Mensola 60",
+            "name": "Staffa 60cm",
             "model": "connettore60",
             "position": [0.025, 0.055, 0],
             "meta": {
@@ -653,7 +654,7 @@
           },
           {
             "modelId": "2",
-            "name": "Mensola 60",
+            "name": "Staffa 60cm",
             "model": "connettore60",
             "position": [0.025, 0.875, 0],
             "meta": {
@@ -905,8 +906,8 @@
         "items": [
           {
             "modelId": "modulo-medium",
-            "name": "Kit evolutivo medium",
-            "description": "Utilizzato per ampliare la libreria small",
+            "name": "Fianchi h 95cm ",
+
             "model": "spalliera-b",
             "position": [0, 0, 0],
             "meta": {
@@ -918,7 +919,7 @@
           },
           {
             "modelId": "2",
-            "name": "spalliera",
+            "name": "Fianchi h 95cm ",
             "model": "spalliera-b",
             "position": [0.825, 0, 0],
             "meta": {
@@ -930,7 +931,7 @@
           },
           {
             "modelId": "2",
-            "name": "Mensola 60",
+            "name": "Staffa 60cm",
             "model": "connettore80",
             "position": [0.025, 0.055, 0],
             "hideFromCart": true,
@@ -941,7 +942,7 @@
           },
           {
             "modelId": "2",
-            "name": "Mensola 60",
+            "name": "Staffa 60cm",
             "model": "connettore80",
             "position": [0.025, 0.875, 0],
             "hideFromCart": true,
@@ -1176,7 +1177,7 @@
       {
         "model": "mensola60",
         "name": "60cm",
-        "title": "Mensola 60cm",
+        "title": "Ripiani 60cm",
         "zoneType": "mensola",
         "meta": {
           "sku": "ELRL60",
@@ -1186,7 +1187,7 @@
       {
         "model": "mensola80",
         "name": "80cm",
-        "title": "Mensola 80cm",
+        "title": "Ripiani 80cm",
         "zoneType": "mensola80",
         "meta": {
           "sku": "ELRL80",
@@ -1253,9 +1254,8 @@
   },
   {
     "modelId": "mensola-montessoriana",
-    "name": "Mensola montessoriana",
-    "title": "Mensola montessoriana",
-    "description": "Mensola montessoriana",
+    "name": "Ripiani Montessori 60cm",
+    "title": "Ripiani Montessori 60cm",
     "model": "mensole-montessoriane",
     "image": "/assets/img/thumbs/mensola-montessoriana.png",
     "position": [0, 0, 0.025],
@@ -1290,9 +1290,8 @@
   },
   {
     "modelId": "mensola-montessoriana80",
-    "name": "Mensola montessoriana",
-    "title": "Mensola montessoriana",
-    "description": "Mensola montessoriana",
+    "name": "Ripiani Montessori 80cm",
+    "title": "Ripiani Montessori 80cm",
     "model": "mensole-montessoriane80",
     "image": "/assets/img/thumbs/mensola-montessoriana.png",
     "position": [0, 0, 0.025],

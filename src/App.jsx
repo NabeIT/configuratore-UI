@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { createClient } from '@supabase/supabase-js';
 import ConfiguratorView from './components/ConfiguratorView';
 import Header from './components/Header';
 import { ItemActions } from './components/ItemActions';
@@ -8,6 +7,7 @@ import LeftSidebar from './components/LeftSidebar';
 import RightSidebar from './components/RightSidebar';
 import StartupModal from './components/StartupModal';
 import catalogItems from './data/catalogItems';
+import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://azrkvmypdhvxhaailnsv.supabase.co';
 const supabaseKey = 'sb_publishable_Tvvx1UT8dNNpu3FK2enaSA_L9lMkfJO';
@@ -84,7 +84,7 @@ function buildCartItems(sceneItems) {
     groupedByModel.set(modelKey, {
       id: modelKey,
       model: item.model || modelKey,
-      title: item.name || item.title || catalogMeta?.title || modelKey,
+      title: item.title || item.name || catalogMeta?.title || modelKey,
       description: item.description || catalogMeta?.description || '',
       image: item.image || catalogMeta?.image || (item.model ? `/assets/img/thumbs/${item.model}.png` : ''),
       quantity: 1,
@@ -100,6 +100,7 @@ function buildCartItems(sceneItems) {
 
 export default function App() {
   const [cartItems, setCartItems] = useState([]);
+  const [sceneColor, setSceneColor] = useState('wood');
   const [quickAddRequest, setQuickAddRequest] = useState(null);
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -142,8 +143,8 @@ export default function App() {
   }, []);
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
-  const iframeSrc = 'http://localhost:5173?embed=true';
-  // const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
+  // const iframeSrc = 'http://localhost:5173?embed=true';
+  const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
 
 
 
@@ -168,9 +169,27 @@ export default function App() {
     return () => document.removeEventListener('dragend', resetOverlay);
   }, []);
 
-  const handleSceneState = useCallback((sceneItems) => {
+  const handleSceneState = useCallback((sceneState) => {
+    const sceneItems = Array.isArray(sceneState)
+      ? sceneState
+      : Array.isArray(sceneState?.items)
+        ? sceneState.items
+        : [];
+    const nextColor = !Array.isArray(sceneState) && typeof sceneState?.color === 'string'
+      ? sceneState.color
+      : null;
+
     setCartItems(buildCartItems(sceneItems));
     setRawSceneItems(sceneItems);
+
+    if (nextColor) {
+      setSceneColor(nextColor);
+    }
+  }, []);
+
+  const handleSceneColor = useCallback((color) => {
+    if (typeof color !== 'string') return;
+    setSceneColor(color);
   }, []);
 
   const handleQuickAdd = useCallback((item) => {
@@ -196,11 +215,12 @@ export default function App() {
           items={catalogItems}
           setSelectedItem={setSelectedItem}
           onSceneState={handleSceneState}
+          onSceneColor={handleSceneColor}
           quickAddRequest={quickAddRequest}
           presetRequest={presetRequest}
         />
 
-        <RightSidebar rawSceneItems={rawSceneItems} cartItems={cartItems} onAddToCart={(data) => {
+        <RightSidebar rawSceneItems={rawSceneItems} sceneColor={sceneColor} cartItems={cartItems} onAddToCart={(data) => {
           window.parent.postMessage({ type: 'add-to-cart', data }, '*');
 
         }} />
