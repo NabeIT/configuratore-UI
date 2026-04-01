@@ -4,7 +4,7 @@ export default function CartItem({ item }) {
             <img
                 src={item.image}
                 alt={item.title}
-                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                className="w-12 h-12 rounded-lg object-cover flex-shrink-0 brightness-100 contrast-100"
                 onError={(e) => {
                     e.currentTarget.src = '/assets/img/thumbs/spalliera-base.png';
                 }}

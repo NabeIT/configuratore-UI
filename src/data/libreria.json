@@ -3,7 +3,7 @@
     "modelId": "cubo-scaffale",
     "name": "Cubo Scaffale 60cm o 80cm",
     "title": "Base modulare",
-    "image": "/assets/img/thumbs/spalliera-base.png",
+    "image": "/assets/img/thumbs/cubo-scaffale.png",
     "description": "Modulo base con zone posizionali. Si aggancia lateralmente e in alto ad altri cubi.",
     "model": "cubo-scaffale",
     "type": "object",
@@ -164,6 +164,7 @@
           {
             "modelId": "15",
             "name": "Staffa 60cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore60",
             "position": [0.025, 0.312, 0],
             "hideFromCart": true,
@@ -175,6 +176,7 @@
           {
             "modelId": "16",
             "name": "Staffa 60cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore60",
             "position": [0.025, 0.648, 0],
             "hideFromCart": true,
@@ -343,6 +345,7 @@
           {
             "modelId": "15",
             "name": "Staffa 80cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore80",
             "position": [0.025, 0.312, 0],
             "meta": {
@@ -353,6 +356,7 @@
           {
             "modelId": "16",
             "name": "Staffa 80cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore80",
             "position": [0.025, 0.648, 0],
             "meta": {
@@ -427,7 +431,7 @@
     "title": "Espansione",
     "description": "Modulo base con zone posizionali. Si aggancia lateralmente e in alto ad altri cubi.",
     "model": "spalliera",
-    "image": "/assets/img/thumbs/spalliera.png",
+    "image": "/assets/img/thumbs/espansione.png",
     "type": "object",
     "position": [0, 0.84, 0],
     "rotation": [0, 0, 0],
@@ -621,6 +625,7 @@
           {
             "modelId": "modulo-medium",
             "name": "Fianchi h 95cm ",
+            "image": "/assets/img/thumbs/spalliera.png",
             "model": "spalliera-b",
             "position": [0, 0, 0],
             "meta": {
@@ -633,6 +638,7 @@
           {
             "modelId": "2",
             "name": "Fianchi h 95cm ",
+            "image": "/assets/img/thumbs/spalliera.png",
             "model": "spalliera-b",
             "position": [0.625, 0, 0],
             "meta": {
@@ -645,6 +651,7 @@
           {
             "modelId": "2",
             "name": "Staffa 60cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore60",
             "position": [0.025, 0.055, 0],
             "meta": {
@@ -655,6 +662,7 @@
           {
             "modelId": "2",
             "name": "Staffa 60cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore60",
             "position": [0.025, 0.875, 0],
             "meta": {
@@ -907,6 +915,7 @@
           {
             "modelId": "modulo-medium",
             "name": "Fianchi h 95cm ",
+            "image": "/assets/img/thumbs/spalliera.png",
 
             "model": "spalliera-b",
             "position": [0, 0, 0],
@@ -920,6 +929,7 @@
           {
             "modelId": "2",
             "name": "Fianchi h 95cm ",
+            "image": "/assets/img/thumbs/spalliera.png",
             "model": "spalliera-b",
             "position": [0.825, 0, 0],
             "meta": {
@@ -932,6 +942,7 @@
           {
             "modelId": "2",
             "name": "Staffa 60cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore80",
             "position": [0.025, 0.055, 0],
             "hideFromCart": true,
@@ -943,6 +954,7 @@
           {
             "modelId": "2",
             "name": "Staffa 60cm",
+            "image": "/assets/img/thumbs/staff.png",
             "model": "connettore80",
             "position": [0.025, 0.875, 0],
             "hideFromCart": true,
@@ -1036,7 +1048,7 @@
     "title": "Espansione Mini",
     "description": "Modulo base con zone posizionali. Si aggancia lateralmente e in alto ad altri cubi.",
     "model": "spalliera-mini",
-    "image": "/assets/img/thumbs/spalliera-mini.png",
+    "image": "/assets/img/thumbs/espansione-mini.png",
     "type": "object",
     "position": [0, 0, 0],
     "rotation": [0, 0, 0],
