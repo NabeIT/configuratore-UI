@@ -5,8 +5,8 @@ type StateContextType = {
     setSelectedItem: (item: any) => void;
     editedItem: any;
     setEditedItem: (item: any) => void;
-    availableDropZones: any[];
-    setAvailableDropZones?: (zones: any[]) => void;
+    availableDropZones: Record<string, any[]>;
+    setAvailableDropZones?: (zones: Record<string, any[]>) => void;
 
 }
 const StateContext = React.createContext<StateContextType>({} as StateContextType);
@@ -14,7 +14,7 @@ const StateContext = React.createContext<StateContextType>({} as StateContextTyp
 const StateProvider = ({ children }: { children: React.ReactNode }) => {
     const [selectedItem, setSelectedItem] = React.useState(null);
     const [editedItem, setEditedItem] = React.useState(null);
-    const [availableDropZones, setAvailableDropZones] = React.useState<any[]>([]);
+    const [availableDropZones, setAvailableDropZones] = React.useState<Record<string, any[]>>({});
 
     const sceneState: StateContextType = {
         selectedItem,

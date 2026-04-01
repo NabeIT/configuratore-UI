@@ -2,20 +2,8 @@ import { useMemo, useState } from 'react';
 
 import { CircleSlash } from 'lucide-react';
 import { Plus } from 'lucide-react';
-import { useActionContext } from './ActionContext';
-import { useEffect } from 'react';
+import { canQuickAddItem } from '../utils/dropZonePlacement';
 import { useStateContext } from './StateContext';
-
-function Tooltip({ text, visible }) {
-    if (!visible) return null;
-
-    return (
-        <div className="absolute z-50 bottom-full left-full top-1/2 -translate-y-1/2 pointer-events-none mb-2 w-56 p-3 bg-gray-800 text-white text-xs rounded-lg shadow-lg">
-            <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-800" />
-            {text}
-        </div>
-    );
-}
 
 export default function CatalogItem({ item, onDragStart, onQuickAdd, mobileMode, onMobileExpand, onMobileCollapse }) {
     return (
@@ -37,8 +25,6 @@ export default function CatalogItem({ item, onDragStart, onQuickAdd, mobileMode,
 
 
 const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
-
     const { editedItem } = useStateContext();
 
     const { availableDropZones } = useStateContext();
@@ -57,19 +43,12 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
 
     }, [editedItem]);
 
-    useEffect(() => {
-        console.log("Available drop zones updated:", availableDropZones);
-    }, [availableDropZones]);
-
-
-
     const canBePlaced = (variant) => {
-        const zoneType = variant ? variant.zoneType : item.zoneType;
-        if (!zoneType) return true;
+        const candidate = variant
+            ? { ...item, ...variant }
+            : item;
 
-        console.log(zoneType, availableDropZones[zoneType])
-
-        return availableDropZones && availableDropZones[zoneType] && availableDropZones[zoneType].length > 0;
+        return canQuickAddItem(candidate, editedItem, availableDropZones);
     }
 
 
@@ -113,13 +92,18 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                     <button
                         type="button"
                         draggable
-                        onDragStart={(e) => onDragStart(e, {
-                            ...item,
-                            variant: 0
-                        })}
+                        onDragStart={(e) => {
+                            if (editedItem && !canBePlaced(item)) return;
+
+                            onDragStart(e, {
+                                ...item,
+                                variant: 0
+                            });
+                        }}
 
                         onClick={(e) => {
                             e.stopPropagation();
+                            if (editedItem && !canBePlaced(item)) return;
                             onQuickAdd?.({
                                 ...item,
                                 variant: 0,
@@ -156,13 +140,18 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                                 <button
                                     type="button"
                                     draggable
-                                    onDragStart={(e) => onDragStart(e, {
-                                        ...item,
-                                        variant: index
-                                    })}
+                                    onDragStart={(e) => {
+                                        if (editedItem && !canBePlaced(variant)) return;
+
+                                        onDragStart(e, {
+                                            ...item,
+                                            variant: index
+                                        });
+                                    }}
 
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        if (editedItem && !canBePlaced(variant)) return;
                                         onQuickAdd?.({
                                             ...item,
                                             variant: index,
@@ -202,7 +191,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
 }
 
 
-const MobileCollapsed = ({ item, onDragStart, onQuickAdd, onExpand }) => {
+const MobileCollapsed = ({ item, onDragStart, onExpand }) => {
     return (
         <div
             onClick={onExpand}
@@ -219,7 +208,7 @@ const MobileCollapsed = ({ item, onDragStart, onQuickAdd, onExpand }) => {
 };
 
 
-const MobileExpanded = ({ item, onDragStart, onQuickAdd, onCollapse }) => {
+const MobileExpanded = ({ item, onDragStart, onQuickAdd }) => {
     const [truncate, setTruncate] = useState(true);
 
     return (

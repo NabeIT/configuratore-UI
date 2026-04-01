@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useActionContext } from './ActionContext';
 import { useStateContext } from './StateContext';
+import { getCascadeZoneTypes, getPlacementOptions, getPreferredTargetZoneKey, resolveZoneType } from '../utils/dropZonePlacement';
 
 const MSG_PREFIX = 'configurator:';
 
@@ -10,12 +11,56 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
     const lastQuickAddIdRef = useRef(null);
     const lastPresetIdRef = useRef(null);
     const iframeReadyRef = useRef(false);
+    const pendingBatchDropRef = useRef(false);
+    const availableZonesRequestSeqRef = useRef(0);
+    const activeAvailableZonesRequestRef = useRef({ requestId: null, editedItemId: null });
+    const previousEditedItemIdRef = useRef(null);
+    const catalogItemsRef = useRef(items);
+    const editedItemRef = useRef(null);
+    const onSceneStateRef = useRef(onSceneState);
+    const onSceneColorRef = useRef(onSceneColor);
+    const setSelectedItemRef = useRef(setSelectedItem);
+    const stateSetSelectedItemRef = useRef(null);
+    const setEditedItemRef = useRef(null);
+    const setAvailableDropZonesRef = useRef(null);
     const [iframeReady, setIframeReady] = useState(false);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
 
     const { action, clearAction } = useActionContext();
 
-    const { setSelectedItem: stateSetSelectedItem, setEditedItem, editedItem, setAvailableDropZones } = useStateContext();
+    const { setSelectedItem: stateSetSelectedItem, setEditedItem, editedItem, availableDropZones, setAvailableDropZones } = useStateContext();
+
+    useEffect(() => {
+        catalogItemsRef.current = items;
+    }, [items]);
+
+    useEffect(() => {
+        editedItemRef.current = editedItem;
+    }, [editedItem]);
+
+    useEffect(() => {
+        onSceneStateRef.current = onSceneState;
+    }, [onSceneState]);
+
+    useEffect(() => {
+        onSceneColorRef.current = onSceneColor;
+    }, [onSceneColor]);
+
+    useEffect(() => {
+        setSelectedItemRef.current = setSelectedItem;
+    }, [setSelectedItem]);
+
+    useEffect(() => {
+        stateSetSelectedItemRef.current = stateSetSelectedItem;
+    }, [stateSetSelectedItem]);
+
+    useEffect(() => {
+        setEditedItemRef.current = setEditedItem;
+    }, [setEditedItem]);
+
+    useEffect(() => {
+        setAvailableDropZonesRef.current = setAvailableDropZones;
+    }, [setAvailableDropZones]);
 
     const postToIframe = useCallback((message) => {
         const iframeWindow = iframeRef.current?.contentWindow;
@@ -37,16 +82,43 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
     }, [postToIframe]);
 
 
-    useEffect(() => {
-        if (postToIframe && editedItem) {
-            const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
-            const dropZonesUnique = [...new Set(dropZones)];
-            postToIframe({
-                type: `${MSG_PREFIX}getAvailableZones`,
-                types: dropZonesUnique,
-            });
+    const requestAvailableZones = useCallback((item) => {
+        const types = getCascadeZoneTypes(item);
+        if (types.length === 0) {
+            activeAvailableZonesRequestRef.current = { requestId: null, editedItemId: item?.id ?? null };
+            return null;
         }
-    }, [editedItem, postToIframe]);
+
+        const requestId = `${item?.id ?? "scene"}:${++availableZonesRequestSeqRef.current}`;
+        activeAvailableZonesRequestRef.current = {
+            requestId,
+            editedItemId: item?.id ?? null,
+        };
+
+        postToIframe({
+            type: `${MSG_PREFIX}getAvailableZones`,
+            types,
+            requestId,
+        });
+        return requestId;
+    }, [postToIframe]);
+
+    useEffect(() => {
+        const previousEditedItemId = previousEditedItemIdRef.current;
+        const nextEditedItemId = editedItem?.id ?? null;
+        previousEditedItemIdRef.current = nextEditedItemId;
+
+        if (!editedItem) {
+            activeAvailableZonesRequestRef.current = { requestId: null, editedItemId: null };
+            setAvailableDropZones?.({});
+            return;
+        }
+
+        if (previousEditedItemId !== nextEditedItemId) {
+            setAvailableDropZones?.({});
+        }
+        requestAvailableZones(editedItem);
+    }, [editedItem, requestAvailableZones, setAvailableDropZones]);
 
 
     useEffect(() => {
@@ -143,22 +215,37 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
         if (!iframe) return;
 
         const handleMessage = (e) => {
-            console.log('Message received from iframe:', e.data);
             if (e.source !== iframe.contentWindow) return;
             const data = e.data;
             if (!data || typeof data.type !== 'string') return;
             if (!data.type.startsWith(MSG_PREFIX)) return;
 
             const payload = data.payload ?? data;
+            const activeEditedItem = editedItemRef.current;
 
             if (data.type === `${MSG_PREFIX}init`) {
-                postToIframe({ type: `${MSG_PREFIX}setAvailableItems`, items });
+                postToIframe({ type: `${MSG_PREFIX}setAvailableItems`, items: catalogItemsRef.current });
                 postToIframe({ type: `${MSG_PREFIX}getSceneState` });
                 return;
             }
 
             if (data.type === `${MSG_PREFIX}availableZones`) {
-                setAvailableDropZones(payload.zones);
+                const responseRequestId =
+                    payload?.requestId
+                    ?? data?.requestId
+                    ?? null;
+                const activeRequest = activeAvailableZonesRequestRef.current;
+
+                if (responseRequestId && activeRequest.requestId && responseRequestId !== activeRequest.requestId) {
+                    return;
+                }
+
+                if (activeRequest.editedItemId && editedItemRef.current?.id && activeRequest.editedItemId !== editedItemRef.current.id) {
+                    return;
+                }
+
+                setAvailableDropZonesRef.current?.(payload.zones);
+                return;
             }
 
             if (data.type === `${MSG_PREFIX}ready`) {
@@ -176,47 +263,65 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
             }
 
             if (data.type === `${MSG_PREFIX}itemAdded` || data.type === `${MSG_PREFIX}itemRemoved`) {
-                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
-
-                if (editedItem) {
-                    const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
-                    const dropZonesUnique = [...new Set(dropZones)];
-                    postToIframe({
-                        type: `${MSG_PREFIX}getAvailableZones`,
-                        types: dropZonesUnique,
-                    });
+                if (data.type === `${MSG_PREFIX}itemAdded`) {
+                    pendingBatchDropRef.current = false;
                 }
+                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                return;
+            }
+
+            if (data.type === `${MSG_PREFIX}itemMoved` || data.type === `${MSG_PREFIX}batchDropComplete`) {
+                pendingBatchDropRef.current = false;
+                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
                 return;
             }
 
             if (data.type === `${MSG_PREFIX}sceneCleared`) {
-                onSceneState?.([]);
+                setAvailableDropZonesRef.current?.({});
+                onSceneStateRef.current?.([]);
                 return;
             }
             if (data.type === `${MSG_PREFIX}itemSelected`) {
-                setSelectedItem(payload.item);
-                stateSetSelectedItem(payload.item);
+                setSelectedItemRef.current?.(payload.item);
+                stateSetSelectedItemRef.current?.(payload.item);
                 return;
             }
             if (data.type === `${MSG_PREFIX}itemDeselected`) {
-                setSelectedItem(null);
-                stateSetSelectedItem(null);
+                setSelectedItemRef.current?.(null);
+                stateSetSelectedItemRef.current?.(null);
 
                 return;
             }
             if (data.type === `${MSG_PREFIX}editItemOn`) {
 
-                setEditedItem(payload.item);
+                setEditedItemRef.current?.(payload.item);
                 return;
             }
             if (data.type === `${MSG_PREFIX}editItemOff`) {
-                setEditedItem(null);
+                activeAvailableZonesRequestRef.current = { requestId: null, editedItemId: null };
+                setEditedItemRef.current?.(null);
+                setAvailableDropZonesRef.current?.({});
                 return;
             }
 
             if (data.type === `${MSG_PREFIX}sceneState`) {
-                console.log('Scene state received from iframe:', payload);
-                onSceneState?.(payload);
+                onSceneStateRef.current?.(payload);
+
+                if (pendingBatchDropRef.current) {
+                    return;
+                }
+
+                if (activeEditedItem?.id && Array.isArray(payload?.items)) {
+                    const nextEditedItem = payload.items.find((item) => item?.id === activeEditedItem.id) ?? null;
+
+                    if (nextEditedItem) {
+                        setEditedItemRef.current?.(nextEditedItem);
+                    } else {
+                        activeAvailableZonesRequestRef.current = { requestId: null, editedItemId: null };
+                        setEditedItemRef.current?.(null);
+                        setAvailableDropZonesRef.current?.({});
+                    }
+                }
                 return;
             }
 
@@ -230,18 +335,53 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
                             : null;
 
                 if (nextColor) {
-                    onSceneColor?.(nextColor);
+                    onSceneColorRef.current?.(nextColor);
                 }
             }
         };
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [editedItem, items, onSceneColor, onSceneState, postToIframe, setAvailableDropZones, setEditedItem, setSelectedItem, stateSetSelectedItem]);
+    }, [postToIframe, requestAvailableZones]);
 
     useEffect(() => {
         if (!quickAddRequest?.item) return;
         if (quickAddRequest.id === lastQuickAddIdRef.current) return;
+
+        const zoneType = resolveZoneType(quickAddRequest.item);
+        const { hasLoadedZoneType, zones } = getPlacementOptions(
+            quickAddRequest.item,
+            editedItem,
+            availableDropZones
+        );
+
+        if (editedItem && zoneType && !hasLoadedZoneType) {
+            requestAvailableZones(editedItem);
+            return;
+        }
+
+        const targetZoneKey = zones[0]?.zoneKey
+            ?? getPreferredTargetZoneKey(
+                quickAddRequest.item,
+                editedItem,
+                availableDropZones
+            );
+
+        if (targetZoneKey) {
+            lastQuickAddIdRef.current = quickAddRequest.id;
+            pendingBatchDropRef.current = true;
+            activeAvailableZonesRequestRef.current = { requestId: null, editedItemId: editedItem?.id ?? null };
+            postToIframe({
+                type: `${MSG_PREFIX}drop`,
+                item: { ...quickAddRequest.item, targetZoneKey },
+            });
+            return;
+        }
+
+        if (editedItem && zoneType) {
+            requestAvailableZones(editedItem);
+            return;
+        }
 
         lastQuickAddIdRef.current = quickAddRequest.id;
 
@@ -253,7 +393,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
             x: rect.width / 2,
             y: rect.height / 2,
         });
-    }, [quickAddRequest, sendDrop]);
+    }, [availableDropZones, editedItem, postToIframe, quickAddRequest, requestAvailableZones, sendDrop]);
 
     // Load preset configuration
     useEffect(() => {
@@ -280,6 +420,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
         //     // }, step.delay + 300); 
         // });
 
+        pendingBatchDropRef.current = true;
         postToIframe({
             type: `${MSG_PREFIX}batchDrop`,
             items: itemsToDrop,

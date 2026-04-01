@@ -17,8 +17,8 @@ export const ItemActions = ({ item }) => {
             <div className="fixed bottom-0 h-16 md:bottom-5 left-0 md:left-100  p-2 rounded flex space-x-4 flex-row items-center w-full z-50 bg-white md:bg-transparent">
                 {/* <span className="text-xs text-gray-600">Hai selezionato:</span> */}
                 <span className="rounded bg-brand text-white p-2 px-4">{item.title || item.name}</span>
-                <div>
-                    <button className="p-3 md:bg-white bg-gray-100 rounded" onClick={() => {
+                <div className="ml-auto md:ml-0">
+                    <button className="p-3 md:bg-red-700 bg-red-700 rounded text-white" onClick={() => {
                         // performAction(actions.REMOVE_ITEM, { id: item.id });
                         setShowConfirm(true);
 
