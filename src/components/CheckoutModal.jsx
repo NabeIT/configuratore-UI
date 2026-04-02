@@ -388,10 +388,9 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
             <div className="relative w-full max-w-2xl mx-4 max-h-[90dvh] bg-gray-50 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="px-5 py-4 border-b border-gray-200 bg-white rounded-t-2xl">
-                    <h2 className="text-sm md:text-lg font-semibold text-gray-700">Indica se possiedi già alcuni elementi per la tua nuova libreria</h2>
+                    <h2 className="text-sm md:text-lg font-semibold text-gray-700">Se possiedi già alcuni di questi elementi indica la quantità.</h2>
                     <p className="text-xs text-gray-400 mt-0.5">
-                        Se hai un letto zero+, puoi usare le sponde da 95 cm come Fianchi h 95 cm della
-                        libreria
+                        Se hai già un letto zero+, puoi riutilizzare le sponde laterali (95cm) come fianchi h 95cm della libreria.
                     </p>
                 </div>
 

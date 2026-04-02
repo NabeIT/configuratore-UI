@@ -71,6 +71,9 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
     const availableColors = useMemo(() => {
         return ["wood", "white"]
     }, []);
+    const availableColorsLabels = useMemo(() => {
+        return ["Legno naturale", "Bio paint bianco 9010"]
+    }, []);
 
     const changeColor = (color) => {
         performAction(actions.CHANGE_COLOR, { color });
@@ -82,25 +85,29 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
 
 
                 <aside className="
-        w-full border-gray-200 flex-row flex fixed top-14 left-0 right-0 z-50 
+        w-full border-gray-200  flex fixed top-14 left-0 right-0 z-50 
         h-auto
         bottom-auto
-        md:flex-col
-    bg-gray-50  md:w-82
+                bg-white
+        flex-col
+    md:bg-gray-50  md:w-90
         md:top-20 md:left-6 md:right-auto 
         md:rounded-2xl
         md:shadow-2xl
         ">
                     {availableColors.length > 0 && (
-                        <div className="px-4 py-3 border-b border-gray-200  md:block">
-                            <h2 className="text-sm font-semibold text-gray-700">Colori disponibili</h2>
-                            <p className="text-xs text-gray-400 mt-0.5">Scegli il colore per i tuoi moduli</p>
+                        <div className="px-4 md:py-3 md:border-b border-gray-200  md:block">
+                            <h2 className="text-xs text-center md:text-left md:text-sm font-semibold text-gray-700">Colori disponibili</h2>
+                            <p className="hidden md:block text-xs text-gray-400 mt-0.5">Scegli il colore per i tuoi moduli</p>
                         </div>
                     )}
                     {availableColors.length > 0 && (
-                        <div className="flex flex-row items-center gap-3 px-4 py-3 ml-auto md:ml-0">
+                        <div className="flex flex-row items-center gap-3 px-4 py-1  md:py-3 justify-center md:ml-0">
                             {availableColors.map(color => (
-                                <div onClick={() => changeColor(color)} key={color} className={`w-8 h-8 rounded-full border ${color === "wood" ? "bg-gradient-to-br from-yellow-800 to-yellow-900" : "bg-gray-200"} cursor-pointer border-gray-400`} />
+                                <div onClick={() => changeColor(color)} className='flex flex-row items-center gap-1 border-1 border-brand rounded-lg cursor-pointer p-1 pr-2'>
+                                    <div key={color} className={`w-6 h-6 rounded-full border ${color === "wood" ? "bg-[url('https://cdn.shopify.com/s/files/1/0659/2708/6299/files/legno.webp?v=1731412759')]" : "bg-gray-200"} cursor-pointer border-gray-400`} />
+                                    <span className='text-xs font-semibold'>{availableColorsLabels[availableColors.indexOf(color)]}</span>
+                                </div>
                             ))}
                         </div>
                     )}
