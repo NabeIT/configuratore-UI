@@ -105,7 +105,7 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                         <div className="flex flex-row items-center gap-3 px-4 py-1  md:py-3 justify-center md:ml-0">
                             {availableColors.map(color => (
                                 <div onClick={() => changeColor(color)} className='flex flex-row items-center gap-1 border-1 border-brand rounded-lg cursor-pointer p-1 pr-2'>
-                                    <div key={color} className={`w-6 h-6 rounded-full border ${color === "wood" ? "bg-[url('https://cdn.shopify.com/s/files/1/0659/2708/6299/files/legno.webp?v=1731412759')]" : "bg-gray-200"} cursor-pointer border-gray-400`} />
+                                    <div key={color} className={`w-6 h-6 rounded-full border ${color === "wood" ? "bg-[url('https://cdn.shopify.com/s/files/1/0659/2708/6299/files/legno.webp?v=1731412759')]" : "bg-gray-50"} cursor-pointer border-gray-400`} />
                                     <span className='text-xs font-semibold'>{availableColorsLabels[availableColors.indexOf(color)]}</span>
                                 </div>
                             ))}
