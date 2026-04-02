@@ -143,8 +143,8 @@ export default function App() {
   }, []);
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
-  // const iframeSrc = 'http://localhost:5173?embed=true';
-  const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
+  const iframeSrc = 'http://localhost:5173?embed=true';
+  // const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
 
 
 
@@ -205,7 +205,7 @@ export default function App() {
 
   console.log('Selected item:', selectedItem);
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col bg-white select-none">
       <Header onClose={handleClose} />
       <div className="flex flex-1 overflow-hidden flex-col-reverse md:flex-row">
         <LeftSidebar items={catalogItems} onDragStart={handleDragStart} onQuickAdd={handleQuickAdd} catalogExpanded={catalogExpanded} setCatalogExpanded={setCatalogExpanded} />

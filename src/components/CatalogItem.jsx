@@ -211,6 +211,33 @@ const MobileCollapsed = ({ item, onDragStart, onExpand }) => {
 const MobileExpanded = ({ item, onDragStart, onQuickAdd }) => {
     const [truncate, setTruncate] = useState(true);
 
+
+    const { editedItem } = useStateContext();
+
+    const { availableDropZones } = useStateContext();
+
+
+    const modeEdit = editedItem && editedItem?.modelId === item.modelId;
+
+
+    const dropZonesUnique = useMemo(() => {
+        if (editedItem?.type === "object") {
+            const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
+            return [...new Set(dropZones)];
+            // console.log("Drop zones unique for edited item:", dropZonesUnique);
+        }
+        return [];
+
+    }, [editedItem]);
+
+    const canBePlaced = (variant) => {
+        const candidate = variant
+            ? { ...item, ...variant }
+            : item;
+
+        return canQuickAddItem(candidate, editedItem, availableDropZones);
+    }
+
     return (
         <div
             data-carousel-card
@@ -232,8 +259,8 @@ const MobileExpanded = ({ item, onDragStart, onQuickAdd }) => {
                     <div className='ml-auto'>
 
                         {item.variants && item.variantLocked ? (<>
-                            <h3 className="text-xs font-medium text-gray-800 truncate mr-auto flex-1 flex">Misura: </h3>
-                            <div className="mt-1 flex items-center flex-row gap-1">
+                            <h3 className="text-xs font-medium text-gray-800 truncate mr-auto flex-1 flex">Scegli la misura: </h3>
+                            <div className="mt-1 flex items-center flex-row gap-1 pt-1">
                                 {item.variants.map((variant, index) => (
                                     <button
                                         key={index}
@@ -250,16 +277,29 @@ const MobileExpanded = ({ item, onDragStart, onQuickAdd }) => {
                                                 variant: index,
                                             });
                                         }}
-                                        className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs "
+                                        // className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs "
+
+                                        className={`cursor-grab active:cursor-grabbing p-1.5 flex justify-center pl-2 rounded-lg gap-2 font-bold border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs  ml-1 items-center
+                                        
+                                        ${!editedItem || dropZonesUnique.includes(variant.zoneType) ? '' : 'pointer-events-none opacity-30'}
+                                        
+                                        `}
+
                                         aria-label={`Aggiungi variante ${variant.title} di ${item.title}`}
                                     >
-                                        {variant.name}
+
+                                        <span>{variant.name}</span>
+
+                                        {canBePlaced(variant) || item.type == "object" ? (
+                                            <div className='bg-brand p-1 rounded-full ml-auto'>
+                                                <Plus size={12} strokeWidth={4} color='#fff' />  </div>
+                                        ) : <CircleSlash size={20} strokeWidth={2} color='#f00' />}
                                     </button>
                                 ))}
                             </div>
                         </>
                         ) : (
-                            <div className="mt-1 flex items-center flex-row gap-1">
+                            <div className="mt-1 flex items-center flex-row gap-1 pt-0.5">
 
                                 <button
 
@@ -274,10 +314,23 @@ const MobileExpanded = ({ item, onDragStart, onQuickAdd }) => {
                                             ...item,
                                         });
                                     }}
-                                    className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs "
+                                    // className="cursor-grab active:cursor-grabbing p-2 flex items-center justify-center rounded-xl border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs "
+
+                                    className={`cursor-grab active:cursor-grabbing p-1.5 flex justify-center pl-2 rounded-full gap-2 font-bold border border-gray-300 text-gray-400 hover:text-gray-600 hover:border-gray-400 transition-colors text-xs  ml-1 items-center
+                                        
+                                        ${!editedItem || dropZonesUnique.includes(item.zoneType) ? '' : 'pointer-events-none opacity-30'}
+                                        
+                                        w-26
+                                        `}
 
                                 >
                                     Aggiungi
+
+                                    {canBePlaced(item) || item.type == "object" ? (
+                                        <div className='bg-brand p-1 rounded-full ml-auto'>
+                                            <Plus size={12} strokeWidth={4} color='#fff' />  </div>
+                                    ) : <CircleSlash size={20} strokeWidth={2} color='#f00' />}
+
                                 </button>
 
                             </div>

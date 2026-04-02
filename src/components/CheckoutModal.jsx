@@ -388,9 +388,10 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
             <div className="relative w-full max-w-2xl mx-4 max-h-[90dvh] bg-gray-50 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
                 {/* Header */}
                 <div className="px-5 py-4 border-b border-gray-200 bg-white rounded-t-2xl">
-                    <h2 className="text-lg font-semibold text-gray-700">Riepilogo configurazione</h2>
+                    <h2 className="text-sm md:text-lg font-semibold text-gray-700">Indica se possiedi già alcuni elementi per la tua nuova libreria</h2>
                     <p className="text-xs text-gray-400 mt-0.5">
-                        Indica quanti di questi elementi possiedi gi&agrave;
+                        Se hai un letto zero+, puoi usare le sponde da 95 cm come Fianchi h 95 cm della
+                        libreria
                     </p>
                 </div>
 
@@ -517,7 +518,7 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
                     <div className="flex gap-3">
                         <button
                             onClick={onClose}
-                            className="cursor-pointer px-4 py-3 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            className="cursor-pointer px-4 py-2 md:py-1.5 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-sm font-medium flex items-center justify-center gap-2"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             {/* Continua a configurare */}
@@ -525,23 +526,27 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
                         <button
                             onClick={saveToPdf}
                             disabled={totalItems === 0}
-                            className="cursor-pointer md:flex-1 px-4 py-3 bg-white border border-brand hover:bg-teal-600 hover:text-white disabled:bg-gray-400 text-brand rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            className="cursor-pointer md:flex-1 px-4 py-2 md:py-1.5 bg-white border border-brand hover:bg-teal-600 hover:text-white disabled:bg-gray-400 text-brand rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
                         >
                             <Save className="w-4 h-4" />
-                            <span className='hidden md:inline'>
+                            <span className='hidden md:inline text-xs'>
                                 Salva configurazione
                             </span>
                         </button>
                         <button
                             onClick={handleAddToCart}
                             disabled={totalItems === 0}
-                            className="cursor-pointer flex-1 px-4 py-3 bg-brand hover:bg-teal-600 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            className="cursor-pointer flex-1 px-4 py-2 md:py-1.5 bg-brand hover:bg-teal-600 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2"
                         >
 
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="w-8 h-8" viewBox="0 0 40 40"><path fill="currentColor" fill-rule="evenodd" d="M15.75 11.8h-3.16l-.77 11.6a5 5 0 0 0 4.99 5.34h7.38a5 5 0 0 0 4.99-5.33L28.4 11.8zm0 1h-2.22l-.71 10.67a4 4 0 0 0 3.99 4.27h7.38a4 4 0 0 0 4-4.27l-.72-10.67h-2.22v.63a4.75 4.75 0 1 1-9.5 0zm8.5 0h-7.5v.63a3.75 3.75 0 1 0 7.5 0z"></path></svg>
                             {/* <ShoppingCart className="w-4 h-4" /> */}
-
-                            Aggiungi al carrello
+                            <div className='hidden md:flex flex-col items-start text-left  text-xs font-bold'>
+                                Continua e vai al carrello
+                            </div>
+                            <div className='md:hidden flex-col items-start text-left  text-xs font-bold'>
+                                Continua <br />e vai al carrello
+                            </div>
                         </button>
                     </div>
                 </div>
