@@ -759,10 +759,22 @@
             "acceptTypes": ["expansion-80"]
           },
           {
+            "direction": "expansion-right-expansion60",
+            "offset": [0.825, 0, 0.01],
+            "scale": [0.6, 0, 0.001],
+            "acceptTypes": ["expansion"]
+          },
+          {
             "direction": "expansion-left-expansion",
             "offset": [-0.825, 0, 0.01],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion-80"]
+          },
+          {
+            "direction": "expansion-left-expansion60",
+            "offset": [-0.625, 0, 0.01],
+            "scale": [0.6, 0, 0.001],
+            "acceptTypes": ["expansion"]
           },
           {
             "direction": "expansion-top-expansion",
@@ -1138,7 +1150,7 @@
     "items": [
       {
         "modelId": "spalliera-mini",
-        "name": "Fianco h 36 cm",
+        "name": "Fianco h 36cm",
         "image": "/assets/img/thumbs/spalliera-mini.png",
 
         "model": "spalliera-mini",
@@ -1150,7 +1162,7 @@
       },
       {
         "modelId": "spalliera-mini",
-        "name": "Fianco h 36 cm",
+        "name": "Fianco h 36cm",
         "image": "/assets/img/thumbs/spalliera-mini.png",
         "model": "spalliera-mini",
         "position": [0.825, 0, 0],

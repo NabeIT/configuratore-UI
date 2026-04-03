@@ -143,7 +143,7 @@ export default function App() {
   }, []);
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
-  // const iframeSrc = 'http://localhost:5173?embed=true';
+  //const iframeSrc = 'http://localhost:5173?embed=true';
   const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
 
 
