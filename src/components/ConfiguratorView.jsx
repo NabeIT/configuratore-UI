@@ -3,10 +3,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useActionContext } from './ActionContext';
 import { useStateContext } from './StateContext';
 import { getCascadeZoneTypes, getPlacementOptions, getPreferredTargetZoneKey, resolveZoneType } from '../utils/dropZonePlacement';
+import { EyeOff, ScanEye } from 'lucide-react';
 
 const MSG_PREFIX = 'configurator:';
 
-export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSceneColor, quickAddRequest, setSelectedItem, presetRequest }) {
+export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSceneColor, quickAddRequest, setSelectedItem, presetRequest, isViewMode = false, onViewModeChange }) {
     const iframeRef = useRef(null);
     const lastQuickAddIdRef = useRef(null);
     const lastPresetIdRef = useRef(null);
@@ -17,6 +18,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
     const previousEditedItemIdRef = useRef(null);
     const catalogItemsRef = useRef(items);
     const editedItemRef = useRef(null);
+    const isViewModeRef = useRef(isViewMode);
     const onSceneStateRef = useRef(onSceneState);
     const onSceneColorRef = useRef(onSceneColor);
     const setSelectedItemRef = useRef(setSelectedItem);
@@ -37,6 +39,10 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
     useEffect(() => {
         editedItemRef.current = editedItem;
     }, [editedItem]);
+
+    useEffect(() => {
+        isViewModeRef.current = isViewMode;
+    }, [isViewMode]);
 
     useEffect(() => {
         onSceneStateRef.current = onSceneState;
@@ -67,6 +73,56 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
         if (!iframeWindow) return;
         iframeWindow.postMessage(message, '*');
     }, []);
+
+    const sendOrbitCommand = useCallback((payload) => {
+        postToIframe({
+            type: `${MSG_PREFIX}orbitCamera`,
+            payload,
+        });
+    }, [postToIframe]);
+
+    const enterViewMode = useCallback(() => {
+        onViewModeChange?.(true);
+        sendOrbitCommand({ phase: 'start', restore: true });
+    }, [onViewModeChange, sendOrbitCommand]);
+
+    const exitViewMode = useCallback(() => {
+        onViewModeChange?.(false);
+        sendOrbitCommand({ phase: 'end', restore: true });
+    }, [onViewModeChange, sendOrbitCommand]);
+
+    const toggleViewMode = useCallback((e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (isViewMode) {
+            exitViewMode();
+            return;
+        }
+
+        enterViewMode();
+    }, [enterViewMode, exitViewMode, isViewMode]);
+
+    useEffect(() => {
+        return () => {
+            if (isViewModeRef.current) {
+                sendOrbitCommand({ phase: 'cancel', restore: true });
+            }
+        };
+    }, [sendOrbitCommand]);
+
+    useEffect(() => {
+        if (!isViewMode) return;
+
+        const handleKeyDown = (e) => {
+            if (e.key !== 'Escape') return;
+            e.preventDefault();
+            exitViewMode();
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [exitViewMode, isViewMode]);
 
     const sendDrop = useCallback((item, position) => {
         if (!item) return;
@@ -262,6 +318,11 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
                 return;
             }
 
+            if (data.type === `${MSG_PREFIX}viewModeExit`) {
+                onViewModeChange?.(false);
+                return;
+            }
+
             if (data.type === `${MSG_PREFIX}itemAdded` || data.type === `${MSG_PREFIX}itemRemoved`) {
                 if (data.type === `${MSG_PREFIX}itemAdded`) {
                     pendingBatchDropRef.current = false;
@@ -342,7 +403,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [postToIframe, requestAvailableZones]);
+    }, [onViewModeChange, postToIframe, requestAvailableZones]);
 
     useEffect(() => {
         if (!quickAddRequest?.item) return;
@@ -430,7 +491,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
 
 
     return (
-        <main className="flex-1 bg-gray-100 flex flex-col relative">
+        <main className={`flex-1 bg-gray-100 flex flex-col relative ${isViewMode ? 'fixed inset-0 z-[60]' : ''}`}>
             {iframeSrc ? (
                 <>
                     <iframe
@@ -451,6 +512,20 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
                         onDrop={handleDrop}
                         style={{ pointerEvents: 'none' }}
                     />
+                    <button
+                        type="button"
+                        aria-label={isViewMode ? 'Esci dalla modalità visualizzazione' : 'Entra in modalità visualizzazione'}
+                        title={isViewMode ? 'Esci dalla modalità visualizzazione' : 'Modalità visualizzazione'}
+                        className={`absolute right-4 top-4 z-[80] flex h-12 w-12 items-center justify-center rounded-full border shadow-2xl backdrop-blur transition-colors ${isViewMode
+                            ? 'border-brand bg-brand text-white'
+                            : 'border-white/80 bg-white/85 text-gray-700 hover:border-brand hover:text-brand'
+                            }`}
+                        style={{ touchAction: 'none' }}
+                        onClick={toggleViewMode}
+                        onContextMenu={(e) => e.preventDefault()}
+                    >
+                        {isViewMode ? <EyeOff size={22} strokeWidth={1.8} /> : <ScanEye size={22} strokeWidth={1.8} />}
+                    </button>
                 </>
             ) : (
                 <div className="flex-1 flex items-center justify-center">

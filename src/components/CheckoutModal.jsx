@@ -185,6 +185,7 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
         const baseUrl = "https://nabecreation.com/products/libreria-evolutiva-evergrow";
         const configurationUrl = !error ? baseUrl + "?config=" + data[0].guid : null;
 
+
         const orderItems = calculateOrderItems(cartItems, ownedQuantities, color);
         const pdfTotalItems = orderItems.reduce((sum, item) => sum + item.quantity, 0);
 
