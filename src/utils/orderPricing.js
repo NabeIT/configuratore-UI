@@ -6,7 +6,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 122,
-      white: 207, // TODO: Giulione
+      white: 172,
     },
   },
   SCAT2BAR95: {
@@ -16,7 +16,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 148,
-      white: 184,
+      white: 222,
     },
   },
   SCAT2BAR95STAFFA60: {
@@ -46,7 +46,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 97,
-      white: 169,
+      white: 177,
     },
   },
   SCAT2RIP80AP: {
@@ -56,7 +56,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 113,
-      white: 218, // TODO: Giulione
+      white: 189,
     },
   },
   SCAT3BAR95: {
@@ -66,7 +66,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 223,
-      white: 405,
+      white: 343,
     },
   },
   SCAT3BAR95STAFFA60: {
@@ -96,7 +96,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 123,
-      white: 252,
+      white: 263,
     },
   },
   SCAT3RIPS80: {
@@ -106,7 +106,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 166,
-      white: 307,
+      white: 298,
     },
   },
   SCAT3RIPS60: {
@@ -126,7 +126,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 133,
-      white: 195,
+      white: 200,
     },
   },
   SCATBARR78TSTAFFA60: {
@@ -146,7 +146,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 133,
-      white: 160,
+      white: 200,
     },
   },
   EL14R80: {
@@ -156,7 +156,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 29,
-      white: 104,
+      white: 69,
     },
   },
 };
@@ -454,27 +454,44 @@ const pushPackage = (packages, sku, quantity, fallbackTitle, color) => {
   });
 };
 
-const getTwoFirstPackageQuantities = (toBuy) => {
+const getMinimalBoxPackageQuantities = (toBuy) => {
   const quantity = Math.max(toBuy, 0);
-  let sku2Quantity = Math.floor(quantity / 2);
-  const sku3Quantity = quantity % 2 > 0 ? 1 : 0;
+  let best = null;
 
-  if (sku3Quantity > 0) {
-    sku2Quantity -= 1;
+  for (
+    let sku2Quantity = 0;
+    sku2Quantity <= Math.ceil(quantity / 2);
+    sku2Quantity += 1
+  ) {
+    for (
+      let sku3Quantity = 0;
+      sku3Quantity <= Math.ceil(quantity / 3);
+      sku3Quantity += 1
+    ) {
+      const packedQuantity = sku2Quantity * 2 + sku3Quantity * 3;
+      if (packedQuantity < quantity) continue;
+
+      const boxCount = sku2Quantity + sku3Quantity;
+      const extraQuantity = packedQuantity - quantity;
+
+      if (
+        !best ||
+        boxCount < best.boxCount ||
+        (boxCount === best.boxCount && extraQuantity < best.extraQuantity)
+      ) {
+        best = {
+          sku2Quantity,
+          sku3Quantity,
+          boxCount,
+          extraQuantity,
+        };
+      }
+    }
   }
 
   return {
-    sku2Quantity: Math.max(sku2Quantity, 0),
-    sku3Quantity,
-  };
-};
-
-const getThreeFirstPackageQuantities = (toBuy) => {
-  const quantity = Math.max(toBuy, 0);
-
-  return {
-    sku2Quantity: quantity % 3 > 0 ? 1 : 0,
-    sku3Quantity: Math.floor(quantity / 3),
+    sku2Quantity: best?.sku2Quantity ?? 0,
+    sku3Quantity: best?.sku3Quantity ?? 0,
   };
 };
 
@@ -490,10 +507,7 @@ const pushTwoThreePackages = (
     strategy = "twoFirst",
   },
 ) => {
-  const quantities =
-    strategy === "threeFirst"
-      ? getThreeFirstPackageQuantities(toBuy)
-      : getTwoFirstPackageQuantities(toBuy);
+  const quantities = getMinimalBoxPackageQuantities(toBuy);
   const pushOrder =
     strategy === "threeFirst"
       ? [
