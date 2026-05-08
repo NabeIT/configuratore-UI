@@ -6,7 +6,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 122,
-      white: 145, // TODO: Giulione
+      white: 207, // TODO: Giulione
     },
   },
   SCAT2BAR95: {
@@ -15,8 +15,8 @@ const ORDER_SKU_CATALOG = {
       white: "2x Fianchi h 95cm (per ripiani 80cm) bio paint",
     },
     prices: {
-      wood: 159,
-      white: 213,
+      wood: 148,
+      white: 184,
     },
   },
   SCAT2BAR95STAFFA60: {
@@ -25,8 +25,8 @@ const ORDER_SKU_CATALOG = {
       white: "2x Fianchi h 95cm (per ripiani 60cm) bio paint",
     },
     prices: {
-      wood: 159,
-      white: 213,
+      wood: 147,
+      white: 212,
     },
   },
   SCAT2RIP60: {
@@ -35,8 +35,8 @@ const ORDER_SKU_CATALOG = {
       white: "2x Ripiani 60cm bio paint",
     },
     prices: {
-      wood: 90,
-      white: 169,
+      wood: 78,
+      white: 156,
     },
   },
   SCAT2RIP80: {
@@ -45,7 +45,7 @@ const ORDER_SKU_CATALOG = {
       white: "2x Ripiani 80cm bio paint",
     },
     prices: {
-      wood: 90,
+      wood: 97,
       white: 169,
     },
   },
@@ -56,7 +56,7 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 113,
-      white: 155, // TODO: Giulione
+      white: 218, // TODO: Giulione
     },
   },
   SCAT3BAR95: {
@@ -65,8 +65,8 @@ const ORDER_SKU_CATALOG = {
       white: "3x Fianchi h 95cm (per ripiani 80cm) bio paint",
     },
     prices: {
-      wood: 227,
-      white: 393,
+      wood: 223,
+      white: 405,
     },
   },
   SCAT3BAR95STAFFA60: {
@@ -75,8 +75,8 @@ const ORDER_SKU_CATALOG = {
       white: "3x Fianchi h 95cm (per ripiani 60cm) bio paint",
     },
     prices: {
-      wood: 227,
-      white: 393,
+      wood: 216,
+      white: 322,
     },
   },
   SCAT3RIP60: {
@@ -85,8 +85,8 @@ const ORDER_SKU_CATALOG = {
       white: "3x Ripiani 60cm bio paint",
     },
     prices: {
-      wood: 133,
-      white: 222,
+      wood: 113,
+      white: 230,
     },
   },
   SCAT3RIP80: {
@@ -95,8 +95,8 @@ const ORDER_SKU_CATALOG = {
       white: "3x Ripiani 80cm bio paint",
     },
     prices: {
-      wood: 133,
-      white: 222,
+      wood: 123,
+      white: 252,
     },
   },
   SCAT3RIPS80: {
@@ -105,8 +105,8 @@ const ORDER_SKU_CATALOG = {
       white: "3x Ripiani Montessori 80cm bio paint",
     },
     prices: {
-      wood: 182,
-      white: 303,
+      wood: 166,
+      white: 307,
     },
   },
   SCAT3RIPS60: {
@@ -115,8 +115,8 @@ const ORDER_SKU_CATALOG = {
       white: "3x Ripiani Montessori 60cm bio paint",
     },
     prices: {
-      wood: 182,
-      white: 303,
+      wood: 200,
+      white: 317,
     },
   },
   SCATBARR78T: {
@@ -125,7 +125,7 @@ const ORDER_SKU_CATALOG = {
       white: "2x Fianchi h 78cm a terra (per ripiani 80cm) bio paint",
     },
     prices: {
-      wood: 117,
+      wood: 133,
       white: 195,
     },
   },
@@ -135,8 +135,8 @@ const ORDER_SKU_CATALOG = {
       white: "2x Fianchi h 78cm a terra (per ripiani 60cm) bio paint",
     },
     prices: {
-      wood: 117,
-      white: 195,
+      wood: 132,
+      white: 194,
     },
   },
   SCATSCR80: {
@@ -145,8 +145,8 @@ const ORDER_SKU_CATALOG = {
       white: "Scrivania bio paint",
     },
     prices: {
-      wood: 189,
-      white: 269,
+      wood: 133,
+      white: 160,
     },
   },
   EL14R80: {
@@ -156,14 +156,24 @@ const ORDER_SKU_CATALOG = {
     },
     prices: {
       wood: 29,
-      white: 29,
+      white: 104,
     },
   },
 };
 
-// TODO: Giulione
-// Aggiungere le variantid
 const ORDER_SKU_VARIANTS_BY_COLOR = {
+  SCAT2BAR36: {
+    wood: {
+      sku: "SCAT2BAR36",
+      handle: "kit-2-barr36-libreria-con-2-staffe-80cm",
+      variantId: "57246199349592",
+    },
+    white: {
+      sku: "SCAT2BAR36W",
+      handle: "kit-2-barr36-libreria-con-2-staffe-80cm-bio-paint",
+      variantId: "57252668080472",
+    },
+  },
   SCAT2BAR95: {
     wood: {
       sku: "SCAT2BAR95",
@@ -211,6 +221,18 @@ const ORDER_SKU_VARIANTS_BY_COLOR = {
       sku: "SCAT2RIP80W",
       handle: "scat2rip80w",
       variantId: "57008245211480",
+    },
+  },
+  SCAT2RIP80AP: {
+    wood: {
+      sku: "SCAT2RIP80AP",
+      handle: "scat2rip80ap",
+      variantId: "57246229758296",
+    },
+    white: {
+      sku: "SCAT2RIP80APW",
+      handle: "2-ripiani-80-cm-bio-paint",
+      variantId: "57252669915480",
     },
   },
   SCAT3BAR95: {
@@ -319,6 +341,18 @@ const ORDER_SKU_VARIANTS_BY_COLOR = {
       sku: "SCATSCR80W",
       handle: "scatscr80w",
       variantId: "57008246096216",
+    },
+  },
+  EL14R80: {
+    wood: {
+      sku: "EL14R80",
+      handle: "mensola-libreria-14-cm-profondita-80cm",
+      variantId: "57204263682392",
+    },
+    white: {
+      sku: "EL14R80W",
+      handle: "mensola-libreria-14-cm-profondita-80cm-bio-paint",
+      variantId: "57252662870360",
     },
   },
 };

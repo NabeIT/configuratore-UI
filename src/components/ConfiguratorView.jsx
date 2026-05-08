@@ -516,7 +516,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
                         type="button"
                         aria-label={isViewMode ? 'Esci dalla modalità visualizzazione' : 'Entra in modalità visualizzazione'}
                         title={isViewMode ? 'Esci dalla modalità visualizzazione' : 'Modalità visualizzazione'}
-                        className={`absolute right-4 top-4 z-[80] flex h-12 w-12 items-center justify-center rounded-full border shadow-2xl backdrop-blur transition-colors ${isViewMode
+                        className={`absolute right-4 ${isViewMode ? 'top-4' : 'top-16 md:top-4'} z-[80] flex h-12 w-12 items-center justify-center rounded-full border shadow-2xl backdrop-blur transition-colors ${isViewMode
                             ? 'border-brand bg-brand text-white'
                             : 'border-white/80 bg-white/85 text-gray-700 hover:border-brand hover:text-brand'
                             }`}
