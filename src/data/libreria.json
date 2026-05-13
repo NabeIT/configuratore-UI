@@ -480,6 +480,12 @@
             "acceptTypes": ["expansion"]
           },
           {
+            "direction": "expansion-top-expansion-mini",
+            "offset": [0, 1.01, 0.01],
+            "scale": [0.825, 0, 0.001],
+            "acceptTypes": ["expansion-mini"]
+          },
+          {
             "direction": "expansion-right-expansion-mini-1",
             "offset": [0.625, 0, 0.01],
             "scale": [0.825, 0.36, 0.001],
@@ -783,6 +789,12 @@
             "acceptTypes": ["expansion-80"]
           },
           {
+            "direction": "expansion-top-expansion-mini",
+            "offset": [0, 1.01, 0.01],
+            "scale": [0, 0, 0.001],
+            "acceptTypes": ["expansion-mini"]
+          },
+          {
             "direction": "expansion-right-expansion-mini-1",
             "offset": [0.825, 0, 0.01],
             "scale": [0, 0.36, 0.001],
@@ -1079,32 +1091,7 @@
       "lockCascadeChildren": true,
       "cameraPadding": 0.25
     },
-    "behaviors": [
-      {
-        "type": "addMeta",
-        "rules": {
-          "targets": ["spalliera", "spalliera-b"],
-          "position": [0, 0, 0],
-          "offset": [-0.01, 0, 0],
-          "index": 0,
-          "key": "visible",
-          "onSuccess": false,
-          "onFail": true
-        }
-      },
-      {
-        "type": "addMeta",
-        "rules": {
-          "targets": ["spalliera", "spalliera-b"],
-          "position": [0, 0, 0],
-          "offset": [-0.01, 0, 0],
-          "index": 0,
-          "key": "inCart",
-          "onSuccess": false,
-          "onFail": true
-        }
-      }
-    ],
+    "behaviors": [],
     "dropZones": [
       {
         "direction": "appoggio-mensola-5",

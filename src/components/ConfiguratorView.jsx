@@ -159,6 +159,16 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
         return requestId;
     }, [postToIframe]);
 
+    const requestSceneStateRefresh = useCallback(() => {
+        postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+        window.setTimeout(() => {
+            postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+        }, 120);
+        window.setTimeout(() => {
+            postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+        }, 350);
+    }, [postToIframe]);
+
     useEffect(() => {
         const previousEditedItemId = previousEditedItemIdRef.current;
         const nextEditedItemId = editedItem?.id ?? null;
@@ -281,7 +291,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
 
             if (data.type === `${MSG_PREFIX}init`) {
                 postToIframe({ type: `${MSG_PREFIX}setAvailableItems`, items: catalogItemsRef.current });
-                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                requestSceneStateRefresh();
                 return;
             }
 
@@ -307,7 +317,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
             if (data.type === `${MSG_PREFIX}ready`) {
                 iframeReadyRef.current = true;
                 setIframeReady(true);
-                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                requestSceneStateRefresh();
 
                 setTimeout(() => {
                     postToIframe({
@@ -327,13 +337,19 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
                 if (data.type === `${MSG_PREFIX}itemAdded`) {
                     pendingBatchDropRef.current = false;
                 }
-                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                requestSceneStateRefresh();
+                if (editedItemRef.current) {
+                    requestAvailableZones(editedItemRef.current);
+                }
                 return;
             }
 
             if (data.type === `${MSG_PREFIX}itemMoved` || data.type === `${MSG_PREFIX}batchDropComplete`) {
                 pendingBatchDropRef.current = false;
-                postToIframe({ type: `${MSG_PREFIX}getSceneState` });
+                requestSceneStateRefresh();
+                if (editedItemRef.current) {
+                    requestAvailableZones(editedItemRef.current);
+                }
                 return;
             }
 
@@ -403,7 +419,7 @@ export default function ConfiguratorView({ iframeSrc, items, onSceneState, onSce
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [onViewModeChange, postToIframe, requestAvailableZones]);
+    }, [onViewModeChange, postToIframe, requestAvailableZones, requestSceneStateRefresh]);
 
     useEffect(() => {
         if (!quickAddRequest?.item) return;

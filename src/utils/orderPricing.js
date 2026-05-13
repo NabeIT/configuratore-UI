@@ -129,6 +129,16 @@ const ORDER_SKU_CATALOG = {
       white: 200,
     },
   },
+  SCAT3BARR78T: {
+    titles: {
+      wood: "3x Fianchi h 78cm a terra con 4 staffe 80cm",
+      white: "3x Fianchi h 78cm a terra con 4 staffe 80cm bio paint",
+    },
+    prices: {
+      wood: 211,
+      white: 322,
+    },
+  },
   SCATBARR78TSTAFFA60: {
     titles: {
       wood: "2x Fianchi h 78cm a terra (per ripiani 60cm)",
@@ -319,6 +329,18 @@ const ORDER_SKU_VARIANTS_BY_COLOR = {
       variantId: "57008245768536",
     },
   },
+  SCAT3BARR78T: {
+    wood: {
+      sku: "SCAT3BARR78T",
+      handle: "fianchi-78-cm-a-terra-3pz-con-4-staffe-80cm",
+      variantId: "57269338603864",
+    },
+    white: {
+      sku: "SCAT3BARR78TW",
+      handle: "fianchi-78-cm-a-terra-3pz-con-4-staffe-80cm-bio-paint",
+      variantId: "57269338702168",
+    },
+  },
   SCATBARR78TSTAFFA60: {
     wood: {
       sku: "SCATBARR78TSTAFFA60",
@@ -391,6 +413,7 @@ const GROUPED_OUTPUT_TO_PRICE_SOURCE = {
   SCAT3RIPS60: { sourceSku: "SCAT3RIPS60", units: 1 },
   SCAT3RIPS80: { sourceSku: "SCAT3RIPS80", units: 1 },
   SCATBARR78T: { sourceSku: "BARR78-80", units: 2 },
+  SCAT3BARR78T: { sourceSku: "BARR78-80", units: 3 },
   SCATBARR78TSTAFFA60: { sourceSku: "BARR78", units: 2 },
   SCATSCR80: { sourceSku: "ELSCR80", units: 1 },
 };
@@ -663,15 +686,16 @@ export function calculateOrderItems(
     ownedQuantities,
   );
   if (BARR78_80ToBuy > 0) {
-    const numPackages = Math.ceil(BARR78_80ToBuy / 2);
-
-    pushPackage(
-      cartPackages,
-      "SCATBARR78T",
-      numPackages,
-      "Barra 78 cm libreria (2pz) compreso imballo e ferramenta, con staffa per ripiano 80 cm",
+    pushTwoThreePackages(cartPackages, {
+      toBuy: BARR78_80ToBuy,
+      sku2: "SCATBARR78T",
+      sku3: "SCAT3BARR78T",
+      fallbackTitle2:
+        "Barra 78 cm libreria (2pz) compreso imballo e ferramenta, con staffa per ripiano 80 cm",
+      fallbackTitle3:
+        "Barra 78 cm libreria (3pz) compreso imballo e ferramenta, con 4 staffe per ripiano 80 cm",
       color,
-    );
+    });
   }
 
   const BARR95ToBuy = getToBuyBySku(visibleItems, "BARR95", ownedQuantities);

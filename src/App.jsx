@@ -43,18 +43,73 @@ function collectCatalogMeta(items, map = new Map()) {
   return map;
 }
 
-function collectCartSourceItems(items) {
+const STRUCTURAL_SIDE_SKUS = new Set(['BARR36', 'BARR78', 'BARR78-80', 'BARR95']);
+const ZERO_POSITION = [0, 0, 0];
+
+function normalizePosition(position) {
+  return Array.isArray(position)
+    ? [Number(position[0]) || 0, Number(position[1]) || 0, Number(position[2]) || 0]
+    : ZERO_POSITION;
+}
+
+function addPositions(a, b) {
+  return [
+    (Number(a?.[0]) || 0) + (Number(b?.[0]) || 0),
+    (Number(a?.[1]) || 0) + (Number(b?.[1]) || 0),
+    (Number(a?.[2]) || 0) + (Number(b?.[2]) || 0),
+  ];
+}
+
+function getSidePositionKey(item, worldPosition) {
+  const sku = item.meta?.sku || '';
+  const model = item.model || '';
+  const positionKey = normalizePosition(worldPosition)
+    .map((value) => Math.round(value * 1000) / 1000)
+    .join(':');
+
+  return `${sku}:${model}:${positionKey}`;
+}
+
+function isStructuralSide(item) {
+  return STRUCTURAL_SIDE_SKUS.has(item?.meta?.sku);
+}
+
+function collectCartSourceItems(items, parentPosition = ZERO_POSITION, sidePositionKeys = new Set()) {
   if (!Array.isArray(items)) return [];
 
   return items.reduce((acc, item) => {
     if (!item || typeof item !== 'object') return acc;
 
-    if (item.model && item.type !== 'object' && (!item.meta || item.meta.inCart === undefined || item.meta?.inCart)) {
-      acc.push(item);
+    const localPosition = normalizePosition(item.position);
+    const worldPosition = Array.isArray(item.worldPosition)
+      ? normalizePosition(item.worldPosition)
+      : addPositions(parentPosition, localPosition);
+    const structuralSide = isStructuralSide(item);
+
+    if (item.model && item.type !== 'object') {
+      if (structuralSide) {
+        const sideKey = getSidePositionKey(item, worldPosition);
+        if (!sidePositionKeys.has(sideKey)) {
+          sidePositionKeys.add(sideKey);
+          acc.push({
+            ...item,
+            cartWorldPosition: worldPosition,
+            meta: {
+              ...item.meta,
+              inCart: true,
+            },
+          });
+        }
+      } else if (!item.hideFromCart && (!item.meta || item.meta.inCart === undefined || item.meta?.inCart)) {
+        acc.push({
+          ...item,
+          cartWorldPosition: worldPosition,
+        });
+      }
     }
 
     if (item.type === 'object' && Array.isArray(item.items)) {
-      acc.push(...collectCartSourceItems(item.items));
+      acc.push(...collectCartSourceItems(item.items, worldPosition, sidePositionKeys));
     }
 
     return acc;
@@ -69,7 +124,9 @@ function buildCartItems(sceneItems) {
 
   console.log("Source items", sceneItems);
   sourceItems.forEach((item) => {
-    const modelKey = item.model || item.id;
+    const modelKey = item.meta?.sku
+      ? `${item.model || item.id}:${item.meta.sku}`
+      : item.model || item.id;
     if (!modelKey) return;
 
     const existing = groupedByModel.get(modelKey);
