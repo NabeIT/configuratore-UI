@@ -1,4 +1,4 @@
-import { ArrowLeft, Minus, Plus, Save, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Loader2, Minus, Plus, Save, ShoppingCart } from 'lucide-react';
 import { calculateOrderItems, calculateRealtimeCartTotal, getOrderVariantData } from '../utils/orderPricing';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -23,6 +23,7 @@ function generateUUIDv4() {
 
 export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, onClose, onAddToCart }) {
     const [ownedQuantities, setOwnedQuantities] = useState({});
+    const [isSavingPdf, setIsSavingPdf] = useState(false);
 
     // Initialize owned quantities to 0 for each item
     useEffect(() => {
@@ -174,44 +175,85 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
     };
 
     const saveToPdf = async () => {
+        if (isSavingPdf) return;
+        setIsSavingPdf(true);
         const doc = new jsPDF({ unit: 'mm', format: 'a4' });
         const pageW = doc.internal.pageSize.getWidth();
         const margin = 15;
         const contentW = pageW - margin * 2;
         let y = margin;
-        const { items: freshItems, color } = await requestSceneState();
-
-        const { data, error } = await saveToSupabase(freshItems);
-        const baseUrl = "https://nabecreation.com/products/libreria-evolutiva-evergrow";
-        const configurationUrl = !error ? baseUrl + "?config=" + data[0].guid : null;
-
-
-        const orderItems = calculateOrderItems(cartItems, ownedQuantities, color);
-        const pdfTotalItems = orderItems.reduce((sum, item) => sum + item.quantity, 0);
-
-
-        const addPageIfNeeded = (needed) => {
-            if (y + needed > doc.internal.pageSize.getHeight() - margin) {
-                doc.addPage();
-                y = margin;
-            }
-        };
-
-        // --- Header ---
-        doc.setFontSize(20);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Riepilogo Configurazione', margin, y + 7);
-        y += 12;
-
-        doc.setFontSize(9);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(120);
-        doc.text(`Generato il ${new Date().toLocaleDateString('it-IT')}`, margin, y);
-        doc.setTextColor(0);
-        y += 8;
-
-        // --- Screenshot della libreria ---
         try {
+            const sceneState = await requestSceneState();
+            const freshItems = Array.isArray(sceneState?.items)
+                ? sceneState.items
+                : Array.isArray(sceneState)
+                    ? sceneState
+                    : rawSceneItems;
+            const color = sceneState?.color || sceneColor;
+
+            const { data, error } = await saveToSupabase(freshItems);
+            const baseUrl = "https://nabecreation.com/products/libreria-evolutiva-evergrow";
+            const configurationUrl = !error && data?.[0]?.guid ? baseUrl + "?config=" + data[0].guid : null;
+
+
+            const orderItems = calculateOrderItems(cartItems, ownedQuantities, color);
+            const pdfTotalItems = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+
+
+            const addPageIfNeeded = (needed) => {
+                if (y + needed > doc.internal.pageSize.getHeight() - margin) {
+                    doc.addPage();
+                    y = margin;
+                }
+            };
+
+            // --- Header ---
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Riepilogo Configurazione', margin, y + 7);
+            y += 12;
+
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(120);
+            doc.text(`Generato il ${new Date().toLocaleDateString('it-IT')}`, margin, y);
+            doc.setTextColor(0);
+            y += 8;
+
+            if (configurationUrl) {
+                const buttonLabel = 'Apri configurazione salvata';
+                const buttonX = margin;
+                const buttonW = contentW;
+                const buttonH = 20;
+                const urlLines = doc.splitTextToSize(configurationUrl, contentW);
+
+                addPageIfNeeded(buttonH + 14 + urlLines.length * 3.5);
+                const buttonY = y;
+                doc.setFillColor(121, 174, 163);
+                doc.roundedRect(buttonX, buttonY, buttonW, buttonH, 4, 4, 'F');
+                doc.link(buttonX, buttonY, buttonW, buttonH, { url: configurationUrl });
+
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(255);
+                const buttonTextX = buttonX + (buttonW - doc.getTextWidth(buttonLabel)) / 2;
+                doc.text(buttonLabel, buttonTextX, buttonY + buttonH / 2 + 2);
+
+                y += buttonH + 6;
+                doc.setFontSize(7);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(70);
+                urlLines.forEach((line) => {
+                    const lineX = margin + (contentW - doc.getTextWidth(line)) / 2;
+                    doc.textWithLink(line, lineX, y, { url: configurationUrl });
+                    y += 3.5;
+                });
+                doc.setTextColor(0);
+                y += 8;
+            }
+
+            // --- Screenshot della libreria ---
+            try {
             const iframe = document.querySelector('iframe');
             if (iframe) {
                 const dataUrl = await new Promise((resolve, reject) => {
@@ -248,14 +290,14 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
                 doc.addImage(dataUrl, 'PNG', margin, y, imgW, imgH);
                 y += imgH + 5;
             }
-        } catch (err) {
-            console.warn('Screenshot non disponibile per il PDF:', err.message);
-        }
+            } catch (err) {
+                console.warn('Screenshot non disponibile per il PDF:', err.message);
+            }
 
-        // --- Separatore ---
-        doc.setDrawColor(200);
-        doc.line(margin, y, pageW - margin, y);
-        y += 6;
+            // --- Separatore ---
+            doc.setDrawColor(200);
+            doc.line(margin, y, pageW - margin, y);
+            y += 6;
 
         // --- Tabella articoli ---
         doc.setFontSize(12);
@@ -341,40 +383,10 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
         doc.text(`${pdfTotalItems} ${pdfTotalItems === 1 ? 'prodotto' : 'prodotti'}`, margin, y);
         y += 10;
 
-        // --- URL configurazione ---
-        try {
-
-            if (configurationUrl) {
-                addPageIfNeeded(20);
-                doc.setDrawColor(200);
-                doc.line(margin, y, pageW - margin, y);
-                y += 6;
-
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(0);
-                doc.text('Link alla configurazione', margin, y);
-                y += 5;
-
-                doc.setFontSize(7);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(60);
-
-                // Spezza l'URL su più righe se troppo lungo
-                const urlLines = doc.splitTextToSize(configurationUrl, contentW);
-                doc.textWithLink(urlLines[0], margin, y, { url: configurationUrl });
-                if (urlLines.length > 1) {
-                    for (let i = 1; i < urlLines.length; i++) {
-                        y += 3.5;
-                        doc.text(urlLines[i], margin, y);
-                    }
-                }
-            }
-        } catch (err) {
-            console.warn('Impossibile generare URL configurazione:', err.message);
+            doc.save('configurazione-libreria.pdf');
+        } finally {
+            setIsSavingPdf(false);
         }
-
-        doc.save('configurazione-libreria.pdf');
     };
 
     return (
@@ -525,12 +537,12 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
                         </button>
                         <button
                             onClick={saveToPdf}
-                            disabled={totalItems === 0}
+                            disabled={totalItems === 0 || isSavingPdf}
                             className="cursor-pointer md:flex-1 px-4 py-2 md:py-1.5 bg-white border border-brand hover:bg-teal-600 hover:text-white disabled:bg-gray-400 text-brand rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
                         >
-                            <Save className="w-4 h-4" />
+                            {isSavingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                             <span className='hidden md:inline text-xs'>
-                                Salva configurazione
+                                {isSavingPdf ? 'Salvataggio...' : 'Salva configurazione'}
                             </span>
                         </button>
                         <button

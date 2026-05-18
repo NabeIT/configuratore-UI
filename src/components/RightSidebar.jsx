@@ -1,11 +1,11 @@
 import { ArrowBigRight, ChevronDown, ShoppingBasket } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import CartItem from './CartItem';
 import CheckoutModal from './CheckoutModal';
 import { calculateRealtimeCartTotal } from '../utils/orderPricing';
 
-export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, onAddToCart }) {
+export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, onAddToCart, checkoutRequest }) {
     const [open, setOpen] = useState(false);
     const [checkoutOpen, setCheckoutOpen] = useState(false);
     const totalItems = cartItems.reduce((sum, item) => item.meta?.inCart !== false ? sum + item.quantity : sum, 0);
@@ -13,6 +13,11 @@ export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, onA
         () => calculateRealtimeCartTotal(cartItems, {}, sceneColor),
         [cartItems, sceneColor]
     );
+
+    useEffect(() => {
+        if (!checkoutRequest) return;
+        setCheckoutOpen(true);
+    }, [checkoutRequest]);
 
     return (
         <>

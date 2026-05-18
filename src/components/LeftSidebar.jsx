@@ -4,12 +4,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowBigDown } from 'lucide-react';
 import CatalogItem from './CatalogItem';
 import { Minimize2 } from 'lucide-react';
+import { ModalConfirmDelete } from './ConfirmModals';
+import { Trash2 } from 'lucide-react';
 import { X } from 'lucide-react';
 import { useMemo } from 'react';
 import { useStateContext } from './StateContext';
 
 export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExpanded, setCatalogExpanded }) {
     const [expandedIndex, setExpandedIndex] = useState(null);
+    const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
     const scrollRef = useRef(null);
 
 
@@ -52,6 +55,12 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
         performAction(actions.EDI_ITEM_OFF, { modelId: editedItem.modelId });
     }
 
+    const removeEditedModule = () => {
+        if (!editedItem?.id) return;
+        performAction(actions.REMOVE_ITEM, { id: editedItem.id });
+        setShowRemoveConfirm(false);
+    }
+
     const baseItems = useMemo(() => {
         return items.filter(i => i.type === "object");
     }, [items]);
@@ -74,6 +83,8 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
     const availableColorsLabels = useMemo(() => {
         return ["Legno naturale", "Bio paint bianco 9010"]
     }, []);
+
+    const getCatalogKey = (item, index) => `${item.modelId || item.id || item.name || item.title}-${index}`;
 
     const changeColor = (color) => {
         performAction(actions.CHANGE_COLOR, { color });
@@ -104,8 +115,8 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                     {availableColors.length > 0 && (
                         <div className="flex flex-row items-center gap-3 px-4 py-1  md:py-3 justify-center md:ml-0">
                             {availableColors.map(color => (
-                                <div onClick={() => changeColor(color)} className='flex flex-row items-center gap-1 border-1 border-brand rounded-lg cursor-pointer p-1 pr-2'>
-                                    <div key={color} className={`w-6 h-6 rounded-full border ${color === "wood" ? "bg-[url('https://cdn.shopify.com/s/files/1/0659/2708/6299/files/legno.webp?v=1731412759')]" : "bg-gray-50"} cursor-pointer border-gray-400`} />
+                                <div key={color} onClick={() => changeColor(color)} className='flex flex-row items-center gap-1 border-1 border-brand rounded-lg cursor-pointer p-1 pr-2'>
+                                    <div className={`w-6 h-6 rounded-full border ${color === "wood" ? "bg-[url('https://cdn.shopify.com/s/files/1/0659/2708/6299/files/legno.webp?v=1731412759')]" : "bg-gray-50"} cursor-pointer border-gray-400`} />
                                     <span className='text-xs font-semibold'>{availableColorsLabels[availableColors.indexOf(color)]}</span>
                                 </div>
                             ))}
@@ -131,8 +142,8 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
 
                 {/* Desktop: vertical list */}
                 <div className="hidden md:flex flex-1  p-3 space-y-2 flex-col w-full ">
-                    {baseItems.map((item) => (
-                        <div className={`  ${editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 ? "  bg-brand/75 bg-linear-to-r from-brand/80 to-brand shadow-2xl/60 p-4 w-90 -ml-6 -mt-3" : ""}  transition-all rounded-xl ${!editedItem || editedItem?.modelId === item.modelId ? "" : "opacity-30 pointer-events-none hidden"} `}>
+                    {baseItems.map((item, index) => (
+                        <div key={getCatalogKey(item, index)} className={`  ${editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 ? "  bg-brand/75 bg-linear-to-r from-brand/80 to-brand shadow-2xl/60 p-4 w-90 -ml-6 -mt-3" : ""}  transition-all rounded-xl ${!editedItem || editedItem?.modelId === item.modelId ? "" : "opacity-30 pointer-events-none hidden"} `}>
 
                             {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
                                 <div onClick={closeEditMode} className='absolute bottom-full left-full z-50 bg-white shadow-2xl/100 rounded-full p-2 text-xs -translate-x-1/2 translate-y-1/2 cursor-pointer'>
@@ -140,14 +151,22 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                                 </div>
                             )}
 
-                            <CatalogItem key={item.id} item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+                            <CatalogItem item={item} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
                             {editedItem && editedItem?.modelId === item.modelId && itemsFiltered.length > 0 && (
                                 <>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowRemoveConfirm(true)}
+                                        className="mt-3 w-full cursor-pointer rounded-lg border border-white/50 bg-white/95 px-3 py-2 text-xs font-semibold text-red-700 shadow-sm transition-colors hover:bg-red-50 flex items-center justify-center gap-2"
+                                    >
+                                        <Trash2 size={15} strokeWidth={1.8} />
+                                        Rimuovi modulo
+                                    </button>
                                     <div className="p-2  gap-2 flex flex-col">
                                         <span className='font-bold text-xs text-center text-white'>Aggiungi pezzi all'oggetto</span>
                                         <ArrowBigDown size={20} className="mx-auto opacity-50" color='white' />
-                                        {itemsFiltered.map(variant => (
-                                            <CatalogItem key={variant.id} item={variant} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
+                                        {itemsFiltered.map((variant, variantIndex) => (
+                                            <CatalogItem key={getCatalogKey(variant, variantIndex)} item={variant} onDragStart={onDragStart} onQuickAdd={onQuickAdd} />
                                         ))}
                                     </div>
                                 </>
@@ -161,7 +180,7 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                     <div className="flex md:hidden flex-1 overflow-x-auto p-3 flex-row gap-3 w-full">
                         {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
                             <CatalogItem
-                                key={item.id}
+                                key={getCatalogKey(item, index)}
                                 item={item}
                                 onDragStart={onDragStart}
                                 onQuickAdd={onQuickAdd}
@@ -187,7 +206,7 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                         >
                             {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
                                 <CatalogItem
-                                    key={item.id}
+                                    key={getCatalogKey(item, index)}
                                     item={item}
                                     onDragStart={onDragStart}
                                     onQuickAdd={onQuickAdd}
@@ -199,6 +218,12 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                     </div>
                 )}
             </aside>
+            {showRemoveConfirm && (
+                <ModalConfirmDelete
+                    onConfirm={removeEditedModule}
+                    onClose={() => setShowRemoveConfirm(false)}
+                />
+            )}
         </>
     );
     // return (

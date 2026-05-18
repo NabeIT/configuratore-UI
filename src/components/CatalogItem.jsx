@@ -138,6 +138,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
                         {item.variants.map((variant, index) => {
                             return (
                                 <button
+                                    key={`${variant.zoneType || variant.name || "variant"}-${index}`}
                                     type="button"
                                     draggable
                                     onDragStart={(e) => {

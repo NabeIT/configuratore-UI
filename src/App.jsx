@@ -1,3 +1,4 @@
+import { ArrowLeft, Save, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import ConfiguratorView from './components/ConfiguratorView';
@@ -165,6 +166,8 @@ export default function App() {
   const [showStartup, setShowStartup] = useState(true);
   const [presetRequest, setPresetRequest] = useState(null);
   const [isViewMode, setIsViewMode] = useState(false);
+  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [checkoutRequest, setCheckoutRequest] = useState(null);
 
   const [rawSceneItems, setRawSceneItems] = useState([]);
 
@@ -260,8 +263,34 @@ export default function App() {
   }, []);
 
   const handleClose = useCallback(() => {
+    setShowCloseConfirm(true);
+  }, []);
+
+  const confirmClose = useCallback(() => {
+    window.parent.postMessage({ type: 'close-configurator' }, '*');
     window.close();
   }, []);
+
+  const openSaveFromClose = useCallback(() => {
+    setShowCloseConfirm(false);
+    setCheckoutRequest({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleParentMessage = (event) => {
+      if (event.data?.type === 'request-close-configurator') {
+        setShowCloseConfirm(true);
+      }
+      if (event.data?.type === 'open-save-configurator') {
+        openSaveFromClose();
+      }
+    };
+
+    window.addEventListener('message', handleParentMessage);
+    return () => window.removeEventListener('message', handleParentMessage);
+  }, [openSaveFromClose]);
 
   const viewModeHiddenClass = isViewMode
     ? 'opacity-0 pointer-events-none transition-opacity duration-150'
@@ -294,7 +323,7 @@ export default function App() {
           <RightSidebar rawSceneItems={rawSceneItems} sceneColor={sceneColor} cartItems={cartItems} onAddToCart={(data) => {
             window.parent.postMessage({ type: 'add-to-cart', data }, '*');
 
-          }} />
+          }} checkoutRequest={checkoutRequest} />
         </div>
 
         {selectedItem && (
@@ -306,6 +335,44 @@ export default function App() {
         {showStartup && (
           <div className={viewModeHiddenClass}>
             <StartupModal onSelect={handlePresetSelect} />
+          </div>
+        )}
+
+        {showCloseConfirm && (
+          <div className="fixed inset-0 z-[220] flex items-center justify-center bg-black/50 px-4">
+            <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
+              <div className="mb-6 flex flex-col gap-1">
+                <h2 className="text-lg font-bold text-gray-800">Chiudere il configuratore?</h2>
+                <p className="text-sm text-gray-500">Puoi chiudere senza salvare oppure aprire il salvataggio della configurazione.</p>
+              </div>
+              <div className="flex flex-col gap-3 md:flex-row md:justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowCloseConfirm(false)}
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Continua a configurare
+                </button>
+                <button
+                  type="button"
+                  onClick={openSaveFromClose}
+                  disabled={cartItems.length === 0}
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-brand bg-white px-4 py-3 text-sm font-medium text-brand transition-colors hover:bg-teal-600 hover:text-white disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+                >
+                  <Save className="h-4 w-4" />
+                  Salva configurazione
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmClose}
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-gray-800 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-700"
+                >
+                  <X className="h-4 w-4" />
+                  Chiudi
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

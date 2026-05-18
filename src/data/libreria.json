@@ -31,31 +31,31 @@
         "dropZones": [
           {
             "direction": "cubo-right-cubo",
-            "offset": [0.625, 0, 0.01],
+            "offset": [0.625, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["cubo"]
           },
           {
             "direction": "cubo-right-cubo80",
-            "offset": [0.625, 0, 0.01],
+            "offset": [0.625, 0, 0],
             "scale": [0.825, 0, 0.001],
             "acceptTypes": ["cubo-80"]
           },
           {
             "direction": "cubo-left-cubo",
-            "offset": [-0.625, 0, 0.01],
+            "offset": [-0.625, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["cubo"]
           },
           {
             "direction": "cubo-left-cubo80",
-            "offset": [-0.825, 0, 0.01],
+            "offset": [-0.825, 0, 0],
             "scale": [0.825, 0, 0.001],
             "acceptTypes": ["cubo-80"]
           },
           {
             "direction": "cubo-top-expansion",
-            "offset": [0, 0.84, 0.01],
+            "offset": [0, 0.84, 0],
             "scale": [0, 0.95, 0.001],
             "acceptTypes": ["expansion"],
             "blocksAvailabilityForTypes": ["expansion-80"],
@@ -217,31 +217,31 @@
         "dropZones": [
           {
             "direction": "cubo-right-cubo",
-            "offset": [0.825, 0, 0.01],
+            "offset": [0.825, 0, 0],
             "scale": [0.625, 0, 0.001],
             "acceptTypes": ["cubo"]
           },
           {
             "direction": "cubo-left-cubo",
-            "offset": [-0.625, 0, 0.01],
+            "offset": [-0.625, 0, 0],
             "scale": [0.625, 0, 0.001],
             "acceptTypes": ["cubo"]
           },
           {
             "direction": "cubo-right-cubo-80",
-            "offset": [0.825, 0, 0.01],
+            "offset": [0.825, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["cubo-80"]
           },
           {
             "direction": "cubo-left-cubo-80",
-            "offset": [-0.825, 0, 0.01],
+            "offset": [-0.825, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["cubo-80"]
           },
           {
             "direction": "cubo-top-expansion",
-            "offset": [0, 0.84, 0.01],
+            "offset": [0, 0.84, 0],
             "scale": [0, 0.95, 0.001],
             "acceptTypes": ["expansion-80"],
             "blocksAvailabilityForTypes": ["expansion"],
@@ -257,7 +257,7 @@
           },
           {
             "direction": "appoggio-mensola-1",
-            "acceptTypes": ["mensola80", "scrivania"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.695, 0.025],
             "scale": [0.8, 0.001, 0.3],
@@ -265,7 +265,7 @@
           },
           {
             "direction": "appoggio-mensola-2",
-            "acceptTypes": ["mensola80", "scrivania"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.61, 0.025],
             "scale": [0.8, 0.001, 0.3],
@@ -273,7 +273,7 @@
           },
           {
             "direction": "appoggio-mensola-3",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.527, 0.0025],
             "scale": [0.8, 0.001, 0.3],
@@ -281,7 +281,7 @@
           },
           {
             "direction": "appoggio-mensola-4",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.44, 0.025],
             "scale": [0.8, 0.001, 0.3],
@@ -289,7 +289,7 @@
           },
           {
             "direction": "appoggio-mensola-5",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.36, 0.025],
             "scale": [0.8, 0.001, 0.3],
@@ -297,7 +297,7 @@
           },
           {
             "direction": "appoggio-mensola-6",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.275, 0.025],
             "scale": [0.8, 0.001, 0.3],
@@ -305,7 +305,7 @@
           },
           {
             "direction": "appoggio-mensola-7",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.192, 0.025],
             "scale": [0.8, 0.001, 0.3],
@@ -313,7 +313,7 @@
           },
           {
             "direction": "appoggio-mensola-0",
-            "acceptTypes": ["mensola80", "scrivania"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.78, 0.025],
             "scale": [0.8, 0.001, 0.3],
@@ -457,73 +457,73 @@
         "dropZones": [
           {
             "direction": "expansion-right-expansion",
-            "offset": [0.625, 0, 0.01],
+            "offset": [0.625, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion", "expansion-80"]
           },
           {
             "direction": "expansion-left-expansion",
-            "offset": [-0.625, 0, 0.01],
+            "offset": [-0.625, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion"]
           },
           {
             "direction": "expansion-left-expansion-80",
-            "offset": [-0.825, 0, 0.01],
+            "offset": [-0.825, 0, 0],
             "scale": [0.825, 0, 0.001],
             "acceptTypes": ["expansion-80"]
           },
           {
             "direction": "expansion-top-expansion",
-            "offset": [0, 1.01, 0.01],
+            "offset": [0, 1.01, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion"]
           },
           {
             "direction": "expansion-top-expansion-mini",
-            "offset": [0, 1.01, 0.01],
+            "offset": [0, 1.01, 0],
             "scale": [0.825, 0, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-right-expansion-mini-1",
-            "offset": [0.625, 0, 0.01],
+            "offset": [0.625, 0, 0],
             "scale": [0.825, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-right-expansion-mini-2",
-            "offset": [0.625, 0.34, 0.01],
+            "offset": [0.625, 0.34, 0],
             "scale": [0.825, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-right-expansion-mini-3",
-            "offset": [0.625, 0.59, 0.01],
+            "offset": [0.625, 0.59, 0],
             "scale": [0.825, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-left-expansion-mini-1",
-            "offset": [-0.825, 0, 0.01],
+            "offset": [-0.825, 0, 0],
             "scale": [0.825, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-left-expansion-mini-2",
-            "offset": [-0.825, 0.34, 0.01],
+            "offset": [-0.825, 0.34, 0],
             "scale": [0.825, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-left-expansion-mini-3",
-            "offset": [-0.825, 0.59, 0.01],
+            "offset": [-0.825, 0.59, 0],
             "scale": [0.825, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-bottom-cubo",
-            "offset": [0, -0.84, 0.01],
+            "offset": [0, -0.84, 0],
             "scale": [0, 0.78, 0.001],
             "acceptTypes": ["cubo"],
             "blocksAvailabilityForTypes": ["cubo-80"],
@@ -677,6 +677,30 @@
             }
           }
         ],
+        "helpers": [
+          {
+            "id": "mount-point",
+            "name": "Mount point",
+            "model": "mount-point",
+            "position": [0.0125, 0.9575, 0.2875],
+            "rotation": [0, 0, 0],
+            "scale": [0.026, 0.026, 0.026],
+            "minY": 0,
+            "maxY": 0,
+            "snaps": [0.025, 0.025, 0.025]
+          },
+          {
+            "id": "mount-point",
+            "name": "Mount point",
+            "model": "mount-point",
+            "position": [0.6385, 0.9575, 0.2875],
+            "rotation": [0, 0, 0],
+            "scale": [0.026, 0.026, 0.026],
+            "minY": 0,
+            "maxY": 0,
+            "snaps": [0.025, 0.025, 0.025]
+          }
+        ],
         "behaviors": [
           {
             "type": "addMeta",
@@ -718,7 +742,7 @@
                 "id": "16",
                 "name": "Mensola 60",
                 "model": "connettore-sponde",
-                "position": [0, -0.06, 0.277],
+                "position": [0, -0.06, 0.282],
                 "rotation": [0, 0, 0],
                 "scale": [1, 1, 1],
                 "minY": 0.025,
@@ -742,7 +766,7 @@
                 "id": "17",
                 "name": "Mensola 60",
                 "model": "connettore-sponde",
-                "position": [0.625, -0.06, 0.277],
+                "position": [0.625, -0.06, 0.282],
                 "rotation": [0, 0, 0],
                 "scale": [1, 1, 1],
                 "minY": 0.025,
@@ -760,79 +784,79 @@
         "dropZones": [
           {
             "direction": "expansion-right-expansion",
-            "offset": [0.825, 0, 0.01],
+            "offset": [0.825, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion-80"]
           },
           {
             "direction": "expansion-right-expansion60",
-            "offset": [0.825, 0, 0.01],
+            "offset": [0.825, 0, 0],
             "scale": [0.6, 0, 0.001],
             "acceptTypes": ["expansion"]
           },
           {
             "direction": "expansion-left-expansion",
-            "offset": [-0.825, 0, 0.01],
+            "offset": [-0.825, 0, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion-80"]
           },
           {
             "direction": "expansion-left-expansion60",
-            "offset": [-0.625, 0, 0.01],
+            "offset": [-0.625, 0, 0],
             "scale": [0.6, 0, 0.001],
             "acceptTypes": ["expansion"]
           },
           {
             "direction": "expansion-top-expansion",
-            "offset": [0, 1.01, 0.01],
+            "offset": [0, 1.01, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion-80"]
           },
           {
             "direction": "expansion-top-expansion-mini",
-            "offset": [0, 1.01, 0.01],
+            "offset": [0, 1.01, 0],
             "scale": [0, 0, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-right-expansion-mini-1",
-            "offset": [0.825, 0, 0.01],
+            "offset": [0.825, 0, 0],
             "scale": [0, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-right-expansion-mini-2",
-            "offset": [0.825, 0.34, 0.01],
+            "offset": [0.825, 0.34, 0],
             "scale": [0, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-right-expansion-mini-3",
-            "offset": [0.825, 0.59, 0.01],
+            "offset": [0.825, 0.59, 0],
             "scale": [0, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-left-expansion-mini-1",
-            "offset": [-0.825, 0, 0.01],
+            "offset": [-0.825, 0, 0],
             "scale": [0, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-left-expansion-mini-2",
-            "offset": [-0.825, 0.34, 0.01],
+            "offset": [-0.825, 0.34, 0],
             "scale": [0, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-left-expansion-mini-3",
-            "offset": [-0.825, 0.59, 0.01],
+            "offset": [-0.825, 0.59, 0],
             "scale": [0, 0.36, 0.001],
             "acceptTypes": ["expansion-mini"]
           },
           {
             "direction": "expansion-bottom-cubo",
-            "offset": [0, -0.84, 0.01],
+            "offset": [0, -0.84, 0],
             "scale": [0, 0.78, 0.001],
             "acceptTypes": ["cubo-80"],
             "blocksAvailabilityForTypes": ["cubo"],
@@ -840,7 +864,7 @@
           },
           {
             "direction": "appoggio-mensola",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.87, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -849,7 +873,7 @@
 
           {
             "direction": "appoggio-mensola-1",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.776, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -857,7 +881,7 @@
           },
           {
             "direction": "appoggio-mensola-2",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.694, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -865,7 +889,7 @@
           },
           {
             "direction": "appoggio-mensola-3",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.61, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -873,7 +897,7 @@
           },
           {
             "direction": "appoggio-mensola-4",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.527, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -881,7 +905,7 @@
           },
           {
             "direction": "appoggio-mensola-5",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.442, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -889,7 +913,7 @@
           },
           {
             "direction": "appoggio-mensola-6",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.359, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -897,7 +921,7 @@
           },
           {
             "direction": "appoggio-mensola-7",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.276, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -905,7 +929,7 @@
           },
           {
             "direction": "appoggio-mensola-8",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.192, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -913,7 +937,7 @@
           },
           {
             "direction": "appoggio-mensola-9",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.11, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -921,7 +945,7 @@
           },
           {
             "direction": "appoggio-mensola-10",
-            "acceptTypes": ["mensola80", "mensola-appendi-abiti"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.024, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -929,7 +953,7 @@
           },
           {
             "direction": "appoggio-mensola-0",
-            "acceptTypes": ["mensola80"],
+            "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
             "cascade": true,
             "offset": [0.025, 0.95, 0.03],
             "scale": [0.8, 0.001, 0.25],
@@ -989,6 +1013,30 @@
             }
           }
         ],
+        "helpers": [
+          {
+            "id": "mount-point",
+            "name": "Mount point",
+            "model": "mount-point",
+            "position": [0.0125, 0.9575, 0.2875],
+            "rotation": [0, 0, 0],
+            "scale": [0.026, 0.026, 0.026],
+            "minY": 0,
+            "maxY": 0,
+            "snaps": [0.025, 0.025, 0.025]
+          },
+          {
+            "id": "mount-point",
+            "name": "Mount point",
+            "model": "mount-point",
+            "position": [0.8385, 0.9575, 0.2875],
+            "rotation": [0, 0, 0],
+            "scale": [0.026, 0.026, 0.026],
+            "minY": 0,
+            "maxY": 0,
+            "snaps": [0.025, 0.025, 0.025]
+          }
+        ],
         "behaviors": [
           {
             "type": "addMeta",
@@ -1030,7 +1078,7 @@
                 "id": "16",
                 "name": "Mensola 60",
                 "model": "connettore-sponde",
-                "position": [0, -0.06, 0.277],
+                "position": [0, -0.06, 0.282],
                 "rotation": [0, 0, 0],
                 "scale": [1, 1, 1],
                 "minY": 0.025,
@@ -1054,7 +1102,7 @@
                 "id": "17",
                 "name": "Mensola 60",
                 "model": "connettore-sponde",
-                "position": [0.825, -0.06, 0.277],
+                "position": [0.825, -0.06, 0.282],
                 "rotation": [0, 0, 0],
                 "scale": [1, 1, 1],
                 "minY": 0.025,
@@ -1091,11 +1139,108 @@
       "lockCascadeChildren": true,
       "cameraPadding": 0.25
     },
-    "behaviors": [],
+    "behaviors": [
+      {
+        "type": "addMeta",
+        "rules": {
+          "targets": ["spalliera-b", "spalliera-base", "spalliera"],
+          "position": [0, 0, 0],
+          "offset": [0.01, 0, 0],
+          "index": 0,
+          "key": "visible",
+          "onSuccess": false,
+          "onFail": true
+        }
+      },
+      {
+        "type": "addMeta",
+        "rules": {
+          "targets": ["spalliera-b", "spalliera-base", "spalliera"],
+          "position": [0, 0, 0],
+          "offset": [0.01, 0, 0],
+          "index": 0,
+          "key": "inCart",
+          "onSuccess": false,
+          "onFail": true
+        }
+      },
+      {
+        "type": "addMeta",
+        "rules": {
+          "targets": ["spalliera-b", "spalliera-base", "spalliera"],
+          "position": [0.825, 0, 0],
+          "offset": [0.01, 0, 0],
+          "index": 1,
+          "key": "visible",
+          "onSuccess": false,
+          "onFail": true
+        }
+      },
+      {
+        "type": "addMeta",
+        "rules": {
+          "targets": ["spalliera-b", "spalliera-base", "spalliera"],
+          "position": [0.825, 0, 0],
+          "offset": [0.01, 0, 0],
+          "index": 1,
+          "key": "inCart",
+          "onSuccess": false,
+          "onFail": true
+        }
+      },
+      {
+        "type": "addItem",
+        "content": {
+          "connectedInfo": "Verrà aggiunto in automatico un connettore per unire le due spalliere una sopra l'altra"
+        },
+        "rules": {
+          "targets": ["mount-point"],
+          "offset": [0.0125, -0.0125, 0.285],
+          "position": [0, -0.06, 0]
+        },
+        "items": [
+          {
+            "id": "16",
+            "name": "Giunto",
+            "model": "connettore-sponde",
+            "position": [0, -0.06, 0.282],
+            "rotation": [0, 0, 0],
+            "scale": [1, 1, 1],
+            "minY": 0.025,
+            "maxY": 100,
+            "snaps": [0.025, 0.025, 0.025]
+          }
+        ]
+      },
+      {
+        "type": "addItem",
+        "content": {
+          "connectedInfo": "Verrà aggiunto in automatico un connettore per unire le due spalliere una sopra l'altra"
+        },
+        "rules": {
+          "targets": ["mount-point"],
+          "offset": [0.8385, -0.0125, 0.285],
+          "position": [0, -0.06, 0]
+        },
+        "items": [
+          {
+            "id": "17",
+            "name": "Giunto",
+            "model": "connettore-sponde",
+            "position": [0.825, -0.06, 0.282],
+            "rotation": [0, 0, 0],
+            "scale": [1, 1, 1],
+            "minY": 0.025,
+            "maxY": 100,
+            "snaps": [0.025, 0.025, 0.025]
+          }
+        ]
+      }
+    ],
     "dropZones": [
       {
         "direction": "appoggio-mensola-5",
-        "acceptTypes": ["mensola80"],
+        "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
         "cascade": true,
         "offset": [0.025, 0.359, 0.03],
         "scale": [0.8, 0.001, 0.25],
@@ -1103,7 +1248,7 @@
       },
       {
         "direction": "appoggio-mensola-6",
-        "acceptTypes": ["mensola80"],
+        "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
         "cascade": true,
         "offset": [0.025, 0.276, 0.03],
         "scale": [0.8, 0.001, 0.25],
@@ -1111,7 +1256,7 @@
       },
       {
         "direction": "appoggio-mensola-7",
-        "acceptTypes": ["mensola80"],
+        "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
         "cascade": true,
         "offset": [0.025, 0.192, 0.03],
         "scale": [0.8, 0.001, 0.25],
@@ -1119,7 +1264,7 @@
       },
       {
         "direction": "appoggio-mensola-8",
-        "acceptTypes": ["mensola80"],
+        "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
         "cascade": true,
         "offset": [0.025, 0.11, 0.03],
         "scale": [0.8, 0.001, 0.25],
@@ -1127,7 +1272,7 @@
       },
       {
         "direction": "appoggio-mensola-9",
-        "acceptTypes": ["mensola80", "mensola-appendi-abiti"],
+        "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
         "cascade": true,
         "offset": [0.025, 0.025, 0.03],
         "scale": [0.8, 0.001, 0.25],
@@ -1162,7 +1307,21 @@
         "modelId": "2",
         "name": "Connettore 80",
         "model": "connettore80",
-        "position": [0.025, 0.31, 0],
+        "image": "/assets/img/thumbs/staff.png",
+        "position": [0.025, 0.055, 0],
+        "hideFromCart": true,
+        "meta": {
+          "sku": "ELSTAFFA80",
+          "price": 0
+        }
+      },
+      {
+        "modelId": "2",
+        "name": "Connettore 80",
+        "model": "connettore80",
+        "image": "/assets/img/thumbs/staff.png",
+        "position": [0.025, 0.285, 0],
+        "hideFromCart": true,
         "meta": {
           "sku": "ELSTAFFA80",
           "price": 0
