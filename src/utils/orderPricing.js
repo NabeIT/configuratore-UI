@@ -1,4 +1,14 @@
 const ORDER_SKU_CATALOG = {
+  SCATBAR36: {
+    titles: {
+      wood: "1x Fianco h 36cm",
+      white: "1x Fianco h 36cm bio paint",
+    },
+    prices: {
+      wood: 77,
+      white: 109,
+    },
+  },
   SCAT2BAR36: {
     titles: {
       wood: "2x Fianchi h 36cm",
@@ -172,6 +182,18 @@ const ORDER_SKU_CATALOG = {
 };
 
 const ORDER_SKU_VARIANTS_BY_COLOR = {
+  SCATBAR36: {
+    wood: {
+      sku: "SCATBAR36",
+      handle: "kit-1-barr36-libreria-con-2-staffe-80cm",
+      variantId: "57317526241624",
+    },
+    white: {
+      sku: "SCATBAR36W",
+      handle: "kit-1-barr36-libreria-con-2-staffe-80cm-bio-paint",
+      variantId: "57317530829144",
+    },
+  },
   SCAT2BAR36: {
     wood: {
       sku: "SCAT2BAR36",
@@ -400,6 +422,7 @@ const ORDER_HANDLED_INPUT_SKUS = new Set([
 ]);
 
 const GROUPED_OUTPUT_TO_PRICE_SOURCE = {
+  SCATBAR36: { sourceSku: "BARR36", units: 1 },
   SCAT2BAR36: { sourceSku: "BARR36", units: 2 },
   SCAT2BAR95: { sourceSku: "BARR95", units: 2 },
   SCAT2BAR95STAFFA60: { sourceSku: "BARR95", units: 2 },
@@ -656,13 +679,21 @@ export function calculateOrderItems(
 
   const BARR36ToBuy = getToBuyBySku(visibleItems, "BARR36", ownedQuantities);
   if (BARR36ToBuy > 0) {
-    const numPackages = Math.ceil(BARR36ToBuy / 2);
+    const pairPackages = Math.floor(BARR36ToBuy / 2);
+    const singlePackages = BARR36ToBuy % 2;
 
     pushPackage(
       cartPackages,
       "SCAT2BAR36",
-      numPackages,
+      pairPackages,
       "Fianchi h 36 cm libreria (2pz) compreso imballo e ferramenta",
+      color,
+    );
+    pushPackage(
+      cartPackages,
+      "SCATBAR36",
+      singlePackages,
+      "Fianco h 36 cm libreria (1pz) compreso imballo e ferramenta",
       color,
     );
   }
