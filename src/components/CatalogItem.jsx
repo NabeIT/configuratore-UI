@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { CircleSlash } from 'lucide-react';
 import { Plus } from 'lucide-react';
-import { canQuickAddItem } from '../utils/dropZonePlacement';
+import { canQuickAddItem, getCascadeZoneTypes } from '../utils/dropZonePlacement';
 import { useStateContext } from './StateContext';
 
 export default function CatalogItem({ item, onDragStart, onQuickAdd, mobileMode, onMobileExpand, onMobileCollapse }) {
@@ -35,8 +35,7 @@ const DesktopVersion = ({ item, onDragStart, onQuickAdd }) => {
 
     const dropZonesUnique = useMemo(() => {
         if (editedItem?.type === "object") {
-            const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
-            return [...new Set(dropZones)];
+            return getCascadeZoneTypes(editedItem);
             // console.log("Drop zones unique for edited item:", dropZonesUnique);
         }
         return [];
@@ -223,8 +222,7 @@ const MobileExpanded = ({ item, onDragStart, onQuickAdd }) => {
 
     const dropZonesUnique = useMemo(() => {
         if (editedItem?.type === "object") {
-            const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
-            return [...new Set(dropZones)];
+            return getCascadeZoneTypes(editedItem);
             // console.log("Drop zones unique for edited item:", dropZonesUnique);
         }
         return [];

@@ -1,6 +1,14 @@
 const hasOwn = (obj, key) =>
   Object.prototype.hasOwnProperty.call(obj ?? {}, key);
 
+const STRUCTURAL_ZONE_TYPES = new Set([
+  "cubo",
+  "cubo-80",
+  "expansion",
+  "expansion-80",
+  "expansion-mini",
+]);
+
 export function resolveZoneType(item) {
   if (!item) return null;
 
@@ -12,12 +20,17 @@ export function resolveZoneType(item) {
   return item.zoneType ?? null;
 }
 
+function isPlacementZone(zone) {
+  if (zone?.cascade) return true;
+  return (zone?.acceptTypes ?? []).some((type) => STRUCTURAL_ZONE_TYPES.has(type));
+}
+
 export function getCascadeZoneTypes(item) {
   if (!Array.isArray(item?.dropZones)) return [];
 
   return [...new Set(
     item.dropZones
-      .filter((zone) => !!zone?.cascade)
+      .filter(isPlacementZone)
       .flatMap((zone) => zone.acceptTypes ?? [])
   )];
 }
@@ -86,6 +99,7 @@ export function canQuickAddItem(item, editedItem, availableDropZones) {
   );
 
   if (!zoneType) return true;
+  if (!editedItem && item?.type === "object") return true;
   if (editedItem && !hasLoadedZoneType) return true;
 
   return zones.length > 0;

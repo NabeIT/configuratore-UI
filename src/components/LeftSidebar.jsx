@@ -7,6 +7,7 @@ import { Minimize2 } from 'lucide-react';
 import { ModalConfirmDelete } from './ConfirmModals';
 import { Trash2 } from 'lucide-react';
 import { X } from 'lucide-react';
+import { getCascadeZoneTypes } from '../utils/dropZonePlacement';
 import { useMemo } from 'react';
 import { useStateContext } from './StateContext';
 
@@ -69,8 +70,7 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
 
     const itemsFiltered = useMemo(() => {
         if (editedItem?.type === "object") {
-            const dropZones = editedItem.dropZones.filter(d => !!d.cascade).map(dz => dz.acceptTypes).flat();
-            const dropZonesUnique = [...new Set(dropZones)];
+            const dropZonesUnique = getCascadeZoneTypes(editedItem);
             return items.filter(i => dropZonesUnique.includes(i.zoneType) || i.variants?.some(v => dropZonesUnique.includes(v.zoneType)));
         }
         return [];

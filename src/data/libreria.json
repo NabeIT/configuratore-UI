@@ -1239,6 +1239,12 @@
     ],
     "dropZones": [
       {
+        "direction": "expansion-top-expansion-mini",
+        "offset": [0, 0.36, 0],
+        "scale": [0.825, 0, 0.001],
+        "acceptTypes": ["expansion-mini"]
+      },
+      {
         "direction": "appoggio-mensola-5",
         "acceptTypes": ["mensola80", "scrivania", "mensola-appendi-abiti"],
         "cascade": true,
