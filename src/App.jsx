@@ -1,5 +1,5 @@
 import { ArrowLeft, Save, X } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import ConfiguratorView from './components/ConfiguratorView';
 import Header from './components/Header';
@@ -75,6 +75,13 @@ function isStructuralSide(item) {
   return STRUCTURAL_SIDE_SKUS.has(item?.meta?.sku);
 }
 
+function isCartSourceVisible(item) {
+  if (item?.hideFromCart) return false;
+  if (item?.visible === false || item?.meta?.visible === false) return false;
+  if (item?.meta?.inCart === false) return false;
+  return true;
+}
+
 function collectCartSourceItems(items, parentPosition = ZERO_POSITION, sidePositionKeys = new Set()) {
   if (!Array.isArray(items)) return [];
 
@@ -87,7 +94,7 @@ function collectCartSourceItems(items, parentPosition = ZERO_POSITION, sidePosit
       : addPositions(parentPosition, localPosition);
     const structuralSide = isStructuralSide(item);
 
-    if (item.model && item.type !== 'object') {
+    if (item.model && item.type !== 'object' && isCartSourceVisible(item)) {
       if (structuralSide) {
         const sideKey = getSidePositionKey(item, worldPosition);
         if (!sidePositionKeys.has(sideKey)) {
@@ -95,13 +102,9 @@ function collectCartSourceItems(items, parentPosition = ZERO_POSITION, sidePosit
           acc.push({
             ...item,
             cartWorldPosition: worldPosition,
-            meta: {
-              ...item.meta,
-              inCart: true,
-            },
           });
         }
-      } else if (!item.hideFromCart && (!item.meta || item.meta.inCart === undefined || item.meta?.inCart)) {
+      } else {
         acc.push({
           ...item,
           cartWorldPosition: worldPosition,
@@ -171,6 +174,22 @@ export default function App() {
 
   const [rawSceneItems, setRawSceneItems] = useState([]);
 
+  const operatorOptions = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    const modeValue = params.get('operator') || params.get('pos') || '';
+    const operatorMode = ['1', 'true', 'yes', 'si'].includes(modeValue.toLowerCase());
+    const posHandoffEndpoint =
+      params.get('posHandoffUrl') ||
+      params.get('handoffUrl') ||
+      import.meta.env.VITE_POS_HANDOFF_API_URL ||
+      '';
+
+    return {
+      operatorMode,
+      posHandoffEndpoint,
+    };
+  }, []);
+
   const handlePresetSelect = useCallback((preset) => {
     setShowStartup(false);
     setPresetRequest({
@@ -204,10 +223,10 @@ export default function App() {
   }, []);
 
   // URL del configuratore 3D — lasciare vuoto per mostrare il placeholder
-  // const iframeSrc = 'http://localhost:5173?embed=true';
+  const iframeSrc = 'http://localhost:5173?embed=true';
   // const iframeSrc = 'http://192.168.0.97:5173/?embed=true';
 
-  const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
+  // const iframeSrc = 'https://configuratore-libreria-4b8v.vercel.app/?embed=true';
 
 
 
@@ -320,7 +339,7 @@ export default function App() {
         />
 
         <div className={viewModeHiddenClass}>
-          <RightSidebar rawSceneItems={rawSceneItems} sceneColor={sceneColor} cartItems={cartItems} onAddToCart={(data) => {
+          <RightSidebar rawSceneItems={rawSceneItems} sceneColor={sceneColor} cartItems={cartItems} operatorMode={operatorOptions.operatorMode} posHandoffEndpoint={operatorOptions.posHandoffEndpoint} onAddToCart={(data) => {
             window.parent.postMessage({ type: 'add-to-cart', data }, '*');
 
           }} checkoutRequest={checkoutRequest} />

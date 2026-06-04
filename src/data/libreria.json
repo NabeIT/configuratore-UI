@@ -1139,6 +1139,30 @@
       "lockCascadeChildren": true,
       "cameraPadding": 0.25
     },
+    "helpers": [
+      {
+        "id": "mount-point",
+        "name": "Mount point",
+        "model": "mount-point",
+        "position": [0.0125, 0.36, 0.2875],
+        "rotation": [0, 0, 0],
+        "scale": [0.026, 0.026, 0.026],
+        "minY": 0,
+        "maxY": 0,
+        "snaps": [0.025, 0.025, 0.025]
+      },
+      {
+        "id": "mount-point",
+        "name": "Mount point",
+        "model": "mount-point",
+        "position": [0.8385, 0.36, 0.2875],
+        "rotation": [0, 0, 0],
+        "scale": [0.026, 0.026, 0.026],
+        "minY": 0,
+        "maxY": 0,
+        "snaps": [0.025, 0.025, 0.025]
+      }
+    ],
     "behaviors": [
       {
         "type": "addMeta",
@@ -1240,7 +1264,7 @@
     "dropZones": [
       {
         "direction": "expansion-top-expansion-mini",
-        "offset": [0, 0.36, 0],
+        "offset": [0, 0.42, 0],
         "scale": [0.825, 0, 0.001],
         "acceptTypes": ["expansion-mini"]
       },

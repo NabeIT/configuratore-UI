@@ -21,9 +21,12 @@ function generateUUIDv4() {
 
 
 
-export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, onClose, onAddToCart }) {
+export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, operatorMode = false, posHandoffEndpoint = '', onClose, onAddToCart }) {
     const [ownedQuantities, setOwnedQuantities] = useState({});
     const [isSavingPdf, setIsSavingPdf] = useState(false);
+    const [isCreatingPosCode, setIsCreatingPosCode] = useState(false);
+    const [posCodeResult, setPosCodeResult] = useState(null);
+    const [posCodeError, setPosCodeError] = useState('');
 
     // Initialize owned quantities to 0 for each item
     useEffect(() => {
@@ -90,12 +93,12 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
         }, 0);
     }, [visibleItems, ownedQuantities]);
 
-    const handleAddToCart = () => {
-        const orderItems = calculateOrderItems(cartItems, ownedQuantities, sceneColor);
+    const buildOrderPayload = (color = sceneColor) => {
+        const orderItems = calculateOrderItems(cartItems, ownedQuantities, color);
         const itemsToAdd = orderItems
             .filter((item) => item.quantity > 0)
             .map((item) => {
-                const variantData = getOrderVariantData(item.sku, sceneColor);
+                const variantData = getOrderVariantData(item.sku, color);
                 const skuForCart = variantData?.sku || item.sku;
 
                 return {
@@ -117,12 +120,76 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
             });
 
         const orderTotalItems = itemsToAdd.reduce((sum, item) => sum + item.quantity, 0);
+        const orderTotalPrice = calculateRealtimeCartTotal(cartItems, ownedQuantities, color);
+
+        return {
+            itemsToAdd,
+            orderTotalItems,
+            orderTotalPrice,
+        };
+    };
+
+    const handleAddToCart = () => {
+        const { itemsToAdd, orderTotalItems, orderTotalPrice } = buildOrderPayload(sceneColor);
 
         onAddToCart({
             items: itemsToAdd,
-            totalPrice,
+            totalPrice: orderTotalPrice,
             totalItems: orderTotalItems,
         });
+    };
+
+    const createPosHandoff = async () => {
+        if (isCreatingPosCode) return;
+
+        const endpoint = posHandoffEndpoint || import.meta.env.VITE_POS_HANDOFF_API_URL || '';
+        if (!endpoint) {
+            setPosCodeError('Endpoint POS non configurato.');
+            return;
+        }
+
+        setIsCreatingPosCode(true);
+        setPosCodeError('');
+        setPosCodeResult(null);
+
+        try {
+            const sceneState = await requestSceneState();
+            const freshItems = Array.isArray(sceneState?.items)
+                ? sceneState.items
+                : Array.isArray(sceneState)
+                    ? sceneState
+                    : rawSceneItems;
+            const color = sceneState?.color || sceneColor;
+            const { itemsToAdd, orderTotalItems, orderTotalPrice } = buildOrderPayload(color);
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    items: itemsToAdd,
+                    cartItems,
+                    sceneItems: freshItems,
+                    sceneColor: color,
+                    totalItems: orderTotalItems,
+                    totalPrice: orderTotalPrice,
+                    sourceUrl: window.location.href,
+                }),
+            });
+            const result = await response.json();
+
+            if (!response.ok || !result?.ok) {
+                throw new Error(result?.error?.message || 'Impossibile generare il codice POS.');
+            }
+
+            setPosCodeResult(result.data);
+            window.parent.postMessage({ type: 'pos-handoff-created', data: result.data }, '*');
+        } catch (error) {
+            setPosCodeError(error instanceof Error ? error.message : 'Impossibile generare il codice POS.');
+        } finally {
+            setIsCreatingPosCode(false);
+        }
     };
 
 
@@ -526,6 +593,24 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
                         </div>
                     </div>
 
+                    {operatorMode && posCodeResult && (
+                        <div className="mb-4 rounded-lg border border-brand bg-teal-50 px-4 py-3 text-center">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-brand">Codice POS</p>
+                            <p className="mt-1 text-4xl font-bold tracking-[0.2em] text-gray-800">{posCodeResult.code}</p>
+                            {posCodeResult.expiresAt && (
+                                <p className="mt-1 text-xs text-gray-500">
+                                    Valido fino alle {new Date(posCodeResult.expiresAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    {operatorMode && posCodeError && (
+                        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                            {posCodeError}
+                        </div>
+                    )}
+
                     {/* Buttons */}
                     <div className="flex gap-3">
                         <button
@@ -546,18 +631,26 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, on
                             </span>
                         </button>
                         <button
-                            onClick={handleAddToCart}
-                            disabled={totalItems === 0}
+                            onClick={operatorMode ? createPosHandoff : handleAddToCart}
+                            disabled={totalItems === 0 || (operatorMode && isCreatingPosCode)}
                             className="cursor-pointer flex-1 px-4 py-2 md:py-1.5 bg-brand hover:bg-teal-600 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2"
                         >
 
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="w-8 h-8" viewBox="0 0 40 40"><path fill="currentColor" fill-rule="evenodd" d="M15.75 11.8h-3.16l-.77 11.6a5 5 0 0 0 4.99 5.34h7.38a5 5 0 0 0 4.99-5.33L28.4 11.8zm0 1h-2.22l-.71 10.67a4 4 0 0 0 3.99 4.27h7.38a4 4 0 0 0 4-4.27l-.72-10.67h-2.22v.63a4.75 4.75 0 1 1-9.5 0zm8.5 0h-7.5v.63a3.75 3.75 0 1 0 7.5 0z"></path></svg>
+                            {operatorMode && isCreatingPosCode ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="w-8 h-8" viewBox="0 0 40 40"><path fill="currentColor" fillRule="evenodd" d="M15.75 11.8h-3.16l-.77 11.6a5 5 0 0 0 4.99 5.34h7.38a5 5 0 0 0 4.99-5.33L28.4 11.8zm0 1h-2.22l-.71 10.67a4 4 0 0 0 3.99 4.27h7.38a4 4 0 0 0 4-4.27l-.72-10.67h-2.22v.63a4.75 4.75 0 1 1-9.5 0zm8.5 0h-7.5v.63a3.75 3.75 0 1 0 7.5 0z"></path></svg>
+                            )}
                             {/* <ShoppingCart className="w-4 h-4" /> */}
                             <div className='hidden md:flex flex-col items-start text-left  text-xs font-bold'>
-                                Continua e vai al carrello
+                                {operatorMode ? (isCreatingPosCode ? 'Generazione...' : 'Genera codice POS') : 'Continua e vai al carrello'}
                             </div>
                             <div className='md:hidden flex-col items-start text-left  text-xs font-bold'>
-                                Continua <br />e vai al carrello
+                                {operatorMode ? (
+                                    <>Codice <br />POS</>
+                                ) : (
+                                    <>Continua <br />e vai al carrello</>
+                                )}
                             </div>
                         </button>
                     </div>

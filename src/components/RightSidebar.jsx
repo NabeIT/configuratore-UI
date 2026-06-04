@@ -5,7 +5,7 @@ import CartItem from './CartItem';
 import CheckoutModal from './CheckoutModal';
 import { calculateRealtimeCartTotal } from '../utils/orderPricing';
 
-export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, onAddToCart, checkoutRequest }) {
+export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, operatorMode = false, posHandoffEndpoint = '', onAddToCart, checkoutRequest }) {
     const [open, setOpen] = useState(false);
     const [checkoutOpen, setCheckoutOpen] = useState(false);
     const totalItems = cartItems.reduce((sum, item) => item.meta?.inCart !== false ? sum + item.quantity : sum, 0);
@@ -94,7 +94,7 @@ export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, onA
                         disabled={totalItems === 0}
                         className="flex md:flex-1 px-3 py-3 gap-3 bg-brand  hover:bg-teal-700 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex-row items-center justify-center"
                     >
-                        <span className='hidden md:block'>Continua</span>
+                        <span className='hidden md:block'>{operatorMode ? 'POS' : 'Continua'}</span>
                         <ArrowBigRight className='w-4 h-4' />
                     </button>
                 </aside>
@@ -106,6 +106,8 @@ export default function RightSidebar({ cartItems, rawSceneItems, sceneColor, onA
                     rawSceneItems={rawSceneItems}
                     sceneColor={sceneColor}
                     cartItems={cartItems}
+                    operatorMode={operatorMode}
+                    posHandoffEndpoint={posHandoffEndpoint}
                     onClose={() => setCheckoutOpen(false)}
                     onAddToCart={(data) => {
                         setCheckoutOpen(false);
