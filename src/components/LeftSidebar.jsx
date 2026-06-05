@@ -7,7 +7,7 @@ import { Minimize2 } from 'lucide-react';
 import { ModalConfirmDelete } from './ConfirmModals';
 import { Trash2 } from 'lucide-react';
 import { X } from 'lucide-react';
-import { getCascadeZoneTypes } from '../utils/dropZonePlacement';
+import { getEditCatalogZoneTypes } from '../utils/dropZonePlacement';
 import { useMemo } from 'react';
 import { useStateContext } from './StateContext';
 
@@ -70,12 +70,14 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
 
     const itemsFiltered = useMemo(() => {
         if (editedItem?.type === "object") {
-            const dropZonesUnique = getCascadeZoneTypes(editedItem);
+            const dropZonesUnique = getEditCatalogZoneTypes(editedItem);
             return items.filter(i => dropZonesUnique.includes(i.zoneType) || i.variants?.some(v => dropZonesUnique.includes(v.zoneType)));
         }
         return [];
 
     }, [editedItem, items]);
+
+    const mobileCatalogItems = editedItem ? itemsFiltered : baseItems;
 
     const availableColors = useMemo(() => {
         return ["wood", "white"]
@@ -178,7 +180,7 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                 {/* Mobile: round dots (collapsed) */}
                 {!isExpanded && (
                     <div className="flex md:hidden flex-1 overflow-x-auto p-3 flex-row gap-3 w-full">
-                        {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
+                        {mobileCatalogItems.map((item, index) => (
                             <CatalogItem
                                 key={getCatalogKey(item, index)}
                                 item={item}
@@ -204,7 +206,7 @@ export default function LeftSidebar({ items, onDragStart, onQuickAdd, catalogExp
                             ref={scrollRef}
                             className="flex overflow-x-auto snap-x snap-mandatory gap-3 px-[7.5vw] py-3 scrollbar-hide"
                         >
-                            {[...(itemsFiltered.length > 0 ? itemsFiltered : baseItems)].map((item, index) => (
+                            {mobileCatalogItems.map((item, index) => (
                                 <CatalogItem
                                     key={getCatalogKey(item, index)}
                                     item={item}

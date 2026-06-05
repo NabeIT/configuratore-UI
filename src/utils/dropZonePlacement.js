@@ -35,6 +35,16 @@ export function getCascadeZoneTypes(item) {
   )];
 }
 
+export function getEditCatalogZoneTypes(item) {
+  if (!Array.isArray(item?.dropZones)) return [];
+
+  return [...new Set(
+    item.dropZones
+      .filter((zone) => !!zone?.cascade)
+      .flatMap((zone) => zone.acceptTypes ?? [])
+  )];
+}
+
 export function getPlacementOptions(item, editedItem, availableDropZones) {
   const zoneType = resolveZoneType(item);
   if (!zoneType) {
