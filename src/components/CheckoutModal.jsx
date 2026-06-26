@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { jsPDF } from 'jspdf';
 
+const CONFIGURATION_PRODUCT_URL = 'https://nabecreation.com/products/libreria-evolutiva-evergrow';
+
 function generateUUIDv4() {
     // If crypto.randomUUID is available (modern browsers)
     if (crypto.randomUUID) {
@@ -24,6 +26,7 @@ function generateUUIDv4() {
 export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, operatorMode = false, posHandoffEndpoint = '', onClose, onAddToCart }) {
     const [ownedQuantities, setOwnedQuantities] = useState({});
     const [isSavingPdf, setIsSavingPdf] = useState(false);
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
     const [isCreatingPosCode, setIsCreatingPosCode] = useState(false);
     const [posCodeResult, setPosCodeResult] = useState(null);
     const [posCodeError, setPosCodeError] = useState('');
@@ -64,8 +67,33 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
         return { data, error };
     }
 
-    const setOwned = (id, value) => {
-        setOwnedQuantities((prev) => ({ ...prev, [id]: value }));
+    const getFreshSceneSnapshot = async () => {
+        const sceneState = await requestSceneState();
+        const freshItems = Array.isArray(sceneState?.items)
+            ? sceneState.items
+            : Array.isArray(sceneState)
+                ? sceneState
+                : rawSceneItems;
+        const color = sceneState?.color || sceneColor;
+
+        return { freshItems, color };
+    };
+
+    const buildSavedConfigurationPayload = (savedConfiguration) => {
+        const configurationGuid = savedConfiguration?.guid;
+        if (!configurationGuid) return {};
+
+        const payload = {
+            configurationId: configurationGuid,
+            configurationGuid,
+            configurationUrl: `${CONFIGURATION_PRODUCT_URL}?config=${configurationGuid}`,
+        };
+
+        if (savedConfiguration.id !== undefined && savedConfiguration.id !== null) {
+            payload.supabaseConfigurationId = savedConfiguration.id;
+        }
+
+        return payload;
     };
 
     const incrementOwned = (id, max) => {
@@ -129,14 +157,34 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
         };
     };
 
-    const handleAddToCart = () => {
-        const { itemsToAdd, orderTotalItems, orderTotalPrice } = buildOrderPayload(sceneColor);
+    const handleAddToCart = async () => {
+        if (isAddingToCart) return;
 
-        onAddToCart({
-            items: itemsToAdd,
-            totalPrice: orderTotalPrice,
-            totalItems: orderTotalItems,
-        });
+        setIsAddingToCart(true);
+
+        try {
+            const { freshItems, color } = await getFreshSceneSnapshot();
+            const { itemsToAdd, orderTotalItems, orderTotalPrice } = buildOrderPayload(color);
+            let savedConfigurationPayload = {};
+
+            try {
+                const { data, error } = await saveToSupabase(freshItems);
+                if (!error) {
+                    savedConfigurationPayload = buildSavedConfigurationPayload(data?.[0]);
+                }
+            } catch (error) {
+                console.error('Error saving configuration before add to cart:', error);
+            }
+
+            onAddToCart({
+                items: itemsToAdd,
+                totalPrice: orderTotalPrice,
+                totalItems: orderTotalItems,
+                ...savedConfigurationPayload,
+            });
+        } finally {
+            setIsAddingToCart(false);
+        }
     };
 
     const createPosHandoff = async () => {
@@ -153,13 +201,7 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
         setPosCodeResult(null);
 
         try {
-            const sceneState = await requestSceneState();
-            const freshItems = Array.isArray(sceneState?.items)
-                ? sceneState.items
-                : Array.isArray(sceneState)
-                    ? sceneState
-                    : rawSceneItems;
-            const color = sceneState?.color || sceneColor;
+            const { freshItems, color } = await getFreshSceneSnapshot();
             const { itemsToAdd, orderTotalItems, orderTotalPrice } = buildOrderPayload(color);
 
             const response = await fetch(endpoint, {
@@ -215,32 +257,6 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
         });
     };
 
-    const buildConfigUrl = (sceneItems) => {
-        const extractSteps = (items, steps = []) => {
-            if (!Array.isArray(items)) return steps;
-            items.forEach((item) => {
-                if (!item || !item.modelId) return;
-                const step = { m: item.modelId };
-                if (item.variant !== undefined && item.variant !== null) step.v = item.variant;
-                if (item.targetZoneKey) step.t = item.targetZoneKey;
-                if (item.id) step.i = item.id;
-                if (item.position) step.p = item.position;
-                steps.push(step);
-                if (item.type === 'object' && Array.isArray(item.items)) {
-                    extractSteps(item.items, steps);
-                }
-            });
-            return steps;
-        };
-
-        const steps = extractSteps(sceneItems);
-        if (steps.length === 0) return null;
-
-        const json = JSON.stringify(steps);
-        const baseUrl = window.location.origin + window.location.pathname;
-        return `${baseUrl}?config=${encodeURIComponent(json)}`;
-    };
-
     const saveToPdf = async () => {
         if (isSavingPdf) return;
         setIsSavingPdf(true);
@@ -250,17 +266,10 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
         const contentW = pageW - margin * 2;
         let y = margin;
         try {
-            const sceneState = await requestSceneState();
-            const freshItems = Array.isArray(sceneState?.items)
-                ? sceneState.items
-                : Array.isArray(sceneState)
-                    ? sceneState
-                    : rawSceneItems;
-            const color = sceneState?.color || sceneColor;
+            const { freshItems, color } = await getFreshSceneSnapshot();
 
             const { data, error } = await saveToSupabase(freshItems);
-            const baseUrl = "https://nabecreation.com/products/libreria-evolutiva-evergrow";
-            const configurationUrl = !error && data?.[0]?.guid ? baseUrl + "?config=" + data[0].guid : null;
+            const configurationUrl = !error && data?.[0]?.guid ? CONFIGURATION_PRODUCT_URL + "?config=" + data[0].guid : null;
 
 
             const orderItems = calculateOrderItems(cartItems, ownedQuantities, color);
@@ -479,7 +488,6 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
                     {visibleItems.map((item) => {
                         const owned = ownedQuantities[item.id] || 0;
                         const toBuy = Math.max(item.quantity - owned, 0);
-                        const itemPrice = toBuy * (item.meta?.price || 0);
 
                         return (
                             <div
@@ -632,11 +640,11 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
                         </button>
                         <button
                             onClick={operatorMode ? createPosHandoff : handleAddToCart}
-                            disabled={totalItems === 0 || (operatorMode && isCreatingPosCode)}
+                            disabled={totalItems === 0 || (operatorMode && isCreatingPosCode) || (!operatorMode && isAddingToCart)}
                             className="cursor-pointer flex-1 px-4 py-2 md:py-1.5 bg-brand hover:bg-teal-600 disabled:bg-gray-400 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2"
                         >
 
-                            {operatorMode && isCreatingPosCode ? (
+                            {(operatorMode && isCreatingPosCode) || (!operatorMode && isAddingToCart) ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
                             ) : (
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="w-8 h-8" viewBox="0 0 40 40"><path fill="currentColor" fillRule="evenodd" d="M15.75 11.8h-3.16l-.77 11.6a5 5 0 0 0 4.99 5.34h7.38a5 5 0 0 0 4.99-5.33L28.4 11.8zm0 1h-2.22l-.71 10.67a4 4 0 0 0 3.99 4.27h7.38a4 4 0 0 0 4-4.27l-.72-10.67h-2.22v.63a4.75 4.75 0 1 1-9.5 0zm8.5 0h-7.5v.63a3.75 3.75 0 1 0 7.5 0z"></path></svg>
