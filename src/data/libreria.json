@@ -1384,7 +1384,7 @@
         "zoneType": "mensola",
         "meta": {
           "sku": "ELRL60",
-          "price": 19
+          "price": 45
         }
       },
       {
@@ -1394,7 +1394,7 @@
         "zoneType": "mensola80",
         "meta": {
           "sku": "ELRL80",
-          "price": 25
+          "price": 45
         }
       }
     ],

@@ -1,4 +1,24 @@
 const ORDER_SKU_CATALOG = {
+  ELRL60: {
+    titles: {
+      wood: "Ripiano singolo 60cm",
+      white: "Ripiano singolo 60cm",
+    },
+    prices: {
+      wood: 45,
+      white: 45,
+    },
+  },
+  ELRL80: {
+    titles: {
+      wood: "Ripiano singolo 80cm",
+      white: "Ripiano singolo 80cm",
+    },
+    prices: {
+      wood: 45,
+      white: 45,
+    },
+  },
   SCATBAR36: {
     titles: {
       wood: "1x Fianco h 36cm",
@@ -125,7 +145,7 @@ const ORDER_SKU_CATALOG = {
       white: "3x Ripiani Montessori 60cm bio paint",
     },
     prices: {
-      wood: 200,
+      wood: 166,
       white: 317,
     },
   },
@@ -155,7 +175,7 @@ const ORDER_SKU_CATALOG = {
       white: "2x Fianchi h 78cm a terra (per ripiani 60cm) bio paint",
     },
     prices: {
-      wood: 132,
+      wood: 133,
       white: 194,
     },
   },
@@ -182,6 +202,20 @@ const ORDER_SKU_CATALOG = {
 };
 
 const ORDER_SKU_VARIANTS_BY_COLOR = {
+  ELRL60: {
+    wood: {
+      sku: "ELRL60",
+      handle: "ripiano-singolo-60cm",
+      variantId: "57658398540120",
+    },
+  },
+  ELRL80: {
+    wood: {
+      sku: "ELRL80",
+      handle: "ripiano-singolo-80cm",
+      variantId: "57658315309400",
+    },
+  },
   SCATBAR36: {
     wood: {
       sku: "SCATBAR36",
@@ -500,6 +534,19 @@ const pushPackage = (packages, sku, quantity, fallbackTitle, color) => {
   });
 };
 
+const pushSingleInputPackage = (packages, cartItems, sku, quantity, fallbackTitle) => {
+  if (quantity <= 0) return;
+
+  const sourceItem = cartItems.find((item) => item.meta?.sku === sku);
+  packages.push({
+    title: sourceItem?.title ?? sourceItem?.name ?? fallbackTitle,
+    sku,
+    quantity,
+    price:
+      typeof sourceItem?.meta?.price === "number" ? sourceItem.meta.price : null,
+  });
+};
+
 const getMinimalBoxPackageQuantities = (toBuy) => {
   const quantity = Math.max(toBuy, 0);
   let best = null;
@@ -590,7 +637,15 @@ export function calculateOrderItems(
     isSkuInCart(visibleItems, "EL14R80");
 
   const ELRL60ToBuy = getToBuyBySku(visibleItems, "ELRL60", ownedQuantities);
-  if (ELRL60ToBuy > 0) {
+  if (ELRL60ToBuy === 1) {
+    pushSingleInputPackage(
+      cartPackages,
+      visibleItems,
+      "ELRL60",
+      ELRL60ToBuy,
+      "Ripiano 60 cm libreria",
+    );
+  } else if (ELRL60ToBuy > 1) {
     pushTwoThreePackages(cartPackages, {
       toBuy: ELRL60ToBuy,
       sku2: "SCAT2RIP60",
@@ -618,7 +673,15 @@ export function calculateOrderItems(
 
   const ELRL80ToBuy = getToBuyBySku(visibleItems, "ELRL80", ownedQuantities);
   const ELRL80ToPack = Math.max(ELRL80ToBuy - ELRAPP80ToBuy, 0);
-  if (ELRL80ToPack > 0) {
+  if (ELRL80ToPack === 1) {
+    pushSingleInputPackage(
+      cartPackages,
+      visibleItems,
+      "ELRL80",
+      ELRL80ToPack,
+      "Ripiano 80 cm libreria",
+    );
+  } else if (ELRL80ToPack > 1) {
     pushTwoThreePackages(cartPackages, {
       toBuy: ELRL80ToPack,
       sku2: "SCAT2RIP80",

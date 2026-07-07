@@ -274,6 +274,7 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
 
             const orderItems = calculateOrderItems(cartItems, ownedQuantities, color);
             const pdfTotalItems = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+            const pdfTotalPrice = calculateRealtimeCartTotal(cartItems, ownedQuantities, color);
 
 
             const addPageIfNeeded = (needed) => {
@@ -412,7 +413,8 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
 
             const toBuy = item.quantity;
             const itemPrice = toBuy * (item.price || 0);
-            const sku = color == "white" ? item.sku + "W" : item.sku;
+            const variantData = getOrderVariantData(item.sku, color);
+            const sku = variantData?.sku || item.sku;
 
             // Nome articolo (troncato se troppo lungo)
             const maxNameW = contentW * 0.52;
@@ -451,7 +453,7 @@ export default function CheckoutModal({ cartItems, rawSceneItems, sceneColor, op
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(0);
         doc.text('Totale da acquistare:', margin, y);
-        doc.text(`${totalPrice.toFixed(2)} €`, pageW - margin, y, { align: 'right' });
+        doc.text(`${pdfTotalPrice.toFixed(2)} €`, pageW - margin, y, { align: 'right' });
         y += 6;
         doc.setFontSize(9);
         doc.setFont('helvetica', 'normal');
